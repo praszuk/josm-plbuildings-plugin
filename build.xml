@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="plbuildings" default="dist" basedir=".">
+
+    <!-- enter the SVN commit message -->
+    <property name="commit.message" value="Add simple building import (from budynki site)"/>
+    <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
+    <property name="plugin.main.version" value="10580"/>
+
+    <property name="plugin.author" value="NieWnen"/>
+    <property name="plugin.class" value="org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin"/>
+    <property name="plugin.description" value="Import buildings from budynki.openstreetmap.org.pl."/>
+    <!-- <property name="plugin.icon" value="no.png"/> -->
+    <property name="plugin.link" value="..."/>
+
+    <property name="plugin.canloadatruntime" value="true"/>
+    <property name="plugin.requires" value="utilsplugin2"/>
+    <!-- ** include targets that all plugins have in common ** -->
+
+    <import file="../build-common.xml"/>
+    <fileset id="plugin.requires.jars" dir="${plugin.dist.dir}">
+        <include name="utilsplugin2.jar"/>
+    </fileset>
+
+</project>
