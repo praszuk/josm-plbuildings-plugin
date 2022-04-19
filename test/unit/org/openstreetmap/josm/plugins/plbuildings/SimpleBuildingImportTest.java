@@ -36,4 +36,18 @@ public class SimpleBuildingImportTest {
         assertTrue(building.hasTag("building"));
 
     }
+
+    @Test
+    public void testImportEmptyDataSet(){
+        new MockUp<BuildingsAction>(){
+            @Mock
+            public DataSet getBuildingsAtCurrentLocation(){
+                return new DataSet();
+            }
+        };
+
+        DataSet ds = new DataSet();
+        BuildingsAction.performBuildingImport(ds);
+        assertTrue(ds.isEmpty());
+    }
 }
