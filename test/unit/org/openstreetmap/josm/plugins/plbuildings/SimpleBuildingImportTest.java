@@ -50,4 +50,22 @@ public class SimpleBuildingImportTest {
         BuildingsAction.performBuildingImport(ds);
         assertTrue(ds.isEmpty());
     }
+
+    @Test
+    public void testImportDataSetWithMultipleBuildingsButImportOnlyOne(){
+        new MockUp<BuildingsAction>(){
+            @Mock
+            public DataSet getBuildingsAtCurrentLocation(){
+
+                DataSet data = importOsmFile(new File("test/data/simple_multiple_buildings.osm"), "");
+                assert data != null;
+                assertTrue(data.getWays().size() > 1);
+                return data;
+            }
+        };
+
+        DataSet ds = new DataSet();
+        BuildingsAction.performBuildingImport(ds);
+        assertEquals(ds.getWays().size(), 1);
+    }
 }
