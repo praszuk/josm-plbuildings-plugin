@@ -1,0 +1,41 @@
+plugins {
+    id("org.openstreetmap.josm").version("0.8.0")
+}
+
+dependencies {
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.8.2")
+    testImplementation("org.jmockit:jmockit:1.49")
+    testImplementation("org.openstreetmap.josm:josm-unittest:"){changing=true}
+    testImplementation("org.awaitility:awaitility:4.2.0")
+}
+
+sourceSets {
+    test {
+        java {
+            srcDirs = ["test/unit"]
+        }
+        resources {
+            srcDirs = ["test/data"]
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    project.afterEvaluate {
+        jvmArgs("-javaagent:${classpath.find { it.name.contains("jmockit") }.absolutePath}")
+    }
+    useJUnitPlatform()
+    testLogging {
+        exceptionFormat "full"
+        events "skipped", "failed"
+        info {
+            showStandardStreams true
+        }
+    }
+}
