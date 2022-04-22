@@ -1,6 +1,7 @@
 # all dot files
 .*
 !.gitignore
+!.github/
 
 # Intellij
 .idea/
@@ -28,6 +29,7 @@ test/jacoco.exe
 
 # Package Files #
 *.jar
+!gradle-wrapper.jar
 *.war
 *.nar
 *.ear
