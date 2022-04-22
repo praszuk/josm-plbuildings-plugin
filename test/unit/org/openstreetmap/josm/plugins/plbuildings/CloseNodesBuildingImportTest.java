@@ -37,4 +37,22 @@ public class CloseNodesBuildingImportTest {
         // Two shared nodes between 2 buildings. Skipping first node because closed ways always duplicates 1 node
         assertEquals(building.getNodes().stream().skip(1).filter((node -> node.isReferredByWays(2))).count(), 2);
     }
+    @Test
+    public void testImportBuildingAllCloseNodesActionShouldBeCanceled(){
+        new MockUp<BuildingsAction>(){
+            @Mock
+            public DataSet getBuildingsAtCurrentLocation(){
+                return importOsmFile(new File("test/data/close_building_base.osm"), "");
+            }
+        };
+
+        DataSet ds = importOsmFile(new File("test/data/close_building_base.osm"), "");
+        assertNotNull(ds);
+        assertEquals(ds.getWays().size(), 1);
+
+        BuildingsAction.performBuildingImport(ds);
+
+        assertNotNull(ds);
+        assertEquals(ds.getWays().size(), 1);
+    }
 }
