@@ -25,20 +25,20 @@ import java.util.stream.Collectors;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-public class BuildingsAction extends JosmAction{
+public class BuildingsAction extends JosmAction {
     static final String DESCRIPTION = tr("Buildings download action.");
     static final double BBOX_OFFSET = 0.0000005;
 
-    public BuildingsAction(){
+    public BuildingsAction() {
         super(
                 tr("Download building"),
                 null,
                 DESCRIPTION,
                 Shortcut.registerShortcut(
-                    "download:building",
-                    tr("Download building"),
-                    KeyEvent.VK_1,
-                    Shortcut.CTRL_SHIFT
+                        "download:building",
+                        tr("Download building"),
+                        KeyEvent.VK_1,
+                        Shortcut.CTRL_SHIFT
                 ),
                 true
         );
@@ -50,7 +50,7 @@ public class BuildingsAction extends JosmAction{
      * semidetached_house/terrace buildings
      * It works only for positive lat/lon values, because this plugin is only for Poland.
      */
-    public static BBox getBBox(List<Node> nodes, double bboxOffset){
+    public static BBox getBBox(List<Node> nodes, double bboxOffset) {
         BBox bbox = new BBox();
         nodes.forEach(bbox::add);
 
@@ -66,32 +66,32 @@ public class BuildingsAction extends JosmAction{
      * Check if node1 is close to node2 where max distance is maxOffset (inclusive)
      * Both (latitude and longitude) values must be close to return true.
      */
-    public static boolean isCloseNode(Node node1, Node node2, double maxOffset){
+    public static boolean isCloseNode(Node node1, Node node2, double maxOffset) {
         boolean isLatOk = Math.abs(node1.lat() - node2.lat()) <= maxOffset;
         boolean isLonOk = Math.abs(node1.lon() - node2.lon()) <= maxOffset;
 
         return isLatOk && isLonOk;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent actionEvent) {
-        DataSet currentDataSet = getLayerManager().getEditDataSet();
-        try{
-            LatLon latLonPoint = MainApplication.getMap().mapView.getLatLon(
+    public static DataSet getBuildingsAtCurrentLocation(){
+        LatLon latLonPoint = MainApplication.getMap().mapView.getLatLon(
                 MainApplication.getMap().mapView.getMousePosition().getX(),
                 MainApplication.getMap().mapView.getMousePosition().getY()
-            );
+        );
 
-            DataSet buildingsDataSet = BuildingsDownloader.downloadBuildings(
-                BuildingsDownloader.createGeometryFeature(latLonPoint)
-            );
+        return BuildingsDownloader.downloadBuildings(BuildingsDownloader.createGeometryFeature(latLonPoint));
+    }
 
-            if (buildingsDataSet == null || buildingsDataSet.isEmpty()){
+    public static void performBuildingImport(DataSet currentDataSet) {
+        try {
+            DataSet importedBuildingsDataSet = getBuildingsAtCurrentLocation();
+
+            if (importedBuildingsDataSet == null || importedBuildingsDataSet.isEmpty()) {
                 return;
             }
 
-            // TODO sort dataset by distance from lat lon, then get only closest way
-            Way importedBuilding = (Way) buildingsDataSet.getWays().toArray()[0]; // just get first building for now
+            // just get first building
+            Way importedBuilding = (Way) importedBuildingsDataSet.getWays().toArray()[0];
 
             List<Node> newNodes = importedBuilding.getNodes().stream()
                     .map(node -> new Node(node, true))
@@ -103,7 +103,7 @@ public class BuildingsAction extends JosmAction{
 
             Way newBuilding = new Way();
             newBuilding.cloneFrom(importedBuilding, false);
-            buildingsDataSet.clear();
+            importedBuildingsDataSet.clear();
 
             // Check if any building's node is very close to existing node – almost/same lat lon and replace it
             BBox bbox = getBBox(newNodes, BBOX_OFFSET);
@@ -117,21 +117,20 @@ public class BuildingsAction extends JosmAction{
             AtomicInteger sameNodeCounter = new AtomicInteger();
             newNodes.forEach(newNode -> {
                 Node sameNode = closeNodes.stream()
-                    .filter(closeNode -> isCloseNode(closeNode, newNode, BBOX_OFFSET))
-                    .findFirst().orElse(null);
+                        .filter(closeNode -> isCloseNode(closeNode, newNode, BBOX_OFFSET))
+                        .findFirst().orElse(null);
 
-                if (sameNode != null){
+                if (sameNode != null) {
                     buildingNodes.add(sameNode);
                     sameNodeCounter.getAndIncrement();
-                }
-                else{
+                } else {
                     buildingNodes.add(newNode);
                     nodesToAddToDataSet.add(newNode);
                 }
             });
 
             // Whole building is a duplicate – contains the same nodes
-            if (sameNodeCounter.get() == buildingNodes.size()){
+            if (sameNodeCounter.get() == buildingNodes.size()) {
                 return;
             }
             newBuilding.setNodes(buildingNodes);
@@ -140,38 +139,37 @@ public class BuildingsAction extends JosmAction{
             List<Command> commands = new ArrayList<>();
 
             nodesToAddToDataSet.forEach(node -> commands.add(new AddCommand(currentDataSet, node)));
-            // newNodes.forEach(node -> commands.add(new AddCommand(currentDataSet, node)));
             commands.add(new AddCommand(currentDataSet, newBuilding));
 
-            Collection<OsmPrimitive> selected = getLayerManager().getEditDataSet().getSelected()
-                .stream()
-                .filter(osmPrimitive -> osmPrimitive.getType() == OsmPrimitiveType.WAY)
-                .collect(Collectors.toList());
+            Collection<OsmPrimitive> selected = currentDataSet.getSelected()
+                    .stream()
+                    .filter(osmPrimitive -> osmPrimitive.getType() == OsmPrimitiveType.WAY)
+                    .collect(Collectors.toList());
 
             // TODO maybe semidetached/terrace auto-change building tag
             UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Import building"), commands));
 
-            if (selected.size() == 1){
+            if (selected.size() == 1) {
                 Way selectedBuilding = (Way) selected.toArray()[0];
-                try{
+                try {
                     ReplaceGeometryCommand replaceCommand = ReplaceGeometryUtils.buildReplaceWithNewCommand(
-                        selectedBuilding,
-                        newBuilding
+                            selectedBuilding,
+                            newBuilding
                     );
                     UndoRedoHandler.getInstance().add(replaceCommand);
-                }catch (IllegalArgumentException ignored){
+                } catch (IllegalArgumentException ignored) {
                     // If user cancel conflict window do nothing
                     Notification note = new Notification(tr("Canceled merging buildings."));
                     note.setIcon(JOptionPane.WARNING_MESSAGE);
                     note.setDuration(Notification.TIME_SHORT);
                     note.show();
-                } catch (ReplaceGeometryException ignore){
+                } catch (ReplaceGeometryException ignore) {
                     // If selected building cannot be merged (e.g. connected ways/relation)
                     Notification note = new Notification(tr(
-                        "Cannot merge buildings!" +
-                            " Old building may be connected with some ways/relations" +
-                            " or not whole area is downloaded."
-                        ));
+                            "Cannot merge buildings!" +
+                                    " Old building may be connected with some ways/relations" +
+                                    " or not whole area is downloaded."
+                    ));
                     note.setIcon(JOptionPane.ERROR_MESSAGE);
                     note.setDuration(Notification.TIME_SHORT);
                     note.show();
@@ -181,9 +179,13 @@ public class BuildingsAction extends JosmAction{
             }
 
 
-        }catch(NullPointerException ignored){
+        } catch (NullPointerException ignored) {
             // TODO log it
         }
     }
 
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        performBuildingImport(getLayerManager().getEditDataSet());
+    }
 }

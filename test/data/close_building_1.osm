@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <bounds minlat='50.3380928' minlon='19.4856906' maxlat='50.3405579' maxlon='19.4910336' origin='CGImap 0.8.6 (691213 spike-08.openstreetmap.org)' />
+  <bounds minlat='50.3380928' minlon='19.4856906' maxlat='50.3405579' maxlon='19.4910336' origin='OpenStreetMap server' />
+  <node id='-101947' action='modify' visible='true' lat='50.33901848446' lon='19.48890880434' />
+  <node id='-101948' action='modify' visible='true' lat='50.33905328157' lon='19.48830089883' />
+  <node id='-101949' action='modify' visible='true' lat='50.33855543823' lon='19.4882381441' />
+  <node id='-101950' action='modify' visible='true' lat='50.33853310169' lon='19.48886291673' />
+  <way id='-102470' action='modify' visible='true'>
+    <nd ref='-101947' />
+    <nd ref='-101948' />
+    <nd ref='-101949' />
+    <nd ref='-101950' />
+    <nd ref='-101947' />
+    <tag k='building' v='detached' />
+  </way>
+</osm>
