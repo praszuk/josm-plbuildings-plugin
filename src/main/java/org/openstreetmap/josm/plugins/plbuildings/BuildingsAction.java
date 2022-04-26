@@ -163,6 +163,8 @@ public class BuildingsAction extends JosmAction {
                     note.setIcon(JOptionPane.WARNING_MESSAGE);
                     note.setDuration(Notification.TIME_SHORT);
                     note.show();
+
+                    UndoRedoHandler.getInstance().undo(); // undo importing building
                 } catch (ReplaceGeometryException ignore) {
                     // If selected building cannot be merged (e.g. connected ways/relation)
                     Notification note = new Notification(tr(
@@ -173,6 +175,8 @@ public class BuildingsAction extends JosmAction {
                     note.setIcon(JOptionPane.ERROR_MESSAGE);
                     note.setDuration(Notification.TIME_SHORT);
                     note.show();
+
+                    UndoRedoHandler.getInstance().undo(); // undo importing building
                 }
 
                 currentDataSet.clearSelection();
