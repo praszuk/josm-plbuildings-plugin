@@ -147,7 +147,8 @@ public class BuildingsAction extends JosmAction {
                     .collect(Collectors.toList());
 
             // TODO maybe semidetached/terrace auto-change building tag
-            UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Import building"), commands));
+            SequenceCommand importBuildingSequenceCommand = new SequenceCommand(tr("Import building"), commands);
+            UndoRedoHandler.getInstance().add(importBuildingSequenceCommand);
 
             if (selected.size() == 1) {
                 Way selectedBuilding = (Way) selected.toArray()[0];
@@ -157,6 +158,7 @@ public class BuildingsAction extends JosmAction {
                             newBuilding
                     );
                     UndoRedoHandler.getInstance().add(replaceCommand);
+
                 } catch (IllegalArgumentException ignored) {
                     // If user cancel conflict window do nothing
                     Notification note = new Notification(tr("Canceled merging buildings."));
@@ -164,7 +166,7 @@ public class BuildingsAction extends JosmAction {
                     note.setDuration(Notification.TIME_SHORT);
                     note.show();
 
-                    UndoRedoHandler.getInstance().undo(); // undo importing building
+                    Utils.undoUntil(UndoRedoHandler.getInstance(), importBuildingSequenceCommand, true);
                 } catch (ReplaceGeometryException ignore) {
                     // If selected building cannot be merged (e.g. connected ways/relation)
                     Notification note = new Notification(tr(
@@ -176,7 +178,7 @@ public class BuildingsAction extends JosmAction {
                     note.setDuration(Notification.TIME_SHORT);
                     note.show();
 
-                    UndoRedoHandler.getInstance().undo(); // undo importing building
+                    Utils.undoUntil(UndoRedoHandler.getInstance(), importBuildingSequenceCommand, true);
                 }
 
                 currentDataSet.clearSelection();
