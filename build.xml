@@ -2,7 +2,7 @@
 <project name="plbuildings" default="dist" basedir=".">
 
     <!-- <property name="plugin.icon" value="no.png"/> -->
-    <property name="plugin.description" value="Import buildings from budynki.openstreetmap.org.pl."/>
+    <property name="plugin.description" value="Import buildings from Polish public datasets."/>
     <property file="${basedir}/gradle.properties"/>
 
     <import file="../build-common.xml"/>
