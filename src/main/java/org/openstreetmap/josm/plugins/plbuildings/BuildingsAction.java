@@ -79,7 +79,7 @@ public class BuildingsAction extends JosmAction {
                 MainApplication.getMap().mapView.getMousePosition().getY()
         );
 
-        return BuildingsDownloader.downloadBuildings(BuildingsDownloader.createGeometryFeature(latLonPoint));
+        return BuildingsDownloader.downloadBuildings(latLonPoint, "bdot");
     }
 
     public static void performBuildingImport(DataSet currentDataSet) {

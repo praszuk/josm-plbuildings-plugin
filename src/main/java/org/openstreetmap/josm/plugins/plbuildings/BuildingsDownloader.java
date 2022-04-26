@@ -7,39 +7,53 @@ import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.tools.Http1Client;
 import org.openstreetmap.josm.tools.HttpClient;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 public class BuildingsDownloader {
-    static final String BUDYNKI_URL = "https://budynki.openstreetmap.org.pl/josm_data";
+    static final String SERVER_URL = "https://josm-plbuildings-server.openstreetmap.org.pl/api/v1/buildings";
+    static final float SEARCH_DISTANCE = 3.0f; // meters
+
 
     /**
-     * Download buildings from budynki.openstreetmap.org.pl site and parse it as DataSet
-     * @param geometry is result from createGeometryFeature function
-     * @return DataSet with "raw building" from geojson or null
+     * Download buildings from PLBuildings Server API and parse it as DataSet
+     * Use default search_distance parameter.
+     * @param latLon location of searching building (EPSG 4386)
+     * @param dataSource dataSource of buildings. Currently, only "bdot" is available
+     * @return DataSet with "raw building" from .osm response or null
      */
-    public static DataSet downloadBuildings(JsonObject geometry){
-        String encodedGeometry;
-        try {
-            encodedGeometry = URLEncoder.encode(geometry.toString(), StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return null;
-        }
-        StringBuilder urlBuilder = new StringBuilder(BUDYNKI_URL);
+    public static DataSet downloadBuildings(LatLon latLon, String dataSource){
+        return downloadBuildings(latLon, dataSource, SEARCH_DISTANCE);
+    }
+
+    /**
+     * Download buildings from PLBuildings Server API and parse it as DataSet
+     * @param latLon location of searching building (EPSG 4386)
+     * @param dataSource dataSource of buildings. Currently, only "bdot" is available
+     * @param searchDistance distance in meters to find the nearest building from latLon
+     * @return DataSet with "raw building" from .osm response or null
+     */
+    public static DataSet downloadBuildings(LatLon latLon, String dataSource, float searchDistance){
+
+        StringBuilder urlBuilder = new StringBuilder(SERVER_URL);
+
         urlBuilder.append("?");
-        urlBuilder.append("filter_by=geojson_geometry");
+        urlBuilder.append("lat=");
+        urlBuilder.append(latLon.lat());
+
         urlBuilder.append("&");
-        urlBuilder.append("layers=buildings"); // layers=buildings – all, layers=buildings_to_import – missing
+        urlBuilder.append("lon=");
+        urlBuilder.append(latLon.lon());
+
         urlBuilder.append("&");
-        urlBuilder.append("geom=");
-        urlBuilder.append(encodedGeometry);
+        urlBuilder.append("data_source=");
+        urlBuilder.append(dataSource);
+
+        urlBuilder.append("&");
+        urlBuilder.append("search_distance=");
+        urlBuilder.append(searchDistance);
+
+        System.out.println(urlBuilder);
 
         try {
             URL url = new URL(urlBuilder.toString());
@@ -52,31 +66,5 @@ public class BuildingsDownloader {
             e.printStackTrace();
         }
         return null;
-    }
-
-    /**
-     * Creates JSON geometry which is required as query parameter for budynki.openstreetmap.org.pl site
-     * to pass location of Point (using very small Polygon as hacky solution)
-     * @return JSONObject: {"type": "Polygon", "coordinates": [lon1, lat1], [lon2, lat2], [lon3, lat3]} where
-     * the first one is from point parameter, 2nd and 3rd are moved by small offset (about few meters).
-     */
-    public static JsonObject createGeometryFeature(LatLon point){
-        final double diff = 0.000001;
-        JsonArray pos1 = Json.createArrayBuilder().add(point.lon()).add(point.lat()).build();
-        JsonArray pos2 = Json.createArrayBuilder().add(point.lon() + diff).add(point.lat()).build();
-        JsonArray pos3 = Json.createArrayBuilder().add(point.lon()).add(point.lat() + diff).build();
-        return Json.createObjectBuilder()
-                .add("type", "Polygon")
-                .add("coordinates", Json.createArrayBuilder()
-                        .add(Json.createArrayBuilder()
-                                .add(pos1)
-                                .add(pos2)
-                                .add(pos3)
-                                .add(pos1)
-                                .build()
-                        )
-                        .build()
-                )
-                .build();
     }
 }
