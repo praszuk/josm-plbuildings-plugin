@@ -2,7 +2,7 @@
 
 ## Description
 PLBuildings is a [JOSM](https://josm.openstreetmap.de/) plugin 
-which allows to easily import buildings from polish public datasets to add it to the OpenStreetMap.
+which allows to easily import buildings from Polish public datasets to add it to the OpenStreetMap.
 It communicates with the [PLBuildings server](https://github.com/praszuk/josm-plbuildings-server) that obtains this data.
 
 ## How to use it
