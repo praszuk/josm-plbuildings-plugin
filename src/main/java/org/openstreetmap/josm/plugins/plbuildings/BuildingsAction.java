@@ -27,7 +27,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class BuildingsAction extends JosmAction {
     static final String DESCRIPTION = tr("Buildings download action.");
-    static final double BBOX_OFFSET = 0.0000005;
 
     public BuildingsAction() {
         super(
@@ -106,7 +105,7 @@ public class BuildingsAction extends JosmAction {
             importedBuildingsDataSet.clear();
 
             // Check if any building's node is very close to existing node – almost/same lat lon and replace it
-            BBox bbox = getBBox(newNodes, BBOX_OFFSET);
+            BBox bbox = getBBox(newNodes, BuildingsSettings.BBOX_OFFSET.get());
 
             List<Node> closeNodes = currentDataSet.searchNodes(bbox).stream()
                     .filter(n -> !n.isDeleted())
@@ -117,7 +116,7 @@ public class BuildingsAction extends JosmAction {
             AtomicInteger sameNodeCounter = new AtomicInteger();
             newNodes.forEach(newNode -> {
                 Node sameNode = closeNodes.stream()
-                        .filter(closeNode -> isCloseNode(closeNode, newNode, BBOX_OFFSET))
+                        .filter(closeNode -> isCloseNode(closeNode, newNode, BuildingsSettings.BBOX_OFFSET.get()))
                         .findFirst().orElse(null);
 
                 if (sameNode != null) {
