@@ -11,10 +11,6 @@ import java.io.IOException;
 import java.net.URL;
 
 public class BuildingsDownloader {
-    static final String SERVER_URL = "https://josm-plbuildings-server.openstreetmap.org.pl/api/v1/buildings";
-    static final float SEARCH_DISTANCE = 3.0f; // meters
-
-
     /**
      * Download buildings from PLBuildings Server API and parse it as DataSet
      * Use default search_distance parameter.
@@ -23,7 +19,7 @@ public class BuildingsDownloader {
      * @return DataSet with "raw building" from .osm response or null
      */
     public static DataSet downloadBuildings(LatLon latLon, String dataSource){
-        return downloadBuildings(latLon, dataSource, SEARCH_DISTANCE);
+        return downloadBuildings(latLon, dataSource, BuildingsSettings.SEARCH_DISTANCE.get());
     }
 
     /**
@@ -33,9 +29,9 @@ public class BuildingsDownloader {
      * @param searchDistance distance in meters to find the nearest building from latLon
      * @return DataSet with "raw building" from .osm response or null
      */
-    public static DataSet downloadBuildings(LatLon latLon, String dataSource, float searchDistance){
+    public static DataSet downloadBuildings(LatLon latLon, String dataSource, Double searchDistance){
 
-        StringBuilder urlBuilder = new StringBuilder(SERVER_URL);
+        StringBuilder urlBuilder = new StringBuilder(BuildingsSettings.SERVER_URL.get());
 
         urlBuilder.append("?");
         urlBuilder.append("lat=");
