@@ -1,9 +1,9 @@
-package org.openstreetmap.josm.plugins.plbuildings;
+package org.openstreetmap.josm.plugins.plbuildings.utils;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 
-public class Utils {
+public class UndoRedoUtils {
     /**
      * Undo all commands until specific command object.
      * @param handler instance

@@ -9,6 +9,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.*;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.plugins.plbuildings.utils.UndoRedoUtils;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryCommand;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryException;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryUtils;
@@ -165,7 +166,7 @@ public class BuildingsAction extends JosmAction {
                     note.setDuration(Notification.TIME_SHORT);
                     note.show();
 
-                    Utils.undoUntil(UndoRedoHandler.getInstance(), importBuildingSequenceCommand, true);
+                    UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), importBuildingSequenceCommand, true);
                 } catch (ReplaceGeometryException ignore) {
                     // If selected building cannot be merged (e.g. connected ways/relation)
                     Notification note = new Notification(tr(
@@ -177,7 +178,7 @@ public class BuildingsAction extends JosmAction {
                     note.setDuration(Notification.TIME_SHORT);
                     note.show();
 
-                    Utils.undoUntil(UndoRedoHandler.getInstance(), importBuildingSequenceCommand, true);
+                    UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), importBuildingSequenceCommand, true);
                 }
 
                 currentDataSet.clearSelection();
