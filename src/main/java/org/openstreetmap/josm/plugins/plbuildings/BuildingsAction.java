@@ -9,9 +9,9 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.*;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
-import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryCommand;
+import org.openstreetmap.josm.plugins.plbuildings.command.ReplaceUpdateBuildingCommand;
+import org.openstreetmap.josm.plugins.plbuildings.utils.UndoRedoUtils;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryException;
-import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 
 import javax.swing.*;
@@ -152,11 +152,12 @@ public class BuildingsAction extends JosmAction {
             if (selected.size() == 1) {
                 Way selectedBuilding = (Way) selected.toArray()[0];
                 try {
-                    ReplaceGeometryCommand replaceCommand = ReplaceGeometryUtils.buildReplaceWithNewCommand(
-                            selectedBuilding,
-                            newBuilding
+                    ReplaceUpdateBuildingCommand replaceUpdateBuildingCommand = new ReplaceUpdateBuildingCommand(
+                        currentDataSet,
+                        selectedBuilding,
+                        newBuilding
                     );
-                    UndoRedoHandler.getInstance().add(replaceCommand);
+                    UndoRedoHandler.getInstance().add(replaceUpdateBuildingCommand);
 
                 } catch (IllegalArgumentException ignored) {
                     // If user cancel conflict window do nothing
@@ -165,7 +166,7 @@ public class BuildingsAction extends JosmAction {
                     note.setDuration(Notification.TIME_SHORT);
                     note.show();
 
-                    Utils.undoUntil(UndoRedoHandler.getInstance(), importBuildingSequenceCommand, true);
+                    UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), importBuildingSequenceCommand, true);
                 } catch (ReplaceGeometryException ignore) {
                     // If selected building cannot be merged (e.g. connected ways/relation)
                     Notification note = new Notification(tr(
@@ -177,7 +178,7 @@ public class BuildingsAction extends JosmAction {
                     note.setDuration(Notification.TIME_SHORT);
                     note.show();
 
-                    Utils.undoUntil(UndoRedoHandler.getInstance(), importBuildingSequenceCommand, true);
+                    UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), importBuildingSequenceCommand, true);
                 }
 
                 currentDataSet.clearSelection();
