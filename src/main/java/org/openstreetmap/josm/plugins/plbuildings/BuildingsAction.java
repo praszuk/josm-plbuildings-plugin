@@ -9,10 +9,9 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.*;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.plugins.plbuildings.command.ReplaceUpdateBuildingCommand;
 import org.openstreetmap.josm.plugins.plbuildings.utils.UndoRedoUtils;
-import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryCommand;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryException;
-import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 
 import javax.swing.*;
@@ -153,11 +152,12 @@ public class BuildingsAction extends JosmAction {
             if (selected.size() == 1) {
                 Way selectedBuilding = (Way) selected.toArray()[0];
                 try {
-                    ReplaceGeometryCommand replaceCommand = ReplaceGeometryUtils.buildReplaceWithNewCommand(
-                            selectedBuilding,
-                            newBuilding
+                    ReplaceUpdateBuildingCommand replaceUpdateBuildingCommand = new ReplaceUpdateBuildingCommand(
+                        currentDataSet,
+                        selectedBuilding,
+                        newBuilding
                     );
-                    UndoRedoHandler.getInstance().add(replaceCommand);
+                    UndoRedoHandler.getInstance().add(replaceUpdateBuildingCommand);
 
                 } catch (IllegalArgumentException ignored) {
                     // If user cancel conflict window do nothing
