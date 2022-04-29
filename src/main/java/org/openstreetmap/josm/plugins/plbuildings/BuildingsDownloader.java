@@ -6,6 +6,7 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.tools.Http1Client;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Logging;
 
 import java.io.IOException;
 import java.net.URL;
@@ -49,7 +50,7 @@ public class BuildingsDownloader {
         urlBuilder.append("search_distance=");
         urlBuilder.append(searchDistance);
 
-        System.out.println(urlBuilder);
+        Logging.info("Getting building data from: {0}", urlBuilder);
 
         try {
             URL url = new URL(urlBuilder.toString());
@@ -58,8 +59,10 @@ public class BuildingsDownloader {
             HttpClient.Response response = httpClient.getResponse();
 
             return OsmReader.parseDataSet(response.getContent(), null);
-        } catch (IOException | IllegalDataException e) {
-            e.printStackTrace();
+        } catch (IOException ioException) {
+            Logging.warn("Connection error with getting building data: {0}", ioException.getMessage());
+        } catch (IllegalDataException illegalDataException) {
+            Logging.error("Cannot parse data set from the server: {0}", illegalDataException.getMessage());
         }
         return null;
     }

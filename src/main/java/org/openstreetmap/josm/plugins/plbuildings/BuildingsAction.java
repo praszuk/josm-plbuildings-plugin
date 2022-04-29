@@ -12,6 +12,7 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.plugins.plbuildings.command.ReplaceUpdateBuildingCommand;
 import org.openstreetmap.josm.plugins.plbuildings.utils.UndoRedoUtils;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 import javax.swing.*;
@@ -148,6 +149,7 @@ public class BuildingsAction extends JosmAction {
             // TODO maybe semidetached/terrace auto-change building tag
             SequenceCommand importBuildingSequenceCommand = new SequenceCommand(tr("Import building"), commands);
             UndoRedoHandler.getInstance().add(importBuildingSequenceCommand);
+            Logging.debug("Imported new building {0}", newBuilding.getId());
 
             if (selected.size() == 1) {
                 Way selectedBuilding = (Way) selected.toArray()[0];
@@ -158,6 +160,7 @@ public class BuildingsAction extends JosmAction {
                         newBuilding
                     );
                     UndoRedoHandler.getInstance().add(replaceUpdateBuildingCommand);
+                    Logging.debug("Updated building {0} with new data", selectedBuilding.getId());
 
                 } catch (IllegalArgumentException ignored) {
                     // If user cancel conflict window do nothing
@@ -167,6 +170,10 @@ public class BuildingsAction extends JosmAction {
                     note.show();
 
                     UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), importBuildingSequenceCommand, true);
+                    Logging.debug(
+                        "No building (id: {0}) update, caused: Cancel conflict dialog by user",
+                        selectedBuilding.getId()
+                    );
                 } catch (ReplaceGeometryException ignore) {
                     // If selected building cannot be merged (e.g. connected ways/relation)
                     Notification note = new Notification(tr(
@@ -179,6 +186,10 @@ public class BuildingsAction extends JosmAction {
                     note.show();
 
                     UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), importBuildingSequenceCommand, true);
+                    Logging.debug(
+                        "No building update (id: {0}), caused: Replacing Geometry from UtilPlugins2 error",
+                        selectedBuilding.getId()
+                    );
                 }
 
                 currentDataSet.clearSelection();
