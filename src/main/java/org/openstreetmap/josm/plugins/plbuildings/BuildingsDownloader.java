@@ -1,5 +1,6 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.io.IllegalDataException;
@@ -12,6 +13,12 @@ import java.io.IOException;
 import java.net.URL;
 
 public class BuildingsDownloader {
+    public static final String USER_AGENT = String.format(
+        "%s/%s %s",
+        BuildingsPlugin.info.name,
+        BuildingsPlugin.info.version,
+        Version.getInstance().getFullAgentString()
+    );
     /**
      * Download buildings from PLBuildings Server API and parse it as DataSet
      * Use default search_distance parameter.
@@ -55,6 +62,7 @@ public class BuildingsDownloader {
         try {
             URL url = new URL(urlBuilder.toString());
             HttpClient httpClient = new Http1Client(url, "GET");
+            httpClient.setHeader("User-Agent", USER_AGENT);
             httpClient.connect();
             HttpClient.Response response = httpClient.getResponse();
 
