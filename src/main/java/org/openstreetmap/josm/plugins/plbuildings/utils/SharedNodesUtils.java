@@ -1,11 +1,44 @@
 package org.openstreetmap.josm.plugins.plbuildings.utils;
 
+import java.util.List;
+import java.util.Map;
+
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.TagMap;
 
-import java.util.Map;
-
 public class SharedNodesUtils {
+
+    /**
+     * Create bbox based on list of nodes and their positions.
+     * It will produce bbox expanded by offset to e.g. match all very close nodes when importing
+     * semidetached_house/terrace buildings
+     * It works only for positive lat/lon values, because this plugin is only for Poland.
+     */
+    public static BBox getBBox(List<Node> nodes, double bboxOffset) {
+        BBox bbox = new BBox();
+        nodes.forEach(bbox::add);
+
+        LatLon topLeft = bbox.getTopLeft();
+        LatLon bottomRight = bbox.getBottomRight();
+        bbox.add(new LatLon(topLeft.lat() + bboxOffset, topLeft.lon() - bboxOffset));
+        bbox.add(new LatLon(bottomRight.lat() - bboxOffset, bottomRight.lon() + bboxOffset));
+
+        return bbox;
+    }
+
+    /**
+     * Check if node1 is close to node2 where max distance is maxOffset (inclusive)
+     * Both (latitude and longitude) values must be close to return true.
+     */
+    public static boolean isCloseNode(Node node1, Node node2, double maxOffset) {
+        boolean isLatOk = Math.abs(node1.lat() - node2.lat()) <= maxOffset;
+        boolean isLonOk = Math.abs(node1.lon() - node2.lon()) <= maxOffset;
+
+        return isLatOk && isLonOk;
+    }
+
 
 
     /**
