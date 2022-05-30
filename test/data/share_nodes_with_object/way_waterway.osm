@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <bounds minlat='50.3389967' minlon='19.4891453' maxlat='50.3400923' maxlon='19.4917202' origin='CGImap 0.8.6 (1354445 spike-07.openstreetmap.org)' />
+  <bounds minlat='50.3389967' minlon='19.4891453' maxlat='50.3400923' maxlon='19.4917202' origin='OpenStreetMap server' />
+  <node id='-101930' action='modify' visible='true' lat='50.33912764473' lon='19.49012170189' />
+  <node id='-101931' action='modify' visible='true' lat='50.33934776521' lon='19.49012060937' />
+  <node id='-101932' action='modify' visible='true' lat='50.33973987878' lon='19.49013168725' />
+  <node id='-101933' action='modify' visible='true' lat='50.34002810377' lon='19.49013757663' />
+  <way id='-102727' action='modify' visible='true'>
+    <nd ref='-101930' />
+    <nd ref='-101931' />
+    <nd ref='-101932' />
+    <nd ref='-101933' />
+    <tag k='waterway' v='ditch' />
+  </way>
+</osm>
