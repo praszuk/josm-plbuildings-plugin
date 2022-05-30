@@ -78,4 +78,17 @@ public class ShareNodesWithObjectTest {
                         .count(),
                 0);
     }
+
+    @Test
+    public void testImportBuildingNotShareNodeWithNodeObject(){
+        DataSet ds = importOsmFile(new File("test/data/share_nodes_with_object/node_shop.osm"), "");
+        assertNotNull(ds);
+
+        BuildingsAction.performBuildingImport(ds);
+
+        Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];
+
+        // -1 is for avoid duplicate of nodes from closed way and +1 is for looking for node object
+        assertEquals(ds.getNodes().size(), (building.getNodesCount() - 1) + 1);
+    }
 }
