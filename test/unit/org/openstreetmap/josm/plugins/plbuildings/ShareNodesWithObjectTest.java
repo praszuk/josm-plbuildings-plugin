@@ -63,5 +63,19 @@ public class ShareNodesWithObjectTest {
             0);
     }
 
+    @Test
+    public void testImportBuildingNotShareNodesWithBarrier(){
+        DataSet ds = importOsmFile(new File("test/data/share_nodes_with_object/way_barrier.osm"), "");
+        assertNotNull(ds);
 
+        BuildingsAction.performBuildingImport(ds);
+
+        Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];
+        assertEquals(
+                building.getNodes().stream()
+                        .skip(1)
+                        .filter(node -> node.isReferredByWays(2))
+                        .count(),
+                0);
+    }
 }
