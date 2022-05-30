@@ -4,6 +4,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.*;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.exceptions.ImportBuildingDuplicateException;
+import org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils;
 import org.openstreetmap.josm.tools.Logging;
 
 import java.util.ArrayList;
@@ -108,6 +109,7 @@ public class AddSharedNodesBuildingCommand extends Command  {
 
         List<Node> closeNodes = dataSet.searchNodes(bbox).stream()
             .filter(n -> !n.isDeleted())
+            .filter(SharedNodesUtils::isShareableNode)
             .collect(Collectors.toList());
         List<Node> buildingNodes = new ArrayList<>();
         List<Node> nodesToAddToDataSet = new ArrayList<>();
