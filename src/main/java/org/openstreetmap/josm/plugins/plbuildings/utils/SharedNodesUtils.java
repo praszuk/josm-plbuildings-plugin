@@ -1,5 +1,6 @@
 package org.openstreetmap.josm.plugins.plbuildings.utils;
 
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,16 @@ public class SharedNodesUtils {
         return isLatOk && isLonOk;
     }
 
+    /**
+     * Check if node can be shared with importing building. Check membership of node and parent object's tags.
+     * @return true if node can be shared (reused) with importing building else false
+     */
+    public static boolean isShareableNode(Node node){
+        if (!node.isReferredByWays(1)){ // not member of any way
+            return false;
+        }
+        return SharedNodesUtils.isNodeStickToWayWithTag(node, new AbstractMap.SimpleEntry<>("building", "*"));
+    }
 
 
     /**
