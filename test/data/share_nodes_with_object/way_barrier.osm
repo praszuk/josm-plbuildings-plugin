@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <bounds minlat='50.3389967' minlon='19.4891453' maxlat='50.3400923' maxlon='19.4917202' origin='CGImap 0.8.6 (1354445 spike-07.openstreetmap.org)' />
+  <bounds minlat='50.3389967' minlon='19.4891453' maxlat='50.3400923' maxlon='19.4917202' origin='OpenStreetMap server' />
+  <node id='-101935' action='modify' visible='true' lat='50.33912764473' lon='19.49012170189' />
+  <node id='-101936' action='modify' visible='true' lat='50.33934777586' lon='19.4901206162' />
+  <node id='-101937' action='modify' visible='true' lat='50.33973987609' lon='19.49013168725' />
+  <node id='-101938' action='modify' visible='true' lat='50.34002810377' lon='19.49013757663' />
+  <way id='-102731' action='modify' visible='true'>
+    <nd ref='-101935' />
+    <nd ref='-101936' />
+    <nd ref='-101937' />
+    <nd ref='-101938' />
+    <tag k='barrier' v='fence' />
+  </way>
+</osm>

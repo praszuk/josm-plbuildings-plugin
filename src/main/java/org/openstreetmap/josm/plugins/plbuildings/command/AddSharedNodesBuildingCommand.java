@@ -1,10 +1,10 @@
 package org.openstreetmap.josm.plugins.plbuildings.command;
 
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.*;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.exceptions.ImportBuildingDuplicateException;
+import org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils;
 import org.openstreetmap.josm.tools.Logging;
 
 import java.util.ArrayList;
@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils.getBBox;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils.isCloseNode;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 
@@ -38,34 +40,6 @@ public class AddSharedNodesBuildingCommand extends Command  {
         return createdBuilding;
     }
 
-    /**
-     * Create bbox based on list of nodes and their positions.
-     * It will produce bbox expanded by offset to e.g. match all very close nodes when importing
-     * semidetached_house/terrace buildings
-     * It works only for positive lat/lon values, because this plugin is only for Poland.
-     */
-    public static BBox getBBox(List<Node> nodes, double bboxOffset) {
-        BBox bbox = new BBox();
-        nodes.forEach(bbox::add);
-
-        LatLon topLeft = bbox.getTopLeft();
-        LatLon bottomRight = bbox.getBottomRight();
-        bbox.add(new LatLon(topLeft.lat() + bboxOffset, topLeft.lon() - bboxOffset));
-        bbox.add(new LatLon(bottomRight.lat() - bboxOffset, bottomRight.lon() + bboxOffset));
-
-        return bbox;
-    }
-
-    /**
-     * Check if node1 is close to node2 where max distance is maxOffset (inclusive)
-     * Both (latitude and longitude) values must be close to return true.
-     */
-    public static boolean isCloseNode(Node node1, Node node2, double maxOffset) {
-        boolean isLatOk = Math.abs(node1.lat() - node2.lat()) <= maxOffset;
-        boolean isLonOk = Math.abs(node1.lon() - node2.lon()) <= maxOffset;
-
-        return isLatOk && isLonOk;
-    }
 
     @Override
     public void fillModifiedData(
@@ -135,6 +109,7 @@ public class AddSharedNodesBuildingCommand extends Command  {
 
         List<Node> closeNodes = dataSet.searchNodes(bbox).stream()
             .filter(n -> !n.isDeleted())
+            .filter(SharedNodesUtils::isShareableNode)
             .collect(Collectors.toList());
         List<Node> buildingNodes = new ArrayList<>();
         List<Node> nodesToAddToDataSet = new ArrayList<>();
