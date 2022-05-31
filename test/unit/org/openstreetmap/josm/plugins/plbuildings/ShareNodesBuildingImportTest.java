@@ -13,7 +13,7 @@ import java.io.File;
 import static org.junit.Assert.*;
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
 
-public class CloseNodesBuildingImportTest {
+public class ShareNodesBuildingImportTest {
     @Rule
     public JOSMTestRules rules = new JOSMTestRules().main();
 
