@@ -8,7 +8,7 @@ It communicates with the [PLBuildings server](https://github.com/praszuk/josm-pl
 ## Features
 - Easy import of building at cursor position.
 - Replacing geometry if old building is selected.
-- Replacing tags with the possibility of skipping most common replacement conflicts (from utilsplugin2) like from `building=yes` to `building=detached` without conflict tag dialog.
+- Replacing tags with the possibility of skipping most common replacement conflicts (from utilsplugin2) like from `building=yes` to `building=house` without conflict tag dialog.
 - Joining building other existing buildings. Adjacent nodes will be shared between 2 buildings. It means no overlapping duplicated nodes.
 - Avoiding duplicated imports.
 

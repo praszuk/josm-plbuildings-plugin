@@ -17,7 +17,7 @@
     <nd ref='-101913' />
     <nd ref='-101914' />
     <nd ref='-101905' />
-    <tag k='building' v='detached' />
+    <tag k='building' v='house' />
   </way>
   <way id='-102428' action='modify' visible='true'>
     <nd ref='-101917' />
