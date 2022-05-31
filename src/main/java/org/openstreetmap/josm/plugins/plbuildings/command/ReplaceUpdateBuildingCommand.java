@@ -95,7 +95,7 @@ public class ReplaceUpdateBuildingCommand extends Command {
                     newBuilding
             );
             replaceGeometryCommand.executeCommand();
-        } catch (IllegalArgumentException msg) {
+        } catch (IllegalArgumentException | NullPointerException msg) {
             // If user cancel conflict window do nothing
             if (replaceNoConflictTagsCommand != null){
                 replaceNoConflictTagsCommand.undoCommand();
