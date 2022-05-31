@@ -17,5 +17,11 @@ Move the cursor to a building and press `CTRL + SHIFT + 1`.
 If you select other building before pressing shortcut combination, then it will use _Replace Geometry_ feature (from [utilsplugin2](https://wiki.openstreetmap.org/wiki/JOSM/Plugins/utilsplugin2))
 to replace old shape and tags with the new one. It can show the conflict window.
 
+Simple building import:
+![Simple building import](media/simple_import.gif)
+
+Import with replacing old building geometry:
+![Import with replacing old building geometry](media/import_with_replace.gif)
+
 ## License
 [GPLv3](LICENSE)
