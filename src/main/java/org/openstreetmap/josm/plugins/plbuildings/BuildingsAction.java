@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.openstreetmap.josm.plugins.plbuildings.validation.BuildingsWayValidator.isBuildingWayValid;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class BuildingsAction extends JosmAction {
@@ -97,6 +98,10 @@ public class BuildingsAction extends JosmAction {
                     selectedBuilding,
                     newBuilding
                 );
+                if (!isBuildingWayValid(selectedBuilding)){
+                    throw new DataIntegrityProblemException("Wrongly merged building!");
+                }
+
                 UndoRedoHandler.getInstance().add(replaceUpdateBuildingCommand);
                 Logging.debug("Updated building {0} with new data", selectedBuilding.getId());
 
@@ -127,6 +132,21 @@ public class BuildingsAction extends JosmAction {
                 Logging.debug(
                     "No building update (id: {0}), caused: Replacing Geometry from UtilPlugins2 error",
                     selectedBuilding.getId()
+                );
+            } catch (DataIntegrityProblemException ignored) {
+                // If data integrity like nodes duplicated or first!=last has been somehow broken
+                Notification note = new Notification(tr(
+                "Cannot merge buildings! Building has been wrongly replaced and data has been broken!"
+                ));
+                note.setIcon(JOptionPane.ERROR_MESSAGE);
+                note.setDuration(Notification.TIME_SHORT);
+                note.show();
+
+                UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), addSharedNodesBuildingCommand, true);
+                Logging.error(
+                    "No building update (id: {0}), caused: DataIntegrity with replacing error! Building: {1}",
+                    selectedBuilding.getId(),
+                    selectedBuilding
                 );
             }
 
