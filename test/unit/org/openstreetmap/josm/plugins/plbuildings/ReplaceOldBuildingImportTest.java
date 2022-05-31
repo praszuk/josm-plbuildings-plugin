@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
+import static org.openstreetmap.josm.plugins.plbuildings.validation.BuildingsWayValidator.isBuildingWayValid;
 
 public class ReplaceOldBuildingImportTest {
     @Rule
@@ -45,6 +46,7 @@ public class ReplaceOldBuildingImportTest {
 
 
         assertEquals(buildingToReplace.getNodesCount() - 1, 4);
+        assertTrue(isBuildingWayValid(buildingToReplace));
     }
 
     @Test
@@ -90,10 +92,15 @@ public class ReplaceOldBuildingImportTest {
 
         BuildingsAction.performBuildingImport(ds);
 
+        assertTrue(isBuildingWayValid(buildingToReplace));
         assertEquals(buildingToReplace.getNodesCount() - 1, 4);
+
         UndoRedoHandler.getInstance().undo(2);
+        assertTrue(isBuildingWayValid(buildingToReplace));
         assertEquals(buildingToReplace.getNodesCount(), 5);
+
         UndoRedoHandler.getInstance().redo(2);
+        assertTrue(isBuildingWayValid(buildingToReplace));
         assertEquals(buildingToReplace.getNodesCount() - 1, 4);
     }
 }
