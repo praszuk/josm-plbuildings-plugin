@@ -12,6 +12,6 @@
     <nd ref='-101949' />
     <nd ref='-101950' />
     <nd ref='-101947' />
-    <tag k='building' v='detached' />
+    <tag k='building' v='house' />
   </way>
 </osm>
