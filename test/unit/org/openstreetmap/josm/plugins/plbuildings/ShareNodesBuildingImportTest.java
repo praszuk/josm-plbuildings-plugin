@@ -81,4 +81,27 @@ public class ShareNodesBuildingImportTest {
         assertEquals(building.getNodes().stream().skip(1).filter((node -> node.isReferredByWays(2))).count(), 3);
         assertEquals(building.getNodes().stream().skip(1).filter((node -> node.isReferredByWays(3))).count(), 1);
     }
+    @Test
+    public void testImportBuildingShareFourNodesWithTwoOppositeBuildings(){
+        new MockUp<BuildingsAction>(){
+            @Mock
+            public DataSet getBuildingsAtCurrentLocation(){
+                return importOsmFile(new File("test/data/share_nodes/import_building.osm"), "");
+            }
+        };
+
+        DataSet ds = importOsmFile(
+                new File("test/data/share_nodes/two_opposite_building_base.osm"),
+                "");
+        BuildingsAction.performBuildingImport(ds);
+
+        assertNotNull(ds);
+        assertEquals(ds.getWays().stream().filter(BuildingsWayValidator::isBuildingWayValid).count(), 3);
+
+        Way building = (Way) ds.getWays().stream().filter(way -> way.hasTag("building", "house")).toArray()[0];
+
+        // Four shared nodes between 3 buildings (4 nodes – 2 referred ways).
+        // Skipping first node because closed ways always duplicates 1 node
+        assertEquals(building.getNodes().stream().skip(1).filter((node -> node.isReferredByWays(2))).count(), 4);
+    }
 }
