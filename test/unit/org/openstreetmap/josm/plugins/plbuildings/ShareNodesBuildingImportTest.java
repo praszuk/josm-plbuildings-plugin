@@ -19,7 +19,7 @@ public class ShareNodesBuildingImportTest {
     public JOSMTestRules rules = new JOSMTestRules().main();
 
     @Test
-    public void testImportBuildingShareNodesSimpleJoinToBuildingLikeSemiDetached(){
+    public void testImportBuildingShareTwoNodesWithOneBuilding(){
         new MockUp<BuildingsAction>(){
             @Mock
             public DataSet getBuildingsAtCurrentLocation(){
@@ -55,5 +55,30 @@ public class ShareNodesBuildingImportTest {
 
         assertNotNull(ds);
         assertEquals(ds.getWays().size(), 1);
+    }
+
+    @Test
+    public void testImportBuildingShareThreeNodesWithTwoAdjacentBuildings(){
+        new MockUp<BuildingsAction>(){
+            @Mock
+            public DataSet getBuildingsAtCurrentLocation(){
+                return importOsmFile(new File("test/data/share_nodes/import_building.osm"), "");
+            }
+        };
+
+        DataSet ds = importOsmFile(
+            new File("test/data/share_nodes/two_adjacent_sides_merged_building_base.osm"),
+        "");
+        BuildingsAction.performBuildingImport(ds);
+
+        assertNotNull(ds);
+        assertEquals(ds.getWays().stream().filter(BuildingsWayValidator::isBuildingWayValid).count(), 3);
+
+        Way building = (Way) ds.getWays().stream().filter(way -> way.hasTag("building", "house")).toArray()[0];
+
+        // Three shared nodes between 3 buildings (2 nodes – 2 referred ways, 1 nodes – 3 referred ways).
+        // Skipping first node because closed ways always duplicates 1 node
+        assertEquals(building.getNodes().stream().skip(1).filter((node -> node.isReferredByWays(2))).count(), 3);
+        assertEquals(building.getNodes().stream().skip(1).filter((node -> node.isReferredByWays(3))).count(), 1);
     }
 }
