@@ -18,15 +18,15 @@ public class ShareNodesBuildingImportTest {
     public JOSMTestRules rules = new JOSMTestRules().main();
 
     @Test
-    public void testImportBuildingCloseNodesButNotAllOfThemAndItIsJoinedWithExistingBuildingsTwoNodes(){
+    public void testImportBuildingShareNodesSimpleJoinToBuildingLikeSemiDetached(){
         new MockUp<BuildingsAction>(){
             @Mock
             public DataSet getBuildingsAtCurrentLocation(){
-                return importOsmFile(new File("test/data/close_building_1.osm"), "");
+                return importOsmFile(new File("test/data/share_nodes/import_building.osm"), "");
             }
         };
 
-        DataSet ds = importOsmFile(new File("test/data/close_building_base.osm"), "");
+        DataSet ds = importOsmFile(new File("test/data/share_nodes/building_base.osm"), "");
         BuildingsAction.performBuildingImport(ds);
 
         assertNotNull(ds);
@@ -38,15 +38,15 @@ public class ShareNodesBuildingImportTest {
         assertEquals(building.getNodes().stream().skip(1).filter((node -> node.isReferredByWays(2))).count(), 2);
     }
     @Test
-    public void testImportBuildingAllCloseNodesActionShouldBeCanceled(){
+    public void testImportBuildingAllSameShareNodesActionShouldBeCanceled(){
         new MockUp<BuildingsAction>(){
             @Mock
             public DataSet getBuildingsAtCurrentLocation(){
-                return importOsmFile(new File("test/data/close_building_base.osm"), "");
+                return importOsmFile(new File("test/data/share_nodes/building_base.osm"), "");
             }
         };
 
-        DataSet ds = importOsmFile(new File("test/data/close_building_base.osm"), "");
+        DataSet ds = importOsmFile(new File("test/data/share_nodes/building_base.osm"), "");
         assertNotNull(ds);
         assertEquals(ds.getWays().size(), 1);
 
