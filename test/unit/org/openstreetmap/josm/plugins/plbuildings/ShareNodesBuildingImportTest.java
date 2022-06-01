@@ -6,6 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.plugins.plbuildings.validation.BuildingsWayValidator;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import java.io.File;
@@ -30,7 +31,7 @@ public class ShareNodesBuildingImportTest {
         BuildingsAction.performBuildingImport(ds);
 
         assertNotNull(ds);
-        assertEquals(ds.getWays().stream().filter(Way::isClosed).count(), 2);
+        assertEquals(ds.getWays().stream().filter(BuildingsWayValidator::isBuildingWayValid).count(), 2);
 
         Way building = (Way) ds.getWays().toArray()[0];
 
