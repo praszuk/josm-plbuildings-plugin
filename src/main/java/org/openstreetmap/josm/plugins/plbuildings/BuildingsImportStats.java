@@ -28,6 +28,14 @@ public class BuildingsImportStats {
         return instance;
     }
 
+    public int getImportCounter() {
+        return this.importCounter;
+    }
+
+    public int getImportWithReplaceCounter() {
+        return this.importWithReplaceCounter;
+    }
+
     public void addImportCounter(int value){
         if (value < 1){
             throw new IllegalArgumentException("Number must be greater than 0");
