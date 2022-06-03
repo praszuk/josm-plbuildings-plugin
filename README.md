@@ -11,6 +11,7 @@ It communicates with the [PLBuildings server](https://github.com/praszuk/josm-pl
 - Replacing tags with the possibility of skipping most common replacement conflicts (from utilsplugin2) like from `building=yes` to `building=house` without conflict tag dialog.
 - Joining building other existing buildings. Adjacent nodes will be shared between 2 buildings. It means no overlapping duplicated nodes.
 - Avoiding duplicated imports.
+- Simple statistics (counting imported buildings).
 
 ## How to use it
 Move the cursor to a building and press `CTRL + SHIFT + 1`.
@@ -22,6 +23,11 @@ Simple building import:
 
 Import with replacing old building geometry:
 ![Import with replacing old building geometry](media/import_with_replace.gif)
+
+To show statistics, go to:`Menu->Data->Buildings import stats`
+
+Example stats:
+![Buildings import statistics](media/import_stats.jpg)
 
 ## License
 [GPLv3](LICENSE)
