@@ -4,6 +4,8 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.plugins.Plugin;
 import org.openstreetmap.josm.plugins.PluginInformation;
+import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction;
+import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsStatsAction;
 
 public class BuildingsPlugin extends Plugin {
     public static PluginInformation info;
@@ -11,6 +13,6 @@ public class BuildingsPlugin extends Plugin {
         super(info);
         BuildingsPlugin.info = info;
         MainMenu.add(MainApplication.getMenu().dataMenu, new BuildingsStatsAction());
-        MainMenu.add(MainApplication.getMenu().selectionMenu, new BuildingsAction());
+        MainMenu.add(MainApplication.getMenu().selectionMenu, new BuildingsImportAction());
     }
 }

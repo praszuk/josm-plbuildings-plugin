@@ -1,6 +1,7 @@
-package org.openstreetmap.josm.plugins.plbuildings;
+package org.openstreetmap.josm.plugins.plbuildings.actions;
 
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportStats;
 
 import javax.swing.*;
 import java.awt.*;
