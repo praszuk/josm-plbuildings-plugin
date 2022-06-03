@@ -6,6 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import java.io.File;
@@ -20,7 +21,7 @@ public class SimpleBuildingImportTest {
 
     @Test
     public void testImportBuildingNoCloseNodesJustOneBuildingInDataset(){
-        new MockUp<BuildingsAction>(){
+        new MockUp<BuildingsImportAction>(){
             @Mock
             public DataSet getBuildingsAtCurrentLocation(){
                 return importOsmFile(new File("test/data/simple_building.osm"), "");
@@ -28,7 +29,7 @@ public class SimpleBuildingImportTest {
         };
 
         DataSet ds = new DataSet();
-        BuildingsAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds);
 
         assertEquals(ds.getWays().size(), 1);
         Way building = (Way) ds.getWays().toArray()[0];
@@ -39,7 +40,7 @@ public class SimpleBuildingImportTest {
 
     @Test
     public void testImportEmptyDataSet(){
-        new MockUp<BuildingsAction>(){
+        new MockUp<BuildingsImportAction>(){
             @Mock
             public DataSet getBuildingsAtCurrentLocation(){
                 return new DataSet();
@@ -47,13 +48,13 @@ public class SimpleBuildingImportTest {
         };
 
         DataSet ds = new DataSet();
-        BuildingsAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds);
         assertTrue(ds.isEmpty());
     }
 
     @Test
     public void testImportDataSetWithMultipleBuildingsButImportOnlyOne(){
-        new MockUp<BuildingsAction>(){
+        new MockUp<BuildingsImportAction>(){
             @Mock
             public DataSet getBuildingsAtCurrentLocation(){
 
@@ -65,7 +66,7 @@ public class SimpleBuildingImportTest {
         };
 
         DataSet ds = new DataSet();
-        BuildingsAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds);
         assertEquals(ds.getWays().size(), 1);
     }
 }

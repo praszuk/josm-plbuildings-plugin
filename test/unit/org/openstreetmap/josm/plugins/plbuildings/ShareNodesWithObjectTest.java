@@ -6,6 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import java.io.File;
@@ -18,7 +19,7 @@ public class ShareNodesWithObjectTest {
     public JOSMTestRules rules = new JOSMTestRules().main();
 
     static {
-        new MockUp<BuildingsAction>(){
+        new MockUp<BuildingsImportAction>(){
             @Mock
             public DataSet getBuildingsAtCurrentLocation(){
                 DataSet importData = importOsmFile(
@@ -36,7 +37,7 @@ public class ShareNodesWithObjectTest {
         DataSet ds = importOsmFile(new File("test/data/share_nodes_with_object/way_building.osm"), "");
         assertNotNull(ds);
 
-        BuildingsAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds);
 
         Way building = (Way) ds.getWays().toArray()[0]; // doesn't matter which one
         assertEquals(
@@ -52,7 +53,7 @@ public class ShareNodesWithObjectTest {
         DataSet ds = importOsmFile(new File("test/data/share_nodes_with_object/way_waterway.osm"), "");
         assertNotNull(ds);
 
-        BuildingsAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds);
 
         Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];
         assertEquals(
@@ -68,7 +69,7 @@ public class ShareNodesWithObjectTest {
         DataSet ds = importOsmFile(new File("test/data/share_nodes_with_object/way_barrier.osm"), "");
         assertNotNull(ds);
 
-        BuildingsAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds);
 
         Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];
         assertEquals(
@@ -84,7 +85,7 @@ public class ShareNodesWithObjectTest {
         DataSet ds = importOsmFile(new File("test/data/share_nodes_with_object/node_shop.osm"), "");
         assertNotNull(ds);
 
-        BuildingsAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds);
 
         Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];
 

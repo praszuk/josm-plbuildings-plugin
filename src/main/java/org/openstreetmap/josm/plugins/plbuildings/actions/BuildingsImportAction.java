@@ -1,4 +1,4 @@
-package org.openstreetmap.josm.plugins.plbuildings;
+package org.openstreetmap.josm.plugins.plbuildings.actions;
 
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.UndoRedoHandler;
@@ -6,8 +6,10 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.*;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
-import org.openstreetmap.josm.plugins.plbuildings.command.AddSharedNodesBuildingCommand;
-import org.openstreetmap.josm.plugins.plbuildings.command.ReplaceUpdateBuildingCommand;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsDownloader;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportStats;
+import org.openstreetmap.josm.plugins.plbuildings.commands.AddSharedNodesBuildingCommand;
+import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceUpdateBuildingCommand;
 import org.openstreetmap.josm.plugins.plbuildings.utils.UndoRedoUtils;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryException;
 import org.openstreetmap.josm.tools.Logging;
@@ -20,13 +22,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.openstreetmap.josm.plugins.plbuildings.validation.BuildingsWayValidator.isBuildingWayValid;
+import static org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator.isBuildingWayValid;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-public class BuildingsAction extends JosmAction {
+public class BuildingsImportAction extends JosmAction {
     static final String DESCRIPTION = tr("Buildings download action.");
 
-    public BuildingsAction() {
+    public BuildingsImportAction() {
         super(
                 tr("Download building"),
                 null,

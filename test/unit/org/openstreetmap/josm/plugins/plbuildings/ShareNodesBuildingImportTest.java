@@ -6,7 +6,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.plugins.plbuildings.validation.BuildingsWayValidator;
+import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction;
+import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import java.io.File;
@@ -20,7 +21,7 @@ public class ShareNodesBuildingImportTest {
 
     @Test
     public void testImportBuildingShareTwoNodesWithOneBuilding(){
-        new MockUp<BuildingsAction>(){
+        new MockUp<BuildingsImportAction>(){
             @Mock
             public DataSet getBuildingsAtCurrentLocation(){
                 return importOsmFile(new File("test/data/share_nodes/import_building.osm"), "");
@@ -28,7 +29,7 @@ public class ShareNodesBuildingImportTest {
         };
 
         DataSet ds = importOsmFile(new File("test/data/share_nodes/building_base.osm"), "");
-        BuildingsAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds);
 
         assertNotNull(ds);
         assertEquals(ds.getWays().stream().filter(BuildingsWayValidator::isBuildingWayValid).count(), 2);
@@ -40,7 +41,7 @@ public class ShareNodesBuildingImportTest {
     }
     @Test
     public void testImportBuildingAllSameShareNodesActionShouldBeCanceled(){
-        new MockUp<BuildingsAction>(){
+        new MockUp<BuildingsImportAction>(){
             @Mock
             public DataSet getBuildingsAtCurrentLocation(){
                 return importOsmFile(new File("test/data/share_nodes/building_base.osm"), "");
@@ -51,7 +52,7 @@ public class ShareNodesBuildingImportTest {
         assertNotNull(ds);
         assertEquals(ds.getWays().size(), 1);
 
-        BuildingsAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds);
 
         assertNotNull(ds);
         assertEquals(ds.getWays().size(), 1);
@@ -59,7 +60,7 @@ public class ShareNodesBuildingImportTest {
 
     @Test
     public void testImportBuildingShareThreeNodesWithTwoAdjacentBuildings(){
-        new MockUp<BuildingsAction>(){
+        new MockUp<BuildingsImportAction>(){
             @Mock
             public DataSet getBuildingsAtCurrentLocation(){
                 return importOsmFile(new File("test/data/share_nodes/import_building.osm"), "");
@@ -69,7 +70,7 @@ public class ShareNodesBuildingImportTest {
         DataSet ds = importOsmFile(
             new File("test/data/share_nodes/two_adjacent_sides_merged_building_base.osm"),
         "");
-        BuildingsAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds);
 
         assertNotNull(ds);
         assertEquals(ds.getWays().stream().filter(BuildingsWayValidator::isBuildingWayValid).count(), 3);
@@ -83,7 +84,7 @@ public class ShareNodesBuildingImportTest {
     }
     @Test
     public void testImportBuildingShareFourNodesWithTwoOppositeBuildings(){
-        new MockUp<BuildingsAction>(){
+        new MockUp<BuildingsImportAction>(){
             @Mock
             public DataSet getBuildingsAtCurrentLocation(){
                 return importOsmFile(new File("test/data/share_nodes/import_building.osm"), "");
@@ -93,7 +94,7 @@ public class ShareNodesBuildingImportTest {
         DataSet ds = importOsmFile(
                 new File("test/data/share_nodes/two_opposite_building_base.osm"),
                 "");
-        BuildingsAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds);
 
         assertNotNull(ds);
         assertEquals(ds.getWays().stream().filter(BuildingsWayValidator::isBuildingWayValid).count(), 3);
@@ -107,7 +108,7 @@ public class ShareNodesBuildingImportTest {
 
     @Test
     public void testImportBuildingShareFourNodesWithThreeAdjacentNWEBuildings(){
-        new MockUp<BuildingsAction>(){
+        new MockUp<BuildingsImportAction>(){
             @Mock
             public DataSet getBuildingsAtCurrentLocation(){
                 return importOsmFile(new File("test/data/share_nodes/import_building.osm"), "");
@@ -117,7 +118,7 @@ public class ShareNodesBuildingImportTest {
         DataSet ds = importOsmFile(
                 new File("test/data/share_nodes/three_adjacent_nwe_building_base.osm"),
                 "");
-        BuildingsAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds);
 
         assertNotNull(ds);
         assertEquals(ds.getWays().stream().filter(BuildingsWayValidator::isBuildingWayValid).count(), 4);
