@@ -51,6 +51,8 @@ public class BuildingsAction extends JosmAction {
     }
 
     public static void performBuildingImport(DataSet currentDataSet) {
+        boolean importWithReplace = false;
+
         DataSet importedBuildingsDataSet = getBuildingsAtCurrentLocation();
         if (importedBuildingsDataSet == null){
             Logging.warn("Connection error: Cannot import building!");
@@ -103,6 +105,7 @@ public class BuildingsAction extends JosmAction {
                 }
 
                 UndoRedoHandler.getInstance().add(replaceUpdateBuildingCommand);
+                importWithReplace = true;
                 Logging.debug("Updated building {0} with new data", selectedBuilding.getId());
 
             } catch (IllegalArgumentException ignored) {
@@ -151,6 +154,11 @@ public class BuildingsAction extends JosmAction {
             }
 
             currentDataSet.clearSelection();
+        }
+        if (importWithReplace){
+            BuildingsImportStats.getInstance().addImportWithReplaceCounter(1);
+        } else{
+            BuildingsImportStats.getInstance().addImportCounter(1);
         }
     }
 
