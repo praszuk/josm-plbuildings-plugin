@@ -1,4 +1,4 @@
-package org.openstreetmap.josm.plugins.plbuildings.validation;
+package org.openstreetmap.josm.plugins.plbuildings.validators;
 
 import org.openstreetmap.josm.data.osm.Way;
 
