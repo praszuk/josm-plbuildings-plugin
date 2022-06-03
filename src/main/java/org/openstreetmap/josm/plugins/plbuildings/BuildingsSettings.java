@@ -22,11 +22,16 @@ public class BuildingsSettings {
     );
 
     public static final ListProperty REPLACE_BUILDING_TAG_NO_CONFLICT = new ListProperty(
-        "plbuildings.replace_building_tag_no_conflict",
-            Arrays.asList(
-                "building", "yes",
-                "source", "*"
-            )
+    "plbuildings.replace_building_tag_no_conflict",
+        Arrays.asList(
+            "building", "yes",
+            "source", "*"
+        )
+    );
+
+    public static final StringProperty IMPORT_STATS = new StringProperty(
+        "plbuildings.import_stats",
+        "e30="  // "{}" (base64) – empty JSON
     );
 
 }
