@@ -1,4 +1,4 @@
-package org.openstreetmap.josm.plugins.plbuildings.command;
+package org.openstreetmap.josm.plugins.plbuildings.commands;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
