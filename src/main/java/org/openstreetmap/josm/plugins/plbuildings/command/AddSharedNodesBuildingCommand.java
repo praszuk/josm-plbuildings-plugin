@@ -7,10 +7,7 @@ import org.openstreetmap.josm.plugins.plbuildings.exceptions.ImportBuildingDupli
 import org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils;
 import org.openstreetmap.josm.tools.Logging;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils.getBBox;
@@ -114,7 +111,7 @@ public class AddSharedNodesBuildingCommand extends Command  {
         List<Node> buildingNodes = new ArrayList<>();
         List<Node> nodesToAddToDataSet = new ArrayList<>();
 
-        AtomicInteger sameNodeCounter = new AtomicInteger();
+        HashMap<Way, Integer> buildingSharedNodesWithImportedBuildingCounter = new HashMap<>();
         newNodes.forEach(newNode -> {
             Node sameNode = closeNodes.stream()
                 .filter(closeNode -> isCloseNode(closeNode, newNode, BuildingsSettings.BBOX_OFFSET.get()))
@@ -122,15 +119,27 @@ public class AddSharedNodesBuildingCommand extends Command  {
 
             if (sameNode != null) {
                 buildingNodes.add(sameNode);
-                sameNodeCounter.getAndIncrement();
+                sameNode.getParentWays().forEach(parentWay -> {
+                    int counter = buildingSharedNodesWithImportedBuildingCounter.getOrDefault(parentWay, 0);
+                    buildingSharedNodesWithImportedBuildingCounter.put(parentWay, counter + 1);
+                });
             } else {
                 buildingNodes.add(newNode);
                 nodesToAddToDataSet.add(newNode);
             }
         });
+        Logging.debug(
+            "Buildings shared nodes with imported building counter: {0}",
+            buildingSharedNodesWithImportedBuildingCounter
+        );
+        int maxSharedNodesByCloseBuildingsSize = buildingSharedNodesWithImportedBuildingCounter.values()
+            .stream()
+            .mapToInt(v->v)
+            .max()
+            .orElse(-1);
 
         // Whole building is a duplicate – contains the same nodes
-        if (sameNodeCounter.get() == buildingNodes.size()) {
+        if (maxSharedNodesByCloseBuildingsSize == buildingNodes.size()) {
             throw new ImportBuildingDuplicateException();
         }
         newBuilding.setNodes(buildingNodes);

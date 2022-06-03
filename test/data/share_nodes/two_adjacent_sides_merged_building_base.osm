@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <bounds minlat='50.3382777' minlon='19.4856172' maxlat='50.3404957' maxlon='19.490832' origin='CGImap 0.8.6 (2879931 spike-07.openstreetmap.org)' />
+  <bounds minlat='50.3382777' minlon='19.4856172' maxlat='50.3404957' maxlon='19.490832' origin='OpenStreetMap server' />
+  <node id='-101974' action='modify' visible='true' lat='50.33853310246' lon='19.488862926' />
+  <node id='-101975' action='modify' visible='true' lat='50.33850548264' lon='19.48951383876' />
+  <node id='-101976' action='modify' visible='true' lat='50.33882430008' lon='19.48954686874' />
+  <node id='-101977' action='modify' visible='true' lat='50.3389971283' lon='19.48945904087' />
+  <node id='-101978' action='modify' visible='true' lat='50.33901848506' lon='19.48890881889' />
+  <node id='-102004' action='modify' visible='true' lat='50.33905328157' lon='19.48830089883' />
+  <node id='-102005' action='modify' visible='true' lat='50.33937869906' lon='19.48834228973' />
+  <node id='-102006' action='modify' visible='true' lat='50.33944258751' lon='19.48856450719' />
+  <node id='-102007' action='modify' visible='true' lat='50.339460633' lon='19.48876937385' />
+  <node id='-102026' action='modify' visible='true' lat='50.33942283694' lon='19.48948083126' />
+  <way id='-104341' action='modify' visible='true'>
+    <nd ref='-101974' />
+    <nd ref='-101975' />
+    <nd ref='-101976' />
+    <nd ref='-101977' />
+    <nd ref='-101978' />
+    <nd ref='-101974' />
+    <tag k='building' v='yes' />
+  </way>
+  <way id='-104358' action='modify' visible='true'>
+    <nd ref='-101978' />
+    <nd ref='-102004' />
+    <nd ref='-102005' />
+    <nd ref='-102006' />
+    <nd ref='-102007' />
+    <nd ref='-102026' />
+    <nd ref='-101977' />
+    <nd ref='-101978' />
+    <tag k='building' v='yes' />
+  </way>
+</osm>

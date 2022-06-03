@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <bounds minlat='50.3382777' minlon='19.4856172' maxlat='50.3404957' maxlon='19.490832' origin='CGImap 0.8.6 (2879931 spike-07.openstreetmap.org)' />
+  <bounds minlat='50.3382777' minlon='19.4856172' maxlat='50.3404957' maxlon='19.490832' origin='OpenStreetMap server' />
+  <node id='-101974' action='modify' visible='true' lat='50.33853310246' lon='19.488862926' />
+  <node id='-101975' action='modify' visible='true' lat='50.33850548264' lon='19.48951383876' />
+  <node id='-101976' action='modify' visible='true' lat='50.33882430008' lon='19.48954686874' />
+  <node id='-101977' action='modify' visible='true' lat='50.3389971283' lon='19.48945904087' />
+  <node id='-101978' action='modify' visible='true' lat='50.33901848506' lon='19.48890881889' />
+  <node id='-102071' action='modify' visible='true' lat='50.33855543823' lon='19.4882381441' />
+  <node id='-102072' action='modify' visible='true' lat='50.33859500738' lon='19.48760442831' />
+  <node id='-102073' action='modify' visible='true' lat='50.33869271928' lon='19.48761984139' />
+  <node id='-102074' action='modify' visible='true' lat='50.33868483254' lon='19.4877408282' />
+  <node id='-102075' action='modify' visible='true' lat='50.33887104457' lon='19.48776867813' />
+  <node id='-102076' action='modify' visible='true' lat='50.33887907639' lon='19.48761310147' />
+  <node id='-102077' action='modify' visible='true' lat='50.33909293569' lon='19.48764699924' />
+  <node id='-102078' action='modify' visible='true' lat='50.33905328157' lon='19.48830089883' />
+  <way id='-104341' action='modify' visible='true'>
+    <nd ref='-101974' />
+    <nd ref='-101975' />
+    <nd ref='-101976' />
+    <nd ref='-101977' />
+    <nd ref='-101978' />
+    <nd ref='-101974' />
+    <tag k='building' v='yes' />
+  </way>
+  <way id='-104442' action='modify' visible='true'>
+    <nd ref='-102071' />
+    <nd ref='-102072' />
+    <nd ref='-102073' />
+    <nd ref='-102074' />
+    <nd ref='-102075' />
+    <nd ref='-102076' />
+    <nd ref='-102077' />
+    <nd ref='-102078' />
+    <nd ref='-102071' />
+    <tag k='building' v='yes' />
+  </way>
+</osm>
