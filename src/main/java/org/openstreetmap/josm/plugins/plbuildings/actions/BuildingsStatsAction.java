@@ -2,9 +2,9 @@ package org.openstreetmap.josm.plugins.plbuildings.actions;
 
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportStats;
+import org.openstreetmap.josm.plugins.plbuildings.gui.BuildingsImportStatsPanel;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 
@@ -26,13 +26,22 @@ public class BuildingsStatsAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        HashMap<String, Object> stats = BuildingsImportStats.getInstance().getStats();
-        JPanel panel = new JPanel(new GridLayout(stats.size(), 2));
-        stats.forEach((key, value) -> {
-            panel.add(new JLabel(key + ": "));
-            panel.add(new JLabel(value.toString()));
-        });
+        BuildingsImportStats buildingsStats = BuildingsImportStats.getInstance();
+        HashMap<String, String> statsPanelData = new HashMap<>();
+        statsPanelData.put(
+            tr("import"),
+            Integer.toString(buildingsStats.getImportCounter())
+        );
+        statsPanelData.put(
+            tr("import with replace"),
+            Integer.toString(buildingsStats.getImportWithReplaceCounter())
+        );
 
-        JOptionPane.showMessageDialog(null, panel, TITLE, JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(
+            null,
+            new BuildingsImportStatsPanel(statsPanelData),
+            TITLE,
+            JOptionPane.INFORMATION_MESSAGE
+        );
     }
 }
