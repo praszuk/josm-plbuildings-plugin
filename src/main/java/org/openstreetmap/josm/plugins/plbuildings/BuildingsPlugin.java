@@ -10,6 +10,7 @@ public class BuildingsPlugin extends Plugin {
     public BuildingsPlugin(PluginInformation info){
         super(info);
         BuildingsPlugin.info = info;
+        MainMenu.add(MainApplication.getMenu().dataMenu, new BuildingsStatsAction());
         MainMenu.add(MainApplication.getMenu().selectionMenu, new BuildingsAction());
     }
 }
