@@ -108,8 +108,8 @@ public class AddSharedNodesBuildingCommand extends Command  {
             .filter(n -> !n.isDeleted())
             .filter(SharedNodesUtils::isShareableNode)
             .collect(Collectors.toList());
-        List<Node> buildingNodes = new ArrayList<>();
-        List<Node> nodesToAddToDataSet = new ArrayList<>();
+        LinkedHashSet<Node> buildingNodes = new LinkedHashSet<>();
+        LinkedHashSet<Node> nodesToAddToDataSet = new LinkedHashSet<>();
 
         HashMap<Way, Integer> buildingSharedNodesWithImportedBuildingCounter = new HashMap<>();
         newNodes.forEach(newNode -> {
@@ -142,11 +142,11 @@ public class AddSharedNodesBuildingCommand extends Command  {
         if (maxSharedNodesByCloseBuildingsSize == buildingNodes.size()) {
             throw new ImportBuildingDuplicateException();
         }
-        newBuilding.setNodes(buildingNodes);
-        newBuilding.addNode(buildingNodes.get(0));
+        newBuilding.setNodes(new ArrayList<>(buildingNodes));
+        newBuilding.addNode(newBuilding.getNode(0));
 
         createdBuilding = newBuilding;
-        createdNodes = nodesToAddToDataSet;
+        createdNodes = new ArrayList<>(nodesToAddToDataSet);
     }
 
     public void addBuilding(){
