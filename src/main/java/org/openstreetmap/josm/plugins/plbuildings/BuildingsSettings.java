@@ -25,6 +25,7 @@ public class BuildingsSettings {
     "plbuildings.replace_building_tag_no_conflict",
         Arrays.asList(
             "building", "yes",
+            "building", "farm_auxiliary",  // Not used anymore. It was used instead of building=outbuilding
             "source", "*"
         )
     );
