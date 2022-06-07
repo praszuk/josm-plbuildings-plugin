@@ -42,7 +42,7 @@ public class DuplicateImportTest {
     }
 
     @Test
-    public void testSimpleDuplicateCheckDuplicateAllNodesEqual(){
+    public void testSimpleDuplicateCheckDuplicateAllNodesEqualAndSameTags(){
         new MockUp<BuildingsImportAction>(){
             @Mock
             public DataSet getBuildingsAtCurrentLocation(){
@@ -55,13 +55,42 @@ public class DuplicateImportTest {
             "");
         assertNotNull(ds);
 
-        Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.hasKey("building", "yes")).toArray()[0];
+        Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.hasKey("building", "house")).toArray()[0];
         ds.setSelected(buildingToReplace);
 
         BuildingsImportAction.performBuildingImport(ds);
 
-        assertEquals(ds.getWays().stream().filter(way -> way.hasKey("building", "yes")).count(), 1);
+        assertEquals(ds.getWays().size(), 1);
+        assertEquals(ds.getWays().stream().filter(way -> way.hasKey("building", "house")).count(), 1);
     }
+/*
+ For the now replacing duplicated geometry with different tags is not supported
+
+    @Test
+    public void testSimpleDuplicateCheckNotDuplicateAllNodesEqualAndDifferentTags(){
+        new MockUp<BuildingsImportAction>(){
+            @Mock
+            public DataSet getBuildingsAtCurrentLocation(){
+                return importOsmFile(new File("test/data/duplicate_import/import_building.osm"), "");
+            }
+        };
+
+        DataSet ds = importOsmFile(
+            new File("test/data/duplicate_import/simple_duplicate_different_tags_base.osm"),
+            "");
+        assertNotNull(ds);
+
+        Way buildingToReplace = (Way) ds.getWays().stream()
+            .filter(way -> way.hasKey("building","house"))
+            .toArray()[0];
+        ds.setSelected(buildingToReplace);
+
+        BuildingsImportAction.performBuildingImport(ds);
+
+        assertEquals(ds.getWays().size(), 1);
+        assertEquals(ds.getWays().stream().filter(way -> way.hasKey("building", "detached")).count(), 1);
+    }
+*/
 
     @Test
     public void testDuplicateBaseMoreNodesImportBuildingAllNodesEqual(){
