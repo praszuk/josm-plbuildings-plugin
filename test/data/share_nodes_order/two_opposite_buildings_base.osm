@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='-101991' action='modify' visible='true' lat='50.34032328535' lon='19.48759427319' />
+  <node id='-101992' action='modify' visible='true' lat='50.34027631733' lon='19.48784297884' />
+  <node id='-101993' action='modify' visible='true' lat='50.34022770354' lon='19.48782103495' />
+  <node id='-101994' action='modify' visible='true' lat='50.34027287165' lon='19.4875881505' />
+  <node id='-101995' action='modify' visible='true' lat='50.34027559388' lon='19.48757403094' />
+  <node id='-101996' action='modify' visible='true' lat='50.34025815834' lon='19.48794149951' />
+  <node id='-101997' action='modify' visible='true' lat='50.34020820865' lon='19.48791680941' />
+  <node id='-101998' action='modify' visible='true' lat='50.3402401618' lon='19.48804491775' />
+  <node id='-101999' action='modify' visible='true' lat='50.3401949729' lon='19.48800902471' />
+  <node id='-102000' action='modify' visible='true' lat='50.34019133383' lon='19.48800615786' />
+  <way id='-102599' action='modify' visible='true'>
+    <nd ref='-101991' />
+    <nd ref='-101992' />
+    <nd ref='-101993' />
+    <nd ref='-101994' />
+    <nd ref='-101995' />
+    <nd ref='-101991' />
+    <tag k='building' v='outbuilding' />
+    <tag k='building:levels' v='1' />
+    <tag k='source' v='www.geoportal.gov.pl' />
+  </way>
+  <way id='-102601' action='modify' visible='true'>
+    <nd ref='-101996' />
+    <nd ref='-101998' />
+    <nd ref='-101999' />
+    <nd ref='-102000' />
+    <nd ref='-101997' />
+    <nd ref='-101996' />
+    <tag k='building' v='outbuilding' />
+    <tag k='building:levels' v='1' />
+    <tag k='source' v='www.geoportal.gov.pl' />
+  </way>
+</osm>
