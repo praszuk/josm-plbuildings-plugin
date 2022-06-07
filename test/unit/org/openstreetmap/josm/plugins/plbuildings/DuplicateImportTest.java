@@ -63,4 +63,25 @@ public class DuplicateImportTest {
         assertEquals(ds.getWays().stream().filter(way -> way.hasKey("building", "yes")).count(), 1);
     }
 
+    @Test
+    public void testDuplicateBaseMoreNodesImportBuildingAllNodesEqual(){
+        new MockUp<BuildingsImportAction>(){
+            @Mock
+            public DataSet getBuildingsAtCurrentLocation(){
+                return importOsmFile(new File("test/data/duplicate_import/import_building.osm"), "");
+            }
+        };
+
+        DataSet ds = importOsmFile(
+            new File("test/data/duplicate_import/duplicate_more_nodes_base.osm"),
+            "");
+        assertNotNull(ds);
+
+        Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.hasKey("building", "yes")).toArray()[0];
+        ds.setSelected(buildingToReplace);
+
+        BuildingsImportAction.performBuildingImport(ds);
+
+        assertEquals(ds.getWays().stream().filter(way -> way.hasKey("building", "house")).count(), 1);
+    }
 }
