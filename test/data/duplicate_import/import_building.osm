@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='-102086' action='modify' visible='true' lat='50.34027636955' lon='19.48784299554' />
+  <node id='-102087' action='modify' visible='true' lat='50.34025811053' lon='19.48794151933' />
+  <node id='-102088' action='modify' visible='true' lat='50.3402083609' lon='19.487916823' />
+  <node id='-102090' action='modify' visible='true' lat='50.34022775576' lon='19.48782105165' />
+  <way id='-102826' action='modify' visible='true'>
+    <nd ref='-102086' />
+    <nd ref='-102087' />
+    <nd ref='-102088' />
+    <nd ref='-102090' />
+    <nd ref='-102086' />
+    <tag k='building' v='house' />
+    <tag k='building:levels' v='2' />
+    <tag k='source' v='www.geoportal.gov.pl' />
+  </way>
+</osm>
