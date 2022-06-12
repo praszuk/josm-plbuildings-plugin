@@ -1,11 +1,14 @@
 package org.openstreetmap.josm.plugins.plbuildings.actions;
 
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.*;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsDownloader;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportStats;
 import org.openstreetmap.josm.plugins.plbuildings.commands.AddSharedNodesBuildingCommand;
@@ -15,11 +18,14 @@ import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsDuplicateV
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.UserCancelException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,6 +59,23 @@ public class BuildingsImportAction extends JosmAction {
         return BuildingsDownloader.downloadBuildings(latLonPoint, "bdot");
     }
 
+    /**
+     * Wrapper function copied from Utilsplugin2 ReplaceGeometryUtils.getTagConflictResolutionCommands
+     *
+     * @param newBuilding – building from which tags will be copied
+     * @param selectedBuilding – building with which tags will be merged or updated
+     * @return list of commands as updating tags
+     * @throws UserCancelException if user close the window or reject possible tags conflict
+     */
+    static List<Command> updateTags(Way newBuilding, Way selectedBuilding) throws UserCancelException {
+        Collection<OsmPrimitive> primitives = Arrays.asList(selectedBuilding, newBuilding);
+
+        return CombinePrimitiveResolverDialog.launchIfNecessary(
+            TagCollection.unionOfAllPrimitives(primitives),
+            primitives,
+            Collections.singleton(selectedBuilding)
+        );
+    }
 
     /**
      * Flow:
@@ -60,11 +83,11 @@ public class BuildingsImportAction extends JosmAction {
      * Check if it's unique (no geometry duplicate):
      * -- duplicate:
      * ---- check if 1 building is selected:
-     * ------ selected -> try to update tags (TODO)
+     * ------ selected -> try to update tags
      * ------ not selected -> end
      * -- not duplicate:
      * ---- check if 1 building is selected:
-     * ------ selected -> try to replace geometry and tags
+     * ------ selected -> try to replace geometry and update tags
      * ------ not selected -> just import new building
      */
     public static void performBuildingImport(DataSet currentDataSet) {
@@ -103,8 +126,21 @@ public class BuildingsImportAction extends JosmAction {
             }
 
             else {
-                // TODO update tags not sure if should be counted as import for stats
-                // Logging.info("Duplicated building geometry. Trying to update tags!");
+                Logging.info("Duplicated building geometry. Trying to update tags!");
+                try {
+                    List<Command> updateTagCommands = updateTags(importedBuilding, selectedBuilding);
+                    UndoRedoHandler.getInstance().add(new SequenceCommand(
+                        tr("Updated building tags"),
+                        updateTagCommands
+                    ));
+                    BuildingsImportStats.getInstance().addImportWithReplaceCounter(1);
+                } catch (UserCancelException exception){
+                    Logging.debug(
+                        "No building tags (id: {0}) update, caused: Cancel conflict dialog by user",
+                        selectedBuilding.getId()
+                    );
+                }
+
             }
         }
         else {
