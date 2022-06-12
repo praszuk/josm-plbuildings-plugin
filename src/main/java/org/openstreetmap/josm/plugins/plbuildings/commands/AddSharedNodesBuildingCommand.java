@@ -3,7 +3,6 @@ package org.openstreetmap.josm.plugins.plbuildings.commands;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.*;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
-import org.openstreetmap.josm.plugins.plbuildings.exceptions.ImportBuildingDuplicateException;
 import org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -65,13 +64,8 @@ public class AddSharedNodesBuildingCommand extends Command  {
     @Override
     public boolean executeCommand() {
         if (createdBuilding == null){ // It's necessary for redo handling
-            try {
-                prepareBuilding();
-            } catch (ImportBuildingDuplicateException e) {
-                return false;
-            }
+            prepareBuilding();
         }
-
         addBuilding();
 
         return true;
@@ -89,14 +83,13 @@ public class AddSharedNodesBuildingCommand extends Command  {
      * then it will construct a new building object based on above checks
      * and add it missing nodes and building (with existing and new nodes) to dataset.
      */
-    private void prepareBuilding() throws ImportBuildingDuplicateException {
+    private void prepareBuilding() {
+        // last node is wrongly duplicated after cloning operation, so skip it now
+        // and add first node to the way below to get it as closed line (area)
         List<Node> newNodes = importedBuilding.getNodes().stream()
+            .limit(importedBuilding.getNodesCount() - 1)
             .map(node -> new Node(node, true))
             .collect(Collectors.toList());
-
-        // last node is wrongly duplicated after cloning operation, so remove it now
-        // and add first node to the way below to get it as closed line (area)
-        newNodes.remove(newNodes.size() - 1);
 
         Way newBuilding = new Way();
         newBuilding.cloneFrom(importedBuilding, false);
@@ -108,10 +101,10 @@ public class AddSharedNodesBuildingCommand extends Command  {
             .filter(n -> !n.isDeleted())
             .filter(SharedNodesUtils::isShareableNode)
             .collect(Collectors.toList());
+
         LinkedHashSet<Node> buildingNodes = new LinkedHashSet<>();
         LinkedHashSet<Node> nodesToAddToDataSet = new LinkedHashSet<>();
 
-        HashMap<Way, Integer> buildingSharedNodesWithImportedBuildingCounter = new HashMap<>();
         newNodes.forEach(newNode -> {
             Node sameNode = closeNodes.stream()
                 .filter(closeNode -> isCloseNode(closeNode, newNode, BuildingsSettings.BBOX_OFFSET.get()))
@@ -119,29 +112,11 @@ public class AddSharedNodesBuildingCommand extends Command  {
 
             if (sameNode != null) {
                 buildingNodes.add(sameNode);
-                sameNode.getParentWays().forEach(parentWay -> {
-                    int counter = buildingSharedNodesWithImportedBuildingCounter.getOrDefault(parentWay, 0);
-                    buildingSharedNodesWithImportedBuildingCounter.put(parentWay, counter + 1);
-                });
             } else {
                 buildingNodes.add(newNode);
                 nodesToAddToDataSet.add(newNode);
             }
         });
-        Logging.debug(
-            "Buildings shared nodes with imported building counter: {0}",
-            buildingSharedNodesWithImportedBuildingCounter
-        );
-        int maxSharedNodesByCloseBuildingsSize = buildingSharedNodesWithImportedBuildingCounter.values()
-            .stream()
-            .mapToInt(v->v)
-            .max()
-            .orElse(-1);
-
-        // Whole building is a duplicate – contains the same nodes
-        if (maxSharedNodesByCloseBuildingsSize == buildingNodes.size()) {
-            throw new ImportBuildingDuplicateException();
-        }
         newBuilding.setNodes(new ArrayList<>(buildingNodes));
         newBuilding.addNode(newBuilding.getNode(0));
 
