@@ -15,7 +15,6 @@ public class SharedNodesUtils {
      * Create bbox based on list of nodes and their positions.
      * It will produce bbox expanded by offset to e.g. match all very close nodes when importing
      * semidetached_house/terrace buildings
-     * It works only for positive lat/lon values, because this plugin is only for Poland.
      */
     public static BBox getBBox(List<Node> nodes, double bboxOffset) {
         BBox bbox = new BBox();
