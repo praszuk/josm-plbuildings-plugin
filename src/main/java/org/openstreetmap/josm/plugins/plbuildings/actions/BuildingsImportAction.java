@@ -129,6 +129,10 @@ public class BuildingsImportAction extends JosmAction {
                 Logging.info("Duplicated building geometry. Trying to update tags!");
                 try {
                     List<Command> updateTagCommands = updateTags(importedBuilding, selectedBuilding);
+                    if (updateTagCommands.isEmpty()){
+                        Logging.debug("Duplicated building geometry and tags! Canceling!");
+                        return;
+                    }
                     UndoRedoHandler.getInstance().add(new SequenceCommand(
                         tr("Updated building tags"),
                         updateTagCommands
