@@ -29,5 +29,8 @@ To show statistics, go to:`Menu->Data->Buildings import stats`
 Example stats:
 ![Buildings import statistics](media/import_stats.jpg)
 
+### Simplified buildings import action flow
+![Simplified buildings import action flow](media/simple_import_activity_diagram.jpg)
+
 ## License
 [GPLv3](LICENSE)
