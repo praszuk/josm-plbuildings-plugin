@@ -113,7 +113,7 @@ public class UpdateTagsTest {
         assertNotNull(ds);
 
         Way buildingToReplace = (Way) ds.getWays().stream()
-            .filter(way -> way.hasKey("building", "house"))
+            .filter(way -> way.hasTag("building", "house"))
             .toArray()[0];
 
         ds.setSelected(buildingToReplace);
