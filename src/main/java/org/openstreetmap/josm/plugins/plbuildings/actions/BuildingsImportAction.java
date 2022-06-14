@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator.isBuildingWayValid;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class BuildingsImportAction extends JosmAction {
@@ -77,6 +76,54 @@ public class BuildingsImportAction extends JosmAction {
         );
     }
 
+    static void handleReplaceUpdateBuildingCommandException(ReplaceUpdateBuildingCommand cmd, Way selectedBuilding) {
+        Notification note;
+
+        if (cmd.getCancelException() instanceof IllegalArgumentException) {
+            // If user cancel conflict window do nothing
+            note = new Notification(tr("Canceled merging buildings."));
+            note.setIcon(JOptionPane.WARNING_MESSAGE);
+
+            Logging.debug(
+                "No building (id: {0}) update, caused: Cancel conflict dialog by user",
+                selectedBuilding.getId()
+            );
+        } else if(cmd.getCancelException() instanceof ReplaceGeometryException) {
+            // If selected building cannot be merged (e.g. connected ways/relation)
+            note = new Notification(tr(
+            "Cannot merge buildings!" +
+                " Old building may be connected with some ways/relations" +
+                " or not whole area is downloaded."
+            ));
+            note.setIcon(JOptionPane.ERROR_MESSAGE);
+
+            Logging.debug(
+                "No building update (id: {0}), caused: Replacing Geometry from UtilPlugins2 error",
+                selectedBuilding.getId()
+            );
+        } else if (cmd.getCancelException() instanceof DataIntegrityProblemException) {
+            // If data integrity like nodes duplicated or first!=last has been somehow broken
+            note = new Notification(tr(
+                "Cannot merge buildings! Building has been wrongly replaced and data has been broken!"
+            ));
+            note.setIcon(JOptionPane.ERROR_MESSAGE);
+
+            Logging.error(
+                "No building update (id: {0}), caused: DataIntegrity with replacing error! Building: {1}",
+                selectedBuilding.getId(),
+                selectedBuilding
+            );
+        } else {
+            note = new Notification(tr("Cannot merge buildings! Unknown error!"));
+            Logging.error(
+                "No building update (id: {0}), caused: Unknown error: {1}",
+                selectedBuilding.getId(),
+                cmd.getCancelException().getMessage()
+            );
+        }
+        note.setDuration(Notification.TIME_SHORT);
+        note.show();
+    }
     /**
      * Flow:
      * Download building from server to virtual dataset
@@ -168,63 +215,20 @@ public class BuildingsImportAction extends JosmAction {
                 Way newBuilding = addSharedNodesBuildingCommand.getCreatedBuilding();
                 UndoRedoHandler.getInstance().add(addSharedNodesBuildingCommand, false);
 
-                try {
-                    ReplaceUpdateBuildingCommand replaceUpdateBuildingCommand = new ReplaceUpdateBuildingCommand(
-                        currentDataSet,
-                        selectedBuilding,
-                        newBuilding
-                    );
-                    UndoRedoHandler.getInstance().add(replaceUpdateBuildingCommand);
-                    if (!isBuildingWayValid(selectedBuilding)){
-                        throw new DataIntegrityProblemException("Wrongly merged building!");
-                    }
-
+                ReplaceUpdateBuildingCommand replaceUpdateBuildingCommand = new ReplaceUpdateBuildingCommand(
+                    currentDataSet,
+                    selectedBuilding,
+                    newBuilding
+                );
+                boolean isReplacedUpdated = replaceUpdateBuildingCommand.executeCommand();
+                if (isReplacedUpdated){
+                    UndoRedoHandler.getInstance().add(replaceUpdateBuildingCommand, false);
                     BuildingsImportStats.getInstance().addImportWithReplaceCounter(1);
                     Logging.debug("Updated building {0} with new data", selectedBuilding.getId());
-
-                } catch (IllegalArgumentException ignored) {
-                    // If user cancel conflict window do nothing
-                    Notification note = new Notification(tr("Canceled merging buildings."));
-                    note.setIcon(JOptionPane.WARNING_MESSAGE);
-                    note.setDuration(Notification.TIME_SHORT);
-                    note.show();
-
+                }
+                else {
                     UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), addSharedNodesBuildingCommand, true);
-                    Logging.debug(
-                        "No building (id: {0}) update, caused: Cancel conflict dialog by user",
-                        selectedBuilding.getId()
-                    );
-                } catch (ReplaceGeometryException ignore) {
-                    // If selected building cannot be merged (e.g. connected ways/relation)
-                    Notification note = new Notification(tr(
-                        "Cannot merge buildings!" +
-                        " Old building may be connected with some ways/relations" +
-                        " or not whole area is downloaded."
-                    ));
-                    note.setIcon(JOptionPane.ERROR_MESSAGE);
-                    note.setDuration(Notification.TIME_SHORT);
-                    note.show();
-
-                    UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), addSharedNodesBuildingCommand, true);
-                    Logging.debug(
-                        "No building update (id: {0}), caused: Replacing Geometry from UtilPlugins2 error",
-                        selectedBuilding.getId()
-                    );
-                } catch (DataIntegrityProblemException ignored) {
-                    // If data integrity like nodes duplicated or first!=last has been somehow broken
-                    Notification note = new Notification(tr(
-                    "Cannot merge buildings! Building has been wrongly replaced and data has been broken!"
-                    ));
-                    note.setIcon(JOptionPane.ERROR_MESSAGE);
-                    note.setDuration(Notification.TIME_SHORT);
-                    note.show();
-
-                    UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), addSharedNodesBuildingCommand, true);
-                    Logging.error(
-                        "No building update (id: {0}), caused: DataIntegrity with replacing error! Building: {1}",
-                        selectedBuilding.getId(),
-                        selectedBuilding
-                    );
+                    handleReplaceUpdateBuildingCommandException(replaceUpdateBuildingCommand, selectedBuilding);
                 }
             }
         }

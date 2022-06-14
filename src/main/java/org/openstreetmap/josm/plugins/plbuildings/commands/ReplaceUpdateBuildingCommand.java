@@ -2,6 +2,7 @@ package org.openstreetmap.josm.plugins.plbuildings.commands;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.openstreetmap.josm.plugins.plbuildings.utils.TagConflictUtils.replaceNoConflictTags;
+import static org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator.isBuildingWayValid;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 
@@ -27,10 +29,17 @@ public class ReplaceUpdateBuildingCommand extends Command {
     private ReplaceGeometryCommand replaceGeometryCommand;
     private ChangePropertyCommand replaceNoConflictTagsCommand;
 
+    private Exception cancelException;
+
     public ReplaceUpdateBuildingCommand(DataSet data, Way selectedBuilding, Way newBuilding) {
         super(data);
         this.selectedBuilding = selectedBuilding;
         this.newBuilding = newBuilding;
+        this.cancelException = null;
+    }
+
+    public Exception getCancelException() {
+        return cancelException;
     }
 
     @Override
@@ -60,30 +69,30 @@ public class ReplaceUpdateBuildingCommand extends Command {
 
     @Override
     public void undoCommand() {
-        replaceGeometryCommand.undoCommand();
+        if (replaceGeometryCommand != null){
+            replaceGeometryCommand.undoCommand();
+        }
         if (replaceNoConflictTagsCommand != null){
             replaceNoConflictTagsCommand.undoCommand();
         }
+        this.cancelException = null;
     }
 
     @Override
     public boolean executeCommand() {
+        this.cancelException = null;
         return replaceAndUpdate(selectedBuilding, newBuilding);
     }
 
     /**
      * Main execute command which handle 2 nested commands (tags updates and geometry building update)
-     * @throws ReplaceGeometryException utilsplugin2 replaceGeometry exception
-     * @throws IllegalArgumentException utilsplugin2 replaceGeometry exception
+     * @return false if any exception else true
      */
-    private boolean replaceAndUpdate(
-            Way selectedBuilding,
-            Way newBuilding
-    ) throws ReplaceGeometryException, IllegalArgumentException {
+    private boolean replaceAndUpdate(Way selectedBuilding, Way newBuilding){
         replaceNoConflictTagsCommand = replaceNoConflictTags(
-                selectedBuilding,
-                newBuilding,
-                BuildingsSettings.REPLACE_BUILDING_TAG_NO_CONFLICT.get()
+            selectedBuilding,
+            newBuilding,
+            BuildingsSettings.REPLACE_BUILDING_TAG_NO_CONFLICT.get()
         );
         if (replaceNoConflictTagsCommand != null){
             replaceNoConflictTagsCommand.executeCommand();
@@ -91,22 +100,34 @@ public class ReplaceUpdateBuildingCommand extends Command {
 
         try {
             replaceGeometryCommand = ReplaceGeometryUtils.buildReplaceWithNewCommand(
-                    selectedBuilding,
-                    newBuilding
+                selectedBuilding,
+                newBuilding
             );
             replaceGeometryCommand.executeCommand();
+            if (!isBuildingWayValid(selectedBuilding)){
+                throw new DataIntegrityProblemException("Wrongly merged building!");
+            }
+
         } catch (IllegalArgumentException | NullPointerException msg) {
             // If user cancel conflict window do nothing
             if (replaceNoConflictTagsCommand != null){
                 replaceNoConflictTagsCommand.undoCommand();
             }
-            throw new IllegalArgumentException(msg.getMessage());
+            this.cancelException = new IllegalArgumentException(msg.getMessage());
+            return false;
         } catch (ReplaceGeometryException msg) {
             // If selected building cannot be merged (e.g. connected ways/relation)
             if (replaceNoConflictTagsCommand != null){
                 replaceNoConflictTagsCommand.undoCommand();
             }
-            throw new ReplaceGeometryException(msg.getMessage());
+            this.cancelException = new ReplaceGeometryException(msg.getMessage());
+            return false;
+        } catch(DataIntegrityProblemException msg){
+            if (replaceNoConflictTagsCommand != null){
+                replaceNoConflictTagsCommand.undoCommand();
+            }
+            this.cancelException = new DataIntegrityProblemException(msg.getMessage());
+            return false;
         }
         return true;
     }
