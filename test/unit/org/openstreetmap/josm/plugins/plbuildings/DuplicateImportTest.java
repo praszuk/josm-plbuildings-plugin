@@ -52,7 +52,7 @@ public class DuplicateImportTest {
             "");
         assertNotNull(ds);
 
-        Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.hasKey("building", "yes")).toArray()[0];
+        Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.hasTag("building", "yes")).toArray()[0];
         ds.setSelected(buildingToReplace);
 
         BuildingsImportAction.performBuildingImport(ds);
@@ -74,13 +74,13 @@ public class DuplicateImportTest {
             "");
         assertNotNull(ds);
 
-        Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.hasKey("building", "house")).toArray()[0];
+        Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.hasTag("building", "house")).toArray()[0];
         ds.setSelected(buildingToReplace);
 
         BuildingsImportAction.performBuildingImport(ds);
 
         assertEquals(ds.getWays().size(), 1);
-        assertEquals(ds.getWays().stream().filter(way -> way.hasKey("building", "house")).count(), 1);
+        assertEquals(ds.getWays().stream().filter(way -> way.hasTag("building", "house")).count(), 1);
     }
 
     @Test
@@ -98,14 +98,14 @@ public class DuplicateImportTest {
         assertNotNull(ds);
 
         Way buildingToReplace = (Way) ds.getWays().stream()
-            .filter(way -> way.hasKey("building","house"))
+            .filter(way -> way.hasTag("building","detached"))
             .toArray()[0];
         ds.setSelected(buildingToReplace);
 
         BuildingsImportAction.performBuildingImport(ds);
 
         assertEquals(ds.getWays().size(), 1);
-        assertEquals(ds.getWays().stream().filter(way -> way.hasKey("building", "detached")).count(), 1);
+        assertEquals(ds.getWays().stream().filter(way -> way.hasTag("building", "house")).count(), 1);
     }
 
     @Test
@@ -122,11 +122,11 @@ public class DuplicateImportTest {
             "");
         assertNotNull(ds);
 
-        Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.hasKey("building", "yes")).toArray()[0];
+        Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.hasTag("building", "yes")).toArray()[0];
         ds.setSelected(buildingToReplace);
 
         BuildingsImportAction.performBuildingImport(ds);
 
-        assertEquals(ds.getWays().stream().filter(way -> way.hasKey("building", "house")).count(), 1);
+        assertEquals(ds.getWays().stream().filter(way -> way.hasTag("building", "house")).count(), 1);
     }
 }

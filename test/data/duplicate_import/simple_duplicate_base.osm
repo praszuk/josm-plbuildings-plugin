@@ -10,7 +10,7 @@
     <nd ref='-102094' />
     <nd ref='-102095' />
     <nd ref='-102092' />
-    <tag k='building' v='yes' />
+    <tag k='building' v='house' />
     <tag k='building:levels' v='2' />
     <tag k='source' v='www.geoportal.gov.pl' />
   </way>
