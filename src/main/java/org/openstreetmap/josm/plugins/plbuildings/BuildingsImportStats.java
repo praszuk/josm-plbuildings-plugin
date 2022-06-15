@@ -19,6 +19,10 @@ public class BuildingsImportStats {
     private int importCounter;
     private int importWithReplaceCounter;
 
+    private int importWithTagsUpdateCounter;
+
+    private int totalImportActionCounter;
+
     private static BuildingsImportStats instance;
 
     public static BuildingsImportStats getInstance(){
@@ -34,6 +38,14 @@ public class BuildingsImportStats {
 
     public int getImportWithReplaceCounter() {
         return this.importWithReplaceCounter;
+    }
+
+    public int getImportWithTagsUpdateCounter() {
+        return importWithTagsUpdateCounter;
+    }
+
+    public int getTotalImportActionCounter() {
+        return totalImportActionCounter;
     }
 
     public void addImportCounter(int value){
@@ -52,10 +64,28 @@ public class BuildingsImportStats {
         save();
     }
 
+    public void addImportWithTagsUpdateCounter(int value){
+        if (value < 1){
+            throw new IllegalArgumentException("Number must be greater than 0");
+        }
+        this.importWithTagsUpdateCounter += value;
+        save();
+    }
+
+    public void addTotalImportActionCounter(int value){
+        if (value < 1){
+            throw new IllegalArgumentException("Number must be greater than 0");
+        }
+        this.totalImportActionCounter += value;
+        save();
+    }
+
     public HashMap<String, Object> getStats(){
         HashMap<String, Object> stats = new HashMap<>();
         stats.put("import", this.importCounter);
         stats.put("importWithReplace", this.importWithReplaceCounter);
+        stats.put("importWithTagsUpdate", this.importWithTagsUpdateCounter);
+        stats.put("totalImportAction", this.totalImportActionCounter);
 
         return stats;
     }
@@ -77,6 +107,8 @@ public class BuildingsImportStats {
         JsonObject jsonStats = Json.createObjectBuilder()
             .add("import", this.importCounter)
             .add("importWithReplace", this.importWithReplaceCounter)
+            .add("importWithTagsUpdate", this.importWithTagsUpdateCounter)
+            .add("totalImportAction", this.totalImportActionCounter)
             .build();
 
         String encodedB64Stats = Base64.getEncoder().encodeToString(
@@ -99,6 +131,8 @@ public class BuildingsImportStats {
 
         this.importCounter = jsonStats.getInt("import", 0);
         this.importWithReplaceCounter = jsonStats.getInt("importWithReplace", 0);
+        this.importWithTagsUpdateCounter = jsonStats.getInt("importWithTagsUpdate", 0);
+        this.totalImportActionCounter = jsonStats.getInt("totalImportAction", 0);
         Logging.debug("Loaded import stats: {0}", this.toString());
     }
 }

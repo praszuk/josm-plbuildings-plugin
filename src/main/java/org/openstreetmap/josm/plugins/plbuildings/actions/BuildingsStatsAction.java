@@ -29,12 +29,20 @@ public class BuildingsStatsAction extends JosmAction {
         BuildingsImportStats buildingsStats = BuildingsImportStats.getInstance();
         HashMap<String, String> statsPanelData = new HashMap<>();
         statsPanelData.put(
-            tr("import"),
+            tr("import a new building"),
             Integer.toString(buildingsStats.getImportCounter())
         );
         statsPanelData.put(
-            tr("import with replace"),
+            tr("import with full replace"),
             Integer.toString(buildingsStats.getImportWithReplaceCounter())
+        );
+        statsPanelData.put(
+            tr("import with tags update"),
+            Integer.toString(buildingsStats.getImportWithTagsUpdateCounter())
+        );
+        statsPanelData.put(
+            tr("total import action"),
+            Integer.toString(buildingsStats.getTotalImportActionCounter())
         );
 
         JOptionPane.showMessageDialog(
