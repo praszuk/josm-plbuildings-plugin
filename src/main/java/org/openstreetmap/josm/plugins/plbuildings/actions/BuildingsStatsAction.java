@@ -6,7 +6,7 @@ import org.openstreetmap.josm.plugins.plbuildings.gui.BuildingsImportStatsPanel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -27,21 +27,21 @@ public class BuildingsStatsAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         BuildingsImportStats buildingsStats = BuildingsImportStats.getInstance();
-        HashMap<String, String> statsPanelData = new HashMap<>();
+        LinkedHashMap<String, String> statsPanelData = new LinkedHashMap<>();
         statsPanelData.put(
-            tr("import a new building"),
+            tr("Imported new building"),
             Integer.toString(buildingsStats.getImportCounter())
         );
         statsPanelData.put(
-            tr("import with full replace"),
+            tr("Imported with full replace"),
             Integer.toString(buildingsStats.getImportWithReplaceCounter())
         );
         statsPanelData.put(
-            tr("import with tags update"),
+            tr("Imported with tags update"),
             Integer.toString(buildingsStats.getImportWithTagsUpdateCounter())
         );
         statsPanelData.put(
-            tr("total import action"),
+            tr("Total import action"),
             Integer.toString(buildingsStats.getTotalImportActionCounter())
         );
 
