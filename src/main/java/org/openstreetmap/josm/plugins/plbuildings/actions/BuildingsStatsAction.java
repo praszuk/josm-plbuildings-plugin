@@ -29,8 +29,8 @@ public class BuildingsStatsAction extends JosmAction {
         BuildingsImportStats buildingsStats = BuildingsImportStats.getInstance();
         LinkedHashMap<String, String> statsPanelData = new LinkedHashMap<>();
         statsPanelData.put(
-            tr("Imported new building"),
-            Integer.toString(buildingsStats.getImportCounter())
+            tr("Imported a new building"),
+            Integer.toString(buildingsStats.getImportNewBuildingCounter())
         );
         statsPanelData.put(
             tr("Imported with full replace"),

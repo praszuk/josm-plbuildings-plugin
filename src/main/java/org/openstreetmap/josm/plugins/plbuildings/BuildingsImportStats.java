@@ -16,7 +16,7 @@ import java.util.HashMap;
  * and manages serialization/deserialization between BuildingSettings
  */
 public class BuildingsImportStats {
-    private int importCounter;
+    private int importNewBuildingCounter;
     private int importWithReplaceCounter;
 
     private int importWithTagsUpdateCounter;
@@ -32,8 +32,8 @@ public class BuildingsImportStats {
         return instance;
     }
 
-    public int getImportCounter() {
-        return this.importCounter;
+    public int getImportNewBuildingCounter() {
+        return this.importNewBuildingCounter;
     }
 
     public int getImportWithReplaceCounter() {
@@ -48,11 +48,11 @@ public class BuildingsImportStats {
         return totalImportActionCounter;
     }
 
-    public void addImportCounter(int value){
+    public void addImportNewBuildingCounter(int value){
         if (value < 1){
             throw new IllegalArgumentException("Number must be greater than 0");
         }
-        this.importCounter += value;
+        this.importNewBuildingCounter += value;
         save();
     }
 
@@ -82,7 +82,7 @@ public class BuildingsImportStats {
 
     public HashMap<String, Object> getStats(){
         HashMap<String, Object> stats = new HashMap<>();
-        stats.put("import", this.importCounter);
+        stats.put("importNewBuilding", this.importNewBuildingCounter);
         stats.put("importWithReplace", this.importWithReplaceCounter);
         stats.put("importWithTagsUpdate", this.importWithTagsUpdateCounter);
         stats.put("totalImportAction", this.totalImportActionCounter);
@@ -105,7 +105,7 @@ public class BuildingsImportStats {
     private void save(){
         Logging.debug("Saving import stats: {0}", this.toString());
         JsonObject jsonStats = Json.createObjectBuilder()
-            .add("import", this.importCounter)
+            .add("importNewBuilding", this.importNewBuildingCounter)
             .add("importWithReplace", this.importWithReplaceCounter)
             .add("importWithTagsUpdate", this.importWithTagsUpdateCounter)
             .add("totalImportAction", this.totalImportActionCounter)
@@ -129,7 +129,7 @@ public class BuildingsImportStats {
         JsonObject jsonStats = jsonReader.readObject();
         jsonReader.close();
 
-        this.importCounter = jsonStats.getInt("import", 0);
+        this.importNewBuildingCounter = jsonStats.getInt("importNewBuilding", 0);
         this.importWithReplaceCounter = jsonStats.getInt("importWithReplace", 0);
         this.importWithTagsUpdateCounter = jsonStats.getInt("importWithTagsUpdate", 0);
         this.totalImportActionCounter = jsonStats.getInt("totalImportAction", 0);

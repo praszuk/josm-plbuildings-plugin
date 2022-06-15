@@ -202,7 +202,7 @@ public class BuildingsImportAction extends JosmAction {
                     currentDataSet,
                     importedBuilding
                 ));
-                BuildingsImportStats.getInstance().addImportCounter(1);
+                BuildingsImportStats.getInstance().addImportNewBuildingCounter(1);
             }
             else {
                 Logging.info("Importing new building (with geometry replacing and tags update)!");
