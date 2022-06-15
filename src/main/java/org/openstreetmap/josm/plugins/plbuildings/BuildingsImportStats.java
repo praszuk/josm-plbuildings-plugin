@@ -23,6 +23,12 @@ public class BuildingsImportStats {
 
     private int totalImportActionCounter;
 
+    // FIELD_* strings are used to name fields to (de)serialization to JOSM Settings
+    private final String FIELD_IMPORT_NEW_BUILDING_COUNTER = "importNewBuilding";
+    private final String FIELD_IMPORT_WITH_REPLACE_COUNTER = "importWithReplace";
+    private final String FIELD_IMPORT_WITH_TAGS_UPDATE_COUNTER = "importWithTagsUpdate";
+    private final String FIELD_TOTAL_IMPORT_ACTION = "totalImportAction";
+
     private static BuildingsImportStats instance;
 
     public static BuildingsImportStats getInstance(){
@@ -82,10 +88,10 @@ public class BuildingsImportStats {
 
     public HashMap<String, Object> getStats(){
         HashMap<String, Object> stats = new HashMap<>();
-        stats.put("importNewBuilding", this.importNewBuildingCounter);
-        stats.put("importWithReplace", this.importWithReplaceCounter);
-        stats.put("importWithTagsUpdate", this.importWithTagsUpdateCounter);
-        stats.put("totalImportAction", this.totalImportActionCounter);
+        stats.put(FIELD_IMPORT_NEW_BUILDING_COUNTER, this.importNewBuildingCounter);
+        stats.put(FIELD_IMPORT_WITH_REPLACE_COUNTER, this.importWithReplaceCounter);
+        stats.put(FIELD_IMPORT_WITH_TAGS_UPDATE_COUNTER, this.importWithTagsUpdateCounter);
+        stats.put(FIELD_TOTAL_IMPORT_ACTION, this.totalImportActionCounter);
 
         return stats;
     }
@@ -105,10 +111,10 @@ public class BuildingsImportStats {
     private void save(){
         Logging.debug("Saving import stats: {0}", this.toString());
         JsonObject jsonStats = Json.createObjectBuilder()
-            .add("importNewBuilding", this.importNewBuildingCounter)
-            .add("importWithReplace", this.importWithReplaceCounter)
-            .add("importWithTagsUpdate", this.importWithTagsUpdateCounter)
-            .add("totalImportAction", this.totalImportActionCounter)
+            .add(FIELD_IMPORT_NEW_BUILDING_COUNTER, this.importNewBuildingCounter)
+            .add(FIELD_IMPORT_WITH_REPLACE_COUNTER, this.importWithReplaceCounter)
+            .add(FIELD_IMPORT_WITH_TAGS_UPDATE_COUNTER, this.importWithTagsUpdateCounter)
+            .add(FIELD_TOTAL_IMPORT_ACTION, this.totalImportActionCounter)
             .build();
 
         String encodedB64Stats = Base64.getEncoder().encodeToString(
@@ -129,10 +135,10 @@ public class BuildingsImportStats {
         JsonObject jsonStats = jsonReader.readObject();
         jsonReader.close();
 
-        this.importNewBuildingCounter = jsonStats.getInt("importNewBuilding", 0);
-        this.importWithReplaceCounter = jsonStats.getInt("importWithReplace", 0);
-        this.importWithTagsUpdateCounter = jsonStats.getInt("importWithTagsUpdate", 0);
-        this.totalImportActionCounter = jsonStats.getInt("totalImportAction", 0);
+        this.importNewBuildingCounter = jsonStats.getInt(FIELD_IMPORT_NEW_BUILDING_COUNTER, 0);
+        this.importWithReplaceCounter = jsonStats.getInt(FIELD_IMPORT_WITH_REPLACE_COUNTER, 0);
+        this.importWithTagsUpdateCounter = jsonStats.getInt(FIELD_IMPORT_WITH_TAGS_UPDATE_COUNTER, 0);
+        this.totalImportActionCounter = jsonStats.getInt(FIELD_TOTAL_IMPORT_ACTION, 0);
         Logging.debug("Loaded import stats: {0}", this.toString());
     }
 }
