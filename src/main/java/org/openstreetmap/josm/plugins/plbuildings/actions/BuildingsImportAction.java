@@ -138,6 +138,7 @@ public class BuildingsImportAction extends JosmAction {
      * ------ not selected -> just import new building
      */
     public static void performBuildingImport(DataSet currentDataSet) {
+        BuildingsImportStats.getInstance().addTotalImportActionCounter(1);
         DataSet importedBuildingsDataSet = getBuildingsAtCurrentLocation();
         if (importedBuildingsDataSet == null){
             Logging.warn("Connection error: Cannot import building!");
@@ -184,7 +185,7 @@ public class BuildingsImportAction extends JosmAction {
                         tr("Updated building tags"),
                         updateTagCommands
                     ));
-                    BuildingsImportStats.getInstance().addImportWithReplaceCounter(1);
+                    BuildingsImportStats.getInstance().addImportWithTagsUpdateCounter(1);
                 } catch (UserCancelException exception){
                     Logging.debug(
                         "No building tags (id: {0}) update, caused: Cancel conflict dialog by user",
@@ -201,7 +202,7 @@ public class BuildingsImportAction extends JosmAction {
                     currentDataSet,
                     importedBuilding
                 ));
-                BuildingsImportStats.getInstance().addImportCounter(1);
+                BuildingsImportStats.getInstance().addImportNewBuildingCounter(1);
             }
             else {
                 Logging.info("Importing new building (with geometry replacing and tags update)!");

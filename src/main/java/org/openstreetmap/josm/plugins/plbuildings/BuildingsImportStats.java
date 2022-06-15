@@ -16,8 +16,18 @@ import java.util.HashMap;
  * and manages serialization/deserialization between BuildingSettings
  */
 public class BuildingsImportStats {
-    private int importCounter;
+    private int importNewBuildingCounter;
     private int importWithReplaceCounter;
+
+    private int importWithTagsUpdateCounter;
+
+    private int totalImportActionCounter;
+
+    // FIELD_* strings are used to name fields to (de)serialization to JOSM Settings
+    private final String FIELD_IMPORT_NEW_BUILDING_COUNTER = "importNewBuilding";
+    private final String FIELD_IMPORT_WITH_REPLACE_COUNTER = "importWithReplace";
+    private final String FIELD_IMPORT_WITH_TAGS_UPDATE_COUNTER = "importWithTagsUpdate";
+    private final String FIELD_TOTAL_IMPORT_ACTION = "totalImportAction";
 
     private static BuildingsImportStats instance;
 
@@ -28,19 +38,27 @@ public class BuildingsImportStats {
         return instance;
     }
 
-    public int getImportCounter() {
-        return this.importCounter;
+    public int getImportNewBuildingCounter() {
+        return this.importNewBuildingCounter;
     }
 
     public int getImportWithReplaceCounter() {
         return this.importWithReplaceCounter;
     }
 
-    public void addImportCounter(int value){
+    public int getImportWithTagsUpdateCounter() {
+        return importWithTagsUpdateCounter;
+    }
+
+    public int getTotalImportActionCounter() {
+        return totalImportActionCounter;
+    }
+
+    public void addImportNewBuildingCounter(int value){
         if (value < 1){
             throw new IllegalArgumentException("Number must be greater than 0");
         }
-        this.importCounter += value;
+        this.importNewBuildingCounter += value;
         save();
     }
 
@@ -52,10 +70,28 @@ public class BuildingsImportStats {
         save();
     }
 
+    public void addImportWithTagsUpdateCounter(int value){
+        if (value < 1){
+            throw new IllegalArgumentException("Number must be greater than 0");
+        }
+        this.importWithTagsUpdateCounter += value;
+        save();
+    }
+
+    public void addTotalImportActionCounter(int value){
+        if (value < 1){
+            throw new IllegalArgumentException("Number must be greater than 0");
+        }
+        this.totalImportActionCounter += value;
+        save();
+    }
+
     public HashMap<String, Object> getStats(){
         HashMap<String, Object> stats = new HashMap<>();
-        stats.put("import", this.importCounter);
-        stats.put("importWithReplace", this.importWithReplaceCounter);
+        stats.put(FIELD_IMPORT_NEW_BUILDING_COUNTER, this.importNewBuildingCounter);
+        stats.put(FIELD_IMPORT_WITH_REPLACE_COUNTER, this.importWithReplaceCounter);
+        stats.put(FIELD_IMPORT_WITH_TAGS_UPDATE_COUNTER, this.importWithTagsUpdateCounter);
+        stats.put(FIELD_TOTAL_IMPORT_ACTION, this.totalImportActionCounter);
 
         return stats;
     }
@@ -75,8 +111,10 @@ public class BuildingsImportStats {
     private void save(){
         Logging.debug("Saving import stats: {0}", this.toString());
         JsonObject jsonStats = Json.createObjectBuilder()
-            .add("import", this.importCounter)
-            .add("importWithReplace", this.importWithReplaceCounter)
+            .add(FIELD_IMPORT_NEW_BUILDING_COUNTER, this.importNewBuildingCounter)
+            .add(FIELD_IMPORT_WITH_REPLACE_COUNTER, this.importWithReplaceCounter)
+            .add(FIELD_IMPORT_WITH_TAGS_UPDATE_COUNTER, this.importWithTagsUpdateCounter)
+            .add(FIELD_TOTAL_IMPORT_ACTION, this.totalImportActionCounter)
             .build();
 
         String encodedB64Stats = Base64.getEncoder().encodeToString(
@@ -97,8 +135,10 @@ public class BuildingsImportStats {
         JsonObject jsonStats = jsonReader.readObject();
         jsonReader.close();
 
-        this.importCounter = jsonStats.getInt("import", 0);
-        this.importWithReplaceCounter = jsonStats.getInt("importWithReplace", 0);
+        this.importNewBuildingCounter = jsonStats.getInt(FIELD_IMPORT_NEW_BUILDING_COUNTER, 0);
+        this.importWithReplaceCounter = jsonStats.getInt(FIELD_IMPORT_WITH_REPLACE_COUNTER, 0);
+        this.importWithTagsUpdateCounter = jsonStats.getInt(FIELD_IMPORT_WITH_TAGS_UPDATE_COUNTER, 0);
+        this.totalImportActionCounter = jsonStats.getInt(FIELD_TOTAL_IMPORT_ACTION, 0);
         Logging.debug("Loaded import stats: {0}", this.toString());
     }
 }
