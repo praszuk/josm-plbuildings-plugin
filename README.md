@@ -27,6 +27,7 @@ Import with replacing old building geometry:
 To show statistics, go to:`Menu->Data->Buildings import stats`
 
 Example stats:
+
 ![Buildings import statistics](media/import_stats.jpg)
 
 ### Simplified buildings import action flow
