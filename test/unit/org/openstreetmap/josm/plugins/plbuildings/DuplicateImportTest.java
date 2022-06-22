@@ -9,6 +9,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction;
+import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -25,9 +26,9 @@ public class DuplicateImportTest {
     public JOSMTestRules rules = new JOSMTestRules().main();
 
     static {
-        new MockUp<BuildingsImportAction>(){
+        new MockUp<UpdateBuildingTagsCommand>(){
             @Mock
-            List<Command> updateTags(Way newBuilding, Way selectedBuilding) {
+            List<Command> prepareUpdateTagsCommands(Way newBuilding, Way selectedBuilding) {
                 return Collections.singletonList(
                     new ChangePropertyCommand(
                         selectedBuilding.getDataSet(),

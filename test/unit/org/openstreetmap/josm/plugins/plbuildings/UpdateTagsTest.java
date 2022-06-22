@@ -9,6 +9,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction;
+import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.UserCancelException;
 
@@ -56,9 +57,9 @@ public class UpdateTagsTest {
                 return importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
             }
         };
-        new MockUp<BuildingsImportAction>(){
+        new MockUp<UpdateBuildingTagsCommand>(){
             @Mock
-            List<Command> updateTags(Way newBuilding, Way selectedBuilding) {
+            List<Command> prepareUpdateTagsCommands(Way newBuilding, Way selectedBuilding) {
                 return Collections.singletonList(
                     new ChangePropertyCommand(
                         selectedBuilding.getDataSet(),
@@ -97,9 +98,9 @@ public class UpdateTagsTest {
                 return ds;
             }
         };
-        new MockUp<BuildingsImportAction>(){
+        new MockUp<UpdateBuildingTagsCommand>(){
             @Mock
-            List<Command> updateTags(Way newBuilding, Way selectedBuilding) {
+            List<Command> prepareUpdateTagsCommands(Way newBuilding, Way selectedBuilding) {
                 return Collections.singletonList(
                     new ChangePropertyCommand(
                         selectedBuilding.getDataSet(),
@@ -136,9 +137,9 @@ public class UpdateTagsTest {
                 return ds;
             }
         };
-        new MockUp<BuildingsImportAction>(){
+        new MockUp<UpdateBuildingTagsCommand>(){
             @Mock
-            List<Command> updateTags(Way newBuilding, Way selectedBuilding) throws UserCancelException {
+            List<Command> prepareUpdateTagsCommands(Way newBuilding, Way selectedBuilding) throws UserCancelException {
                 throw new UserCancelException("Canceled by user");
             }
         };
