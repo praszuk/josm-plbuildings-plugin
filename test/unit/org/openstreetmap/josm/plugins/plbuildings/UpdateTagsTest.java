@@ -59,7 +59,7 @@ public class UpdateTagsTest {
         };
         new MockUp<UpdateBuildingTagsCommand>(){
             @Mock
-            List<Command> prepareUpdateTagsCommands(Way newBuilding, Way selectedBuilding) {
+            private List<Command> prepareUpdateTagsCommands(Way selectedBuilding, Way newBuilding){
                 return Collections.singletonList(
                     new ChangePropertyCommand(
                         selectedBuilding.getDataSet(),
@@ -100,7 +100,7 @@ public class UpdateTagsTest {
         };
         new MockUp<UpdateBuildingTagsCommand>(){
             @Mock
-            List<Command> prepareUpdateTagsCommands(Way newBuilding, Way selectedBuilding) {
+            private List<Command> prepareUpdateTagsCommands(Way selectedBuilding, Way newBuilding){
                 return Collections.singletonList(
                     new ChangePropertyCommand(
                         selectedBuilding.getDataSet(),
@@ -139,7 +139,10 @@ public class UpdateTagsTest {
         };
         new MockUp<UpdateBuildingTagsCommand>(){
             @Mock
-            List<Command> prepareUpdateTagsCommands(Way newBuilding, Way selectedBuilding) throws UserCancelException {
+            private List<Command> prepareUpdateTagsCommands(
+                Way selectedBuilding,
+                Way newBuilding
+            ) throws UserCancelException{
                 throw new UserCancelException("Canceled by user");
             }
         };
