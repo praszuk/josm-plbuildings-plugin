@@ -4,20 +4,20 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.*;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsDownloader;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportStats;
 import org.openstreetmap.josm.plugins.plbuildings.commands.AddSharedNodesBuildingCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceUpdateBuildingCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsDuplicateValidator;
-import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
@@ -54,54 +54,6 @@ public class BuildingsImportAction extends JosmAction {
         return BuildingsDownloader.downloadBuildings(latLonPoint, "bdot");
     }
 
-    static void handleReplaceUpdateBuildingCommandException(ReplaceUpdateBuildingCommand cmd, Way selectedBuilding) {
-        Notification note;
-
-        if (cmd.getCancelException() instanceof IllegalArgumentException) {
-            // If user cancel conflict window do nothing
-            note = new Notification(tr("Canceled merging buildings."));
-            note.setIcon(JOptionPane.WARNING_MESSAGE);
-
-            Logging.debug(
-                "No building (id: {0}) update, caused: Cancel conflict dialog by user",
-                selectedBuilding.getId()
-            );
-        } else if(cmd.getCancelException() instanceof ReplaceGeometryException) {
-            // If selected building cannot be merged (e.g. connected ways/relation)
-            note = new Notification(tr(
-            "Cannot merge buildings!" +
-                " Old building may be connected with some ways/relations" +
-                " or not whole area is downloaded."
-            ));
-            note.setIcon(JOptionPane.ERROR_MESSAGE);
-
-            Logging.debug(
-                "No building update (id: {0}), caused: Replacing Geometry from UtilPlugins2 error",
-                selectedBuilding.getId()
-            );
-        } else if (cmd.getCancelException() instanceof DataIntegrityProblemException) {
-            // If data integrity like nodes duplicated or first!=last has been somehow broken
-            note = new Notification(tr(
-                "Cannot merge buildings! Building has been wrongly replaced and data has been broken!"
-            ));
-            note.setIcon(JOptionPane.ERROR_MESSAGE);
-
-            Logging.error(
-                "No building update (id: {0}), caused: DataIntegrity with replacing error! Building: {1}",
-                selectedBuilding.getId(),
-                selectedBuilding
-            );
-        } else {
-            note = new Notification(tr("Cannot merge buildings! Unknown error!"));
-            Logging.error(
-                "No building update (id: {0}), caused: Unknown error: {1}",
-                selectedBuilding.getId(),
-                cmd.getCancelException().getMessage()
-            );
-        }
-        note.setDuration(Notification.TIME_SHORT);
-        note.show();
-    }
     /**
      * Flow:
      * Download building from server to virtual dataset
@@ -175,21 +127,13 @@ public class BuildingsImportAction extends JosmAction {
                     currentDataSet,
                     importedBuilding
                 );
-//                addSharedNodesBuildingCommand.executeCommand();
-
                 // Here it can be checked for detached/semi/terrace
-
                 UpdateBuildingTagsCommand updateBuildingTagsCommand = new UpdateBuildingTagsCommand(
                     currentDataSet,
                     addSharedNodesBuildingCommand,
                     importedBuilding
                 );
-//                boolean isUpdated = updateBuildingTagsCommand.executeCommand();
-//                if (!isUpdated){
-//                    UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), addSharedNodesBuildingCommand, true);
-//                    Logging.error("Unexpected update tags for new building failure!");
-//                    return;
-//                }
+
                 SequenceCommand importedANewBuildingSequence = new SequenceCommand(
                     tr("Imported a new building"),
                     Arrays.asList(addSharedNodesBuildingCommand, updateBuildingTagsCommand)
@@ -201,7 +145,7 @@ public class BuildingsImportAction extends JosmAction {
                 }
                 UndoRedoHandler.getInstance().add(importedANewBuildingSequence, false);
                 BuildingsImportStats.getInstance().addImportNewBuildingCounter(1);
-                Logging.debug("Imported building {0}", addSharedNodesBuildingCommand.getCreatedBuilding().getId());
+                Logging.debug("Imported building: {0}", addSharedNodesBuildingCommand.getResultBuilding().getId());
             }
             else {
                 Logging.info("Importing new building (with geometry replacing and tags update)!");
@@ -210,36 +154,17 @@ public class BuildingsImportAction extends JosmAction {
                     currentDataSet,
                     importedBuilding
                 );
-                // addSharedNodesBuildingCommand.executeCommand();
-
-                // Way newBuildingGeometry = addSharedNodesBuildingCommand.getCreatedBuilding();
-                // UndoRedoHandler.getInstance().add(addSharedNodesBuildingCommand, false);
-
                 ReplaceUpdateBuildingCommand replaceUpdateBuildingCommand = new ReplaceUpdateBuildingCommand(
                     currentDataSet,
                     selectedBuilding,
                     addSharedNodesBuildingCommand
                 );
-//                boolean isReplaced = replaceUpdateBuildingCommand.executeCommand();
-//                if (!isReplaced){
-//                    UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), addSharedNodesBuildingCommand, true);
-//                    handleReplaceUpdateBuildingCommandException(replaceUpdateBuildingCommand, selectedBuilding);
-//                    return;
-//                }
-
                 // Here it can be checked for detached/semi/terrace
-
                 UpdateBuildingTagsCommand updateBuildingTagsCommand = new UpdateBuildingTagsCommand(
                     currentDataSet,
                     ()->selectedBuilding,
                     importedBuilding
                 );
-//                boolean isUpdated = updateBuildingTagsCommand.executeCommand();
-//                if (!isUpdated){
-//                    UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), addSharedNodesBuildingCommand, true);
-//                    Logging.info("Canceled merging tags with building!");
-//                    return;
-//                }
 
                 SequenceCommand mergedGeometryAndUpdatedTagsBuildingSequence = new SequenceCommand(
                     tr("Updated building tags and geometry"),
@@ -255,17 +180,6 @@ public class BuildingsImportAction extends JosmAction {
                     return;
                 }
                 UndoRedoHandler.getInstance().add(mergedGeometryAndUpdatedTagsBuildingSequence, false);
-//                UndoRedoHandler.getInstance().add(
-//                    new SequenceCommand(
-//                        tr("Updated building tags and geometry"),
-//                        Arrays.asList(
-//                            addSharedNodesBuildingCommand,
-//                            replaceUpdateBuildingCommand,
-//                            updateBuildingTagsCommand
-//                        )
-//                    ),
-//                    false
-//                );
                 BuildingsImportStats.getInstance().addImportWithReplaceCounter(1);
                 Logging.debug("Updated building {0} with new data", selectedBuilding.getId());
             }

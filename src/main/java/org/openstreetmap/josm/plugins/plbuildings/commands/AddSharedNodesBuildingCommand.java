@@ -32,11 +32,6 @@ public class AddSharedNodesBuildingCommand extends Command implements CommandRes
         this.importedBuilding = importedBuilding;
     }
 
-    public Way getCreatedBuilding() {
-        return createdBuilding;
-    }
-
-
     @Override
     public void fillModifiedData(
             Collection<OsmPrimitive> modified,
