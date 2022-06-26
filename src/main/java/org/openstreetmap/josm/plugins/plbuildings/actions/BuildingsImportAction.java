@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.plugins.plbuildings.actions;
 
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.*;
@@ -11,7 +12,6 @@ import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportStats;
 import org.openstreetmap.josm.plugins.plbuildings.commands.AddSharedNodesBuildingCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceUpdateBuildingCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
-import org.openstreetmap.josm.plugins.plbuildings.utils.UndoRedoUtils;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsDuplicateValidator;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryException;
 import org.openstreetmap.josm.tools.Logging;
@@ -20,6 +20,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -153,25 +154,54 @@ public class BuildingsImportAction extends JosmAction {
             else {
                 Logging.info("Duplicated building geometry. Trying to update tags!");
                 UpdateBuildingTagsCommand updateBuildingTagsCommand = new UpdateBuildingTagsCommand(
-                    selectedBuilding,
+                    currentDataSet,
+                    () -> selectedBuilding,
                     importedBuilding
                 );
                 boolean isUpdated = updateBuildingTagsCommand.executeCommand();
-                if (isUpdated){
-                    UndoRedoHandler.getInstance().add(updateBuildingTagsCommand, false);
-                    BuildingsImportStats.getInstance().addImportWithTagsUpdateCounter(1);
-                    Logging.info("Update selected building tags (without geometry replacing)!");
+                if (!isUpdated){
+                    Logging.info("Error with updating tags!");
+                    return;
                 }
+                UndoRedoHandler.getInstance().add(updateBuildingTagsCommand, false);
+                BuildingsImportStats.getInstance().addImportWithTagsUpdateCounter(1);
+                Logging.info("Updated selected building tags (without geometry replacing)!");
             }
         }
         else {
             if (selectedBuilding == null){
                 Logging.info("Importing new building (without geometry replacing)!");
-                UndoRedoHandler.getInstance().add(new AddSharedNodesBuildingCommand(
+                AddSharedNodesBuildingCommand addSharedNodesBuildingCommand = new AddSharedNodesBuildingCommand(
                     currentDataSet,
                     importedBuilding
-                ));
+                );
+//                addSharedNodesBuildingCommand.executeCommand();
+
+                // Here it can be checked for detached/semi/terrace
+
+                UpdateBuildingTagsCommand updateBuildingTagsCommand = new UpdateBuildingTagsCommand(
+                    currentDataSet,
+                    addSharedNodesBuildingCommand,
+                    importedBuilding
+                );
+//                boolean isUpdated = updateBuildingTagsCommand.executeCommand();
+//                if (!isUpdated){
+//                    UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), addSharedNodesBuildingCommand, true);
+//                    Logging.error("Unexpected update tags for new building failure!");
+//                    return;
+//                }
+                SequenceCommand importedANewBuildingSequence = new SequenceCommand(
+                    tr("Imported a new building"),
+                    Arrays.asList(addSharedNodesBuildingCommand, updateBuildingTagsCommand)
+                );
+                boolean isSuccess = importedANewBuildingSequence.executeCommand();
+                if(!isSuccess){
+                    Logging.debug("Import of a new building failed!");
+                    return;
+                }
+                UndoRedoHandler.getInstance().add(importedANewBuildingSequence, false);
                 BuildingsImportStats.getInstance().addImportNewBuildingCounter(1);
+                Logging.debug("Imported building {0}", addSharedNodesBuildingCommand.getCreatedBuilding().getId());
             }
             else {
                 Logging.info("Importing new building (with geometry replacing and tags update)!");
@@ -180,26 +210,64 @@ public class BuildingsImportAction extends JosmAction {
                     currentDataSet,
                     importedBuilding
                 );
-                addSharedNodesBuildingCommand.executeCommand();
+                // addSharedNodesBuildingCommand.executeCommand();
 
-                Way newBuilding = addSharedNodesBuildingCommand.getCreatedBuilding();
-                UndoRedoHandler.getInstance().add(addSharedNodesBuildingCommand, false);
+                // Way newBuildingGeometry = addSharedNodesBuildingCommand.getCreatedBuilding();
+                // UndoRedoHandler.getInstance().add(addSharedNodesBuildingCommand, false);
 
                 ReplaceUpdateBuildingCommand replaceUpdateBuildingCommand = new ReplaceUpdateBuildingCommand(
                     currentDataSet,
                     selectedBuilding,
-                    newBuilding
+                    addSharedNodesBuildingCommand
                 );
-                boolean isReplacedUpdated = replaceUpdateBuildingCommand.executeCommand();
-                if (isReplacedUpdated){
-                    UndoRedoHandler.getInstance().add(replaceUpdateBuildingCommand, false);
-                    BuildingsImportStats.getInstance().addImportWithReplaceCounter(1);
-                    Logging.debug("Updated building {0} with new data", selectedBuilding.getId());
+//                boolean isReplaced = replaceUpdateBuildingCommand.executeCommand();
+//                if (!isReplaced){
+//                    UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), addSharedNodesBuildingCommand, true);
+//                    handleReplaceUpdateBuildingCommandException(replaceUpdateBuildingCommand, selectedBuilding);
+//                    return;
+//                }
+
+                // Here it can be checked for detached/semi/terrace
+
+                UpdateBuildingTagsCommand updateBuildingTagsCommand = new UpdateBuildingTagsCommand(
+                    currentDataSet,
+                    ()->selectedBuilding,
+                    importedBuilding
+                );
+//                boolean isUpdated = updateBuildingTagsCommand.executeCommand();
+//                if (!isUpdated){
+//                    UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), addSharedNodesBuildingCommand, true);
+//                    Logging.info("Canceled merging tags with building!");
+//                    return;
+//                }
+
+                SequenceCommand mergedGeometryAndUpdatedTagsBuildingSequence = new SequenceCommand(
+                    tr("Updated building tags and geometry"),
+                    Arrays.asList(
+                        addSharedNodesBuildingCommand,
+                        replaceUpdateBuildingCommand,
+                        updateBuildingTagsCommand
+                    )
+                );
+                boolean isSuccess = mergedGeometryAndUpdatedTagsBuildingSequence.executeCommand();
+                if(!isSuccess){
+                    Logging.debug("Update (geometry and tags) building failed!");
+                    return;
                 }
-                else {
-                    UndoRedoUtils.undoUntil(UndoRedoHandler.getInstance(), addSharedNodesBuildingCommand, true);
-                    handleReplaceUpdateBuildingCommandException(replaceUpdateBuildingCommand, selectedBuilding);
-                }
+                UndoRedoHandler.getInstance().add(mergedGeometryAndUpdatedTagsBuildingSequence, false);
+//                UndoRedoHandler.getInstance().add(
+//                    new SequenceCommand(
+//                        tr("Updated building tags and geometry"),
+//                        Arrays.asList(
+//                            addSharedNodesBuildingCommand,
+//                            replaceUpdateBuildingCommand,
+//                            updateBuildingTagsCommand
+//                        )
+//                    ),
+//                    false
+//                );
+                BuildingsImportStats.getInstance().addImportWithReplaceCounter(1);
+                Logging.debug("Updated building {0} with new data", selectedBuilding.getId());
             }
         }
         currentDataSet.clearSelection();
