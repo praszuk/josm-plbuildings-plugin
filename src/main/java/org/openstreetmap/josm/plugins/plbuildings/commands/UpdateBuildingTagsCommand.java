@@ -79,7 +79,7 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
             this.updateTagsCommand = new SequenceCommand(DESCRIPTION_TEXT, commands);
         }
         this.updateTagsCommand.executeCommand();
-
+        Logging.debug("Updated tags for the building: {0}", selectedBuilding);
         return true;
     }
 

@@ -8,6 +8,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryCommand;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryException;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryUtils;
+import org.openstreetmap.josm.tools.Logging;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -107,6 +108,7 @@ public class ReplaceUpdateBuildingCommand extends Command implements CommandResu
             this.cancelException = new DataIntegrityProblemException(msg.getMessage());
             return false;
         }
+        Logging.debug("Updated tags for the selected building: {0}", selectedBuilding);
         return true;
     }
 
