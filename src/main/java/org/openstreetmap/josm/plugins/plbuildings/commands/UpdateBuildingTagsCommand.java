@@ -12,16 +12,17 @@ import java.util.*;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 
-public class UpdateBuildingTagsCommand extends Command {
+public class UpdateBuildingTagsCommand extends Command implements CommandResultBuilding{
 
     static final String DESCRIPTION_TEXT = tr("Updated building tags");
-    private final Way selectedBuilding;
+    private final CommandResultBuilding resultSelectedBuilding;
     private final Way newBuilding;
+    private Way selectedBuilding;
     private SequenceCommand updateTagsCommand;
 
-    public UpdateBuildingTagsCommand(Way selectedBuilding, Way newBuilding) {
-        super(selectedBuilding.getDataSet());
-        this.selectedBuilding = selectedBuilding;
+    public UpdateBuildingTagsCommand(DataSet dataSet, CommandResultBuilding resultSelectedBuilding, Way newBuilding) {
+        super(dataSet);
+        this.resultSelectedBuilding = resultSelectedBuilding;
         this.newBuilding = newBuilding;
         this.updateTagsCommand = null;
     }
@@ -60,6 +61,7 @@ public class UpdateBuildingTagsCommand extends Command {
     @Override
     public boolean executeCommand() {
         if (this.updateTagsCommand == null) {
+            this.selectedBuilding = resultSelectedBuilding.getResultBuilding();
             List<Command> commands;
             try {
                 commands = prepareUpdateTagsCommands(selectedBuilding, newBuilding);
@@ -98,5 +100,10 @@ public class UpdateBuildingTagsCommand extends Command {
             primitives,
             Collections.singleton(selectedBuilding)
         );
+    }
+
+    @Override
+    public Way getResultBuilding() {
+        return this.selectedBuilding;
     }
 }
