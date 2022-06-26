@@ -14,7 +14,7 @@ import static org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils.
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 
-public class AddSharedNodesBuildingCommand extends Command  {
+public class AddSharedNodesBuildingCommand extends Command implements CommandResultBuilding  {
     /**
      * Add building to dataset and merge with existing nodes.
      * It could not copy all new nodes. It will create only the new which cannot be reused.
@@ -31,11 +31,6 @@ public class AddSharedNodesBuildingCommand extends Command  {
         this.dataSet = dataSet;
         this.importedBuilding = importedBuilding;
     }
-
-    public Way getCreatedBuilding() {
-        return createdBuilding;
-    }
-
 
     @Override
     public void fillModifiedData(
@@ -92,7 +87,6 @@ public class AddSharedNodesBuildingCommand extends Command  {
             .collect(Collectors.toList());
 
         Way newBuilding = new Way();
-        newBuilding.cloneFrom(importedBuilding, false);
 
         // Check if any building's node is very close to existing node – almost/same lat lon and replace it
         BBox bbox = getBBox(newNodes, BuildingsSettings.BBOX_OFFSET.get());
@@ -130,4 +124,8 @@ public class AddSharedNodesBuildingCommand extends Command  {
         Logging.debug("Added new building {0}", createdBuilding.getId());
     }
 
+    @Override
+    public Way getResultBuilding() {
+        return createdBuilding;
+    }
 }
