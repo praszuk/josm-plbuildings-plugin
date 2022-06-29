@@ -1,10 +1,7 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
-import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
-
-import java.util.Arrays;
 
 public class BuildingsSettings {
 
@@ -19,15 +16,6 @@ public class BuildingsSettings {
     public static final DoubleProperty SEARCH_DISTANCE = new DoubleProperty(
         "plbuildings.search_distance",
         3.0 // meters
-    );
-
-    public static final ListProperty REPLACE_BUILDING_TAG_NO_CONFLICT = new ListProperty(
-    "plbuildings.replace_building_tag_no_conflict",
-        Arrays.asList(
-            "building", "yes",
-            "building", "farm_auxiliary",  // Not used anymore. It was used instead of building=outbuilding
-            "source", "*"
-        )
     );
 
     public static final StringProperty IMPORT_STATS = new StringProperty(
