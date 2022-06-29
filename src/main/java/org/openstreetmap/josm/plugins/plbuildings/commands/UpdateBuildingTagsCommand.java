@@ -9,6 +9,7 @@ import org.openstreetmap.josm.tools.UserCancelException;
 
 import java.util.*;
 
+import static org.openstreetmap.josm.plugins.plbuildings.utils.TagConflictUtils.resolveTagConflictsDefault;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 
@@ -84,7 +85,9 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
     }
 
     /**
-     * Wrapper function copied from Utilsplugin2 ReplaceGeometryUtils.getTagConflictResolutionCommands
+     * Prepare update tags command using CombinePrimitiveResolverDialog
+     * before launching dialog, it checks if any conflict can be skipped
+     * using resolveTagConflictsDefault from TagConflictsUtil
      *
      * @return list of commands as updating tags
      * @throws UserCancelException if user close the window or reject possible tags conflict
@@ -94,9 +97,12 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
         Way newBuilding
     ) throws UserCancelException {
         Collection<OsmPrimitive> primitives = Arrays.asList(selectedBuilding, newBuilding);
+        TagCollection tagsOfPrimitives = TagCollection.unionOfAllPrimitives(primitives);
+
+        resolveTagConflictsDefault(tagsOfPrimitives, selectedBuilding, newBuilding);
 
         return CombinePrimitiveResolverDialog.launchIfNecessary(
-            TagCollection.unionOfAllPrimitives(primitives),
+            tagsOfPrimitives,
             primitives,
             Collections.singleton(selectedBuilding)
         );
