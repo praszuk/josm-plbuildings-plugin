@@ -12,7 +12,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsDownloader;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportStats;
 import org.openstreetmap.josm.plugins.plbuildings.commands.AddBuildingGeometryCommand;
-import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceUpdateBuildingCommand;
+import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceBuildingGeometryCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsDuplicateValidator;
 import org.openstreetmap.josm.tools.Logging;
@@ -154,7 +154,7 @@ public class BuildingsImportAction extends JosmAction {
                     currentDataSet,
                     importedBuilding
                 );
-                ReplaceUpdateBuildingCommand replaceUpdateBuildingCommand = new ReplaceUpdateBuildingCommand(
+                ReplaceBuildingGeometryCommand replaceBuildingGeometryCommand = new ReplaceBuildingGeometryCommand(
                     currentDataSet,
                     selectedBuilding,
                     addBuildingGeometryCommand
@@ -170,7 +170,7 @@ public class BuildingsImportAction extends JosmAction {
                     tr("Updated building tags and geometry"),
                     Arrays.asList(
                         addBuildingGeometryCommand,
-                        replaceUpdateBuildingCommand,
+                        replaceBuildingGeometryCommand,
                         updateBuildingTagsCommand
                     )
                 );

@@ -19,9 +19,9 @@ import static org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWay
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 
-public class ReplaceUpdateBuildingCommand extends Command implements CommandResultBuilding {
+public class ReplaceBuildingGeometryCommand extends Command implements CommandResultBuilding {
     /**
-     * Replace the old building geometry with the new one and update building tags
+     * Replace the old building geometry with the new one
      */
     private final Way selectedBuilding;
     private final CommandResultBuilding resultNewBuilding;
@@ -29,7 +29,7 @@ public class ReplaceUpdateBuildingCommand extends Command implements CommandResu
 
     private ReplaceGeometryCommand replaceGeometryCommand;
 
-    public ReplaceUpdateBuildingCommand(DataSet data, Way selectedBuilding, CommandResultBuilding resultNewBuilding) {
+    public ReplaceBuildingGeometryCommand(DataSet data, Way selectedBuilding, CommandResultBuilding resultNewBuilding) {
         super(data);
         this.selectedBuilding = selectedBuilding;
         this.resultNewBuilding = resultNewBuilding;
@@ -41,7 +41,7 @@ public class ReplaceUpdateBuildingCommand extends Command implements CommandResu
             Collection<OsmPrimitive> deleted,
             Collection<OsmPrimitive> added
     ) {
-        replaceAndUpdate(selectedBuilding, newBuilding);
+        updateGeometry(selectedBuilding, newBuilding);
         modified.add(selectedBuilding);
     }
 
@@ -72,8 +72,8 @@ public class ReplaceUpdateBuildingCommand extends Command implements CommandResu
         this.newBuilding = resultNewBuilding.getResultBuilding();
 
         try {
-            replaceAndUpdate(selectedBuilding, newBuilding);
-            Logging.debug("Updated tags for the selected building: {0}", selectedBuilding);
+            updateGeometry(selectedBuilding, newBuilding);
+            Logging.debug("Updated geometry for the selected building: {0}", selectedBuilding);
             return true;
         } catch(Exception exception){
             handleException(exception);
@@ -138,7 +138,7 @@ public class ReplaceUpdateBuildingCommand extends Command implements CommandResu
      * @throws ReplaceGeometryException if selected building cannot be merged (e.g. connected ways/relation)
      * @throws DataIntegrityProblemException if something has been broken (low-level) at merging buildings
      */
-    private void replaceAndUpdate(Way selectedBuilding, Way newBuilding) throws IllegalArgumentException,
+    private void updateGeometry(Way selectedBuilding, Way newBuilding) throws IllegalArgumentException,
         NullPointerException, ReplaceGeometryException, DataIntegrityProblemException
     {
         replaceGeometryCommand = ReplaceGeometryUtils.buildReplaceWithNewCommand(
@@ -153,7 +153,7 @@ public class ReplaceUpdateBuildingCommand extends Command implements CommandResu
 
     @Override
     public String getDescriptionText() {
-        return tr("Replace geometry and update tags");
+        return tr("Replace geometry");
     }
 
     @Override
