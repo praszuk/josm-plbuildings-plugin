@@ -14,9 +14,9 @@ import static org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils.
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 
-public class AddSharedNodesBuildingCommand extends Command implements CommandResultBuilding  {
+public class AddBuildingGeometryCommand extends Command implements CommandResultBuilding  {
     /**
-     * Add building to dataset and merge with existing nodes.
+     * Add building geometry to dataset and merge with existing nodes.
      * It could not copy all new nodes. It will create only the new which cannot be reused.
      */
 
@@ -26,7 +26,7 @@ public class AddSharedNodesBuildingCommand extends Command implements CommandRes
     private List<Node> createdNodes; // only missing nodes (without existing nodes – not all of created building nodes)
     private Way createdBuilding;
 
-    public AddSharedNodesBuildingCommand(DataSet dataSet, Way importedBuilding) {
+    public AddBuildingGeometryCommand(DataSet dataSet, Way importedBuilding) {
         super(dataSet);
         this.dataSet = dataSet;
         this.importedBuilding = importedBuilding;
