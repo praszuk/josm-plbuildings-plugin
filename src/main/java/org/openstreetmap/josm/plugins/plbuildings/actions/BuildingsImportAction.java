@@ -11,8 +11,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsDownloader;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportStats;
-import org.openstreetmap.josm.plugins.plbuildings.commands.AddSharedNodesBuildingCommand;
-import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceUpdateBuildingCommand;
+import org.openstreetmap.josm.plugins.plbuildings.commands.AddBuildingGeometryCommand;
+import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceBuildingGeometryCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsDuplicateValidator;
 import org.openstreetmap.josm.tools.Logging;
@@ -123,20 +123,20 @@ public class BuildingsImportAction extends JosmAction {
         else {
             if (selectedBuilding == null){
                 Logging.info("Importing new building (without geometry replacing)!");
-                AddSharedNodesBuildingCommand addSharedNodesBuildingCommand = new AddSharedNodesBuildingCommand(
+                AddBuildingGeometryCommand addBuildingGeometryCommand = new AddBuildingGeometryCommand(
                     currentDataSet,
                     importedBuilding
                 );
                 // Here it can be checked for detached/semi/terrace
                 UpdateBuildingTagsCommand updateBuildingTagsCommand = new UpdateBuildingTagsCommand(
                     currentDataSet,
-                    addSharedNodesBuildingCommand,
+                    addBuildingGeometryCommand,
                     importedBuilding
                 );
 
                 SequenceCommand importedANewBuildingSequence = new SequenceCommand(
                     tr("Imported a new building"),
-                    Arrays.asList(addSharedNodesBuildingCommand, updateBuildingTagsCommand)
+                    Arrays.asList(addBuildingGeometryCommand, updateBuildingTagsCommand)
                 );
                 boolean isSuccess = importedANewBuildingSequence.executeCommand();
                 if(!isSuccess){
@@ -145,19 +145,19 @@ public class BuildingsImportAction extends JosmAction {
                 }
                 UndoRedoHandler.getInstance().add(importedANewBuildingSequence, false);
                 BuildingsImportStats.getInstance().addImportNewBuildingCounter(1);
-                Logging.debug("Imported building: {0}", addSharedNodesBuildingCommand.getResultBuilding().getId());
+                Logging.debug("Imported building: {0}", addBuildingGeometryCommand.getResultBuilding().getId());
             }
             else {
                 Logging.info("Importing new building (with geometry replacing and tags update)!");
 
-                AddSharedNodesBuildingCommand addSharedNodesBuildingCommand = new AddSharedNodesBuildingCommand(
+                AddBuildingGeometryCommand addBuildingGeometryCommand = new AddBuildingGeometryCommand(
                     currentDataSet,
                     importedBuilding
                 );
-                ReplaceUpdateBuildingCommand replaceUpdateBuildingCommand = new ReplaceUpdateBuildingCommand(
+                ReplaceBuildingGeometryCommand replaceBuildingGeometryCommand = new ReplaceBuildingGeometryCommand(
                     currentDataSet,
                     selectedBuilding,
-                    addSharedNodesBuildingCommand
+                    addBuildingGeometryCommand
                 );
                 // Here it can be checked for detached/semi/terrace
                 UpdateBuildingTagsCommand updateBuildingTagsCommand = new UpdateBuildingTagsCommand(
@@ -169,8 +169,8 @@ public class BuildingsImportAction extends JosmAction {
                 SequenceCommand mergedGeometryAndUpdatedTagsBuildingSequence = new SequenceCommand(
                     tr("Updated building tags and geometry"),
                     Arrays.asList(
-                        addSharedNodesBuildingCommand,
-                        replaceUpdateBuildingCommand,
+                        addBuildingGeometryCommand,
+                        replaceBuildingGeometryCommand,
                         updateBuildingTagsCommand
                     )
                 );
