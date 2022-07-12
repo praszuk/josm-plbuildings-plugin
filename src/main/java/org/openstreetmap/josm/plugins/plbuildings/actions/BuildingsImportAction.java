@@ -46,12 +46,16 @@ public class BuildingsImportAction extends JosmAction {
     }
 
     public static DataSet getBuildingsAtCurrentLocation(){
-        LatLon latLonPoint = MainApplication.getMap().mapView.getLatLon(
-            MainApplication.getMap().mapView.getMousePosition().getX(),
-            MainApplication.getMap().mapView.getMousePosition().getY()
-        );
-
-        return BuildingsDownloader.downloadBuildings(latLonPoint, "bdot");
+        try {
+            LatLon latLonPoint = MainApplication.getMap().mapView.getLatLon(
+                MainApplication.getMap().mapView.getMousePosition().getX(),
+                MainApplication.getMap().mapView.getMousePosition().getY()
+            );
+            return BuildingsDownloader.downloadBuildings(latLonPoint, "bdot");
+        }
+        catch (NullPointerException exception){
+            return null;
+        }
     }
 
     /**
@@ -71,7 +75,7 @@ public class BuildingsImportAction extends JosmAction {
         BuildingsImportStats.getInstance().addTotalImportActionCounter(1);
         DataSet importedBuildingsDataSet = getBuildingsAtCurrentLocation();
         if (importedBuildingsDataSet == null){
-            Logging.warn("Connection error: Cannot import building!");
+            Logging.warn("Downloading error: Cannot import building!");
             return;
         }
         if (importedBuildingsDataSet.isEmpty()) {
