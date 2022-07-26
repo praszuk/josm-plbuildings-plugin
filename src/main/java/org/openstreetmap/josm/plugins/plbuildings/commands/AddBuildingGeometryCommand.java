@@ -68,7 +68,7 @@ public class AddBuildingGeometryCommand extends Command implements CommandResult
 
     @Override
     public String getDescriptionText() {
-        return tr("Add imported building");
+        return tr("Added building geometry");
     }
 
     /**
