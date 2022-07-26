@@ -28,20 +28,20 @@ import java.util.stream.Collectors;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class BuildingsImportAction extends JosmAction {
-    static final String DESCRIPTION = tr("Buildings download action.");
-
+    static final String DESCRIPTION = tr("Import building at cursor position or replace/update selected.");
+    static final String TITLE = tr("Download building");
     public BuildingsImportAction() {
         super(
-                tr("Download building"),
-                null,
-                DESCRIPTION,
-                Shortcut.registerShortcut(
-                    "download:building",
-                    tr("Download building"),
-                    KeyEvent.VK_1,
-                    Shortcut.CTRL_SHIFT
-                ),
-                true
+            TITLE,
+            null,
+            DESCRIPTION,
+            Shortcut.registerShortcut(
+                "download:building",
+                TITLE,
+                KeyEvent.VK_1,
+                Shortcut.CTRL_SHIFT
+            ),
+            true
         );
     }
 
@@ -100,7 +100,7 @@ public class BuildingsImportAction extends JosmAction {
             .filter(osmPrimitive -> osmPrimitive.getType() == OsmPrimitiveType.WAY)
             .collect(Collectors.toList());
         Way selectedBuilding = selected.size() == 1 ? (Way) selected.toArray()[0]:null;
-
+        // if (importedBuilding.hasTag("building", "house")){importedBuilding.put("building", "detached");} // TODO remove it
         if (BuildingsDuplicateValidator.isDuplicate(currentDataSet, importedBuilding)){
             if (selectedBuilding == null){
                 Logging.info("Duplicated building geometry. Not selected any building. Canceling!");

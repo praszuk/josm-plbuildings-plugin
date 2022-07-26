@@ -86,7 +86,7 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
 
         if (exception instanceof IllegalArgumentException) {
             // If user cancel conflict window do nothing
-            note = new Notification(tr("Canceled merging buildings."));
+            note = new Notification(tr("Canceled merging buildings!"));
             note.setIcon(JOptionPane.WARNING_MESSAGE);
 
             Logging.debug(
@@ -98,7 +98,7 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
             note = new Notification(tr(
                 "Cannot merge buildings!" +
                     " Old building may be connected with some ways/relations" +
-                    " or not whole area is downloaded."
+                    " or not whole area is downloaded!"
             ));
             note.setIcon(JOptionPane.ERROR_MESSAGE);
 
@@ -153,7 +153,7 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
 
     @Override
     public String getDescriptionText() {
-        return tr("Replace geometry");
+        return tr("Replaced building geometry");
     }
 
     @Override
