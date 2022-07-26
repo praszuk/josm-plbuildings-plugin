@@ -50,11 +50,24 @@ public class TagConflictUtils {
                 if (currentValue.equals("yes")){
                     return true;
                 }
+                // farm_auxiliary is more like deprecated in Poland
                 else if (currentValue.equals("farm_auxiliary") && newValue.equals("outbuilding")){
                     return true;
                 }
+
+                // residential can be changed to any living building
                 else if (
-                    Arrays.asList("house", "residential").contains(currentValue) &&
+                    currentValue.equals("residential") &&
+                    Arrays.asList(
+                        "house", "apartments", "detached", "semidetached_house", "terrace"
+                    ).contains(newValue)
+                ){
+                    return true;
+                }
+
+                // details of house
+                else if (
+                    currentValue.equals("house") &&
                     Arrays.asList("detached", "semidetached_house", "terrace").contains(newValue)
                 ){
                     return true;
