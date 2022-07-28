@@ -12,6 +12,7 @@ It communicates with the [PLBuildings server](https://github.com/praszuk/josm-pl
 - Joining building other existing buildings. Adjacent nodes will be shared between 2 buildings. It means no overlapping duplicated nodes.
 - Avoiding duplicated imports.
 - Simple statistics (counting imported buildings).
+- Multilingual with i18n (English and Polish).
 
 ## How to use it
 Move the cursor to a building and press `CTRL + SHIFT + 1`.
