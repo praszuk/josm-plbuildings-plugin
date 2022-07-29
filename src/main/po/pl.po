@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: josm-plugin_plbuildings 1.4.2-2-gdebafc4-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-27 01:09+0200\n"
-"PO-Revision-Date: 2022-07-27 01:11+0200\n"
+"POT-Creation-Date: 2022-07-29 17:23+0200\n"
+"PO-Revision-Date: 2022-07-29 17:26+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -22,6 +22,10 @@ msgstr ""
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/AddBuildingGeometryCommand.java:71
 msgid "Added building geometry"
 msgstr "Dodano zaimportowany budynek"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SurveyConfirmationDialog.java:21
+msgid "Building import confirmation"
+msgstr "Potwierdzenie importu budynku"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:16
 msgid "Buildings import stats"
@@ -61,17 +65,25 @@ msgstr ""
 msgid "Cannot merge buildings! Unknown error!"
 msgstr "Nie można scalić budynków! Nieznany błąd!"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:32
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SurveyConfirmationDialog.java:20
+msgid ""
+"Detected \"survey\" value in tags.\n"
+"Are you sure you want to proceed updating this object?"
+msgstr ""
+"Wykryto wartość \"survey\" w tagach.\n"
+"Czy chcesz kontynuować aktualizowanie tego obiektu?"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:34
 msgid "Download building"
 msgstr "Pobierz budynek"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:31
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:33
 msgid "Import building at cursor position or replace/update selected."
 msgstr ""
 "Importuj budynek w miejscu wskazywanym przez kursor lub/i wymień/aktualizuj "
 "zaznaczony."
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:142
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:153
 msgid "Imported a new building"
 msgstr "Zaimportowano nowy budynek"
 
@@ -95,7 +107,7 @@ msgstr "Całkowita liczba akcji importów"
 msgid "Updated building tags"
 msgstr "Zaktualizowano tagi budynku"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:174
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:185
 msgid "Updated building tags and geometry"
 msgstr "Zaktualizowano tagi i geometrię budynku"
 
