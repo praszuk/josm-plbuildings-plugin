@@ -14,6 +14,7 @@ import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportStats;
 import org.openstreetmap.josm.plugins.plbuildings.commands.AddBuildingGeometryCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceBuildingGeometryCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
+import org.openstreetmap.josm.plugins.plbuildings.gui.SurveyConfirmationDialog;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsDuplicateValidator;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -25,6 +26,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.openstreetmap.josm.plugins.plbuildings.utils.TagConflictUtils.hasSurveyValue;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class BuildingsImportAction extends JosmAction {
@@ -100,7 +102,16 @@ public class BuildingsImportAction extends JosmAction {
             .filter(osmPrimitive -> osmPrimitive.getType() == OsmPrimitiveType.WAY)
             .collect(Collectors.toList());
         Way selectedBuilding = selected.size() == 1 ? (Way) selected.toArray()[0]:null;
-        // if (importedBuilding.hasTag("building", "house")){importedBuilding.put("building", "detached");} // TODO remove it
+
+        if (hasSurveyValue(selectedBuilding)){
+            boolean isContinue = SurveyConfirmationDialog.show();
+            if (!isContinue){
+                Logging.info("Canceled import with rejecting survey dialog confirmation.");
+                return;
+            }
+        }
+
+        // if (importedBuilding.hasTag("building", "house")){importedBuilding.put("building", "detached");}
         if (BuildingsDuplicateValidator.isDuplicate(currentDataSet, importedBuilding)){
             if (selectedBuilding == null){
                 Logging.info("Duplicated building geometry. Not selected any building. Canceling!");
