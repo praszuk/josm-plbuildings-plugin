@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: josm-plugin_plbuildings 1.4.2-2-gdebafc4-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-29 17:23+0200\n"
-"PO-Revision-Date: 2022-07-29 17:26+0200\n"
+"POT-Creation-Date: 2022-07-30 17:08+0200\n"
+"PO-Revision-Date: 2022-07-30 17:10+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -73,17 +73,25 @@ msgstr ""
 "Wykryto wartość \"survey\" w tagach.\n"
 "Czy chcesz kontynuować aktualizowanie tego obiektu?"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:34
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/UncommonTagDialog.java:15
+msgid ""
+"Detected uncommon tags.\n"
+"You can check if they are correct and add more details."
+msgstr ""
+"Wykryto nietypowe tagi.\n"
+"Możesz sprawdzić czy są poprawne i dodać więcej szczegółów."
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:36
 msgid "Download building"
 msgstr "Pobierz budynek"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:33
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:35
 msgid "Import building at cursor position or replace/update selected."
 msgstr ""
 "Importuj budynek w miejscu wskazywanym przez kursor lub/i wymień/aktualizuj "
 "zaznaczony."
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:153
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:157
 msgid "Imported a new building"
 msgstr "Zaimportowano nowy budynek"
 
@@ -103,11 +111,15 @@ msgstr "Pokaż statystyki importowania budynków"
 msgid "Total number of import actions"
 msgstr "Całkowita liczba akcji importów"
 
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/UncommonTagDialog.java:16
+msgid "Uncommon tags detected"
+msgstr "Wykryto nietypowe tagi"
+
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/UpdateBuildingTagsCommand.java:18
 msgid "Updated building tags"
 msgstr "Zaktualizowano tagi budynku"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:185
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:190
 msgid "Updated building tags and geometry"
 msgstr "Zaktualizowano tagi i geometrię budynku"
 
