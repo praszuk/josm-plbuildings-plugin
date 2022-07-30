@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.openstreetmap.josm.plugins.plbuildings.utils.TagConflictUtils.hasSurveyValue;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.hasSurveyValue;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class BuildingsImportAction extends JosmAction {

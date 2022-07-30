@@ -81,16 +81,4 @@ public class TagConflictUtils {
         return false;
     }
 
-    /**
-     * Checks if object has any "survey" value e.g. in tags (keys and values)
-     * e.g. source=survey or survey:date=2022-01-01
-     */
-    public static boolean hasSurveyValue(OsmPrimitive primitive) {
-        if (primitive == null){
-            return false;
-        }
-
-        return primitive.getKeys().toString().contains("survey");
-    }
-
 }
