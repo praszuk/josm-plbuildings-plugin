@@ -15,6 +15,7 @@ import org.openstreetmap.josm.plugins.plbuildings.commands.AddBuildingGeometryCo
 import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceBuildingGeometryCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SurveyConfirmationDialog;
+import org.openstreetmap.josm.plugins.plbuildings.gui.UncommonTagDialog;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsDuplicateValidator;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -26,6 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.hasUncommonTags;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.hasSurveyValue;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -111,6 +113,7 @@ public class BuildingsImportAction extends JosmAction {
             }
         }
 
+        Way resultBuilding;
         // if (importedBuilding.hasTag("building", "house")){importedBuilding.put("building", "detached");}
         if (BuildingsDuplicateValidator.isDuplicate(currentDataSet, importedBuilding)){
             if (selectedBuilding == null){
@@ -132,6 +135,7 @@ public class BuildingsImportAction extends JosmAction {
                 }
                 UndoRedoHandler.getInstance().add(updateBuildingTagsCommand, false);
                 BuildingsImportStats.getInstance().addImportWithTagsUpdateCounter(1);
+                resultBuilding = selectedBuilding;
                 Logging.info("Updated selected building tags (without geometry replacing)!");
             }
         }
@@ -160,6 +164,7 @@ public class BuildingsImportAction extends JosmAction {
                 }
                 UndoRedoHandler.getInstance().add(importedANewBuildingSequence, false);
                 BuildingsImportStats.getInstance().addImportNewBuildingCounter(1);
+                resultBuilding = addBuildingGeometryCommand.getResultBuilding();
                 Logging.debug("Imported building: {0}", addBuildingGeometryCommand.getResultBuilding().getId());
             }
             else {
@@ -196,10 +201,15 @@ public class BuildingsImportAction extends JosmAction {
                 }
                 UndoRedoHandler.getInstance().add(mergedGeometryAndUpdatedTagsBuildingSequence, false);
                 BuildingsImportStats.getInstance().addImportWithReplaceCounter(1);
+                resultBuilding = selectedBuilding;
                 Logging.debug("Updated building {0} with new data", selectedBuilding.getId());
             }
         }
         currentDataSet.clearSelection();
+
+        if (hasUncommonTags(resultBuilding)){
+            UncommonTagDialog.show();
+        }
     }
 
     @Override
