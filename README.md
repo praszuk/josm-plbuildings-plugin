@@ -13,6 +13,8 @@ It communicates with the [PLBuildings server](https://github.com/praszuk/josm-pl
 - Avoiding duplicated imports.
 - Simple statistics (counting imported buildings).
 - Multilingual with i18n (English and Polish).
+- Pre-checking buildings before replacing (looking for "survey" value).
+- Post-checking imported building (looking for uncommon tags).
 
 ## How to use it
 Move the cursor to a building and press `CTRL + SHIFT + 1`.
