@@ -100,7 +100,7 @@ public class DuplicateImportTest {
         assertNotNull(ds);
 
         Way buildingToReplace = (Way) ds.getWays().stream()
-            .filter(way -> way.hasTag("building","detached"))
+            .filter(way -> way.hasTag("building","yes"))
             .toArray()[0];
         ds.setSelected(buildingToReplace);
 
