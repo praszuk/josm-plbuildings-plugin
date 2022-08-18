@@ -1,14 +1,18 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class BuildingValueSimplificationTest {
+    @Rule
+    public JOSMTestRules rules = new JOSMTestRules().main();
 
     @Test
     public void testNewPrimitiveHasSimplifiedBuildingValue(){

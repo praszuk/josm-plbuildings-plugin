@@ -1,14 +1,19 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import static org.junit.Assert.*;
 
 public class SurveyCheckerTest {
+
+    @Rule
+    public JOSMTestRules rules = new JOSMTestRules().main();
 
     @Test
     public void testPrimitiveHasSurveyKeyValue(){
