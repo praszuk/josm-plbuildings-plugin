@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.hasUncommonTags;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.hasSurveyValue;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.isBuildingValueSimplification;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class BuildingsImportAction extends JosmAction {
@@ -76,6 +77,7 @@ public class BuildingsImportAction extends JosmAction {
      * ------ not selected -> just import new building
      */
     public static void performBuildingImport(DataSet currentDataSet) {
+        // Preparation and obtaining import data/selection section
         BuildingsImportStats.getInstance().addTotalImportActionCounter(1);
         DataSet importedBuildingsDataSet = getBuildingsAtCurrentLocation();
         if (importedBuildingsDataSet == null){
@@ -96,8 +98,7 @@ public class BuildingsImportAction extends JosmAction {
             Logging.warn("Imported dataset with some data, but without buildings!");
             return;
         }
-        // just get first building
-        Way importedBuilding = importedBuildingsCollection.get(0);
+        Way importedBuilding = importedBuildingsCollection.get(0); // just get first building
 
         Collection<OsmPrimitive> selected = currentDataSet.getSelected()
             .stream()
@@ -105,16 +106,29 @@ public class BuildingsImportAction extends JosmAction {
             .collect(Collectors.toList());
         Way selectedBuilding = selected.size() == 1 ? (Way) selected.toArray()[0]:null;
 
-        if (hasSurveyValue(selectedBuilding)){
-            boolean isContinue = SurveyConfirmationDialog.show();
-            if (!isContinue){
-                Logging.info("Canceled import with rejecting survey dialog confirmation.");
-                return;
+        // Pre-check/modify import data section
+        if (selectedBuilding != null){
+            if (hasSurveyValue(selectedBuilding)){
+                boolean isContinue = SurveyConfirmationDialog.show();
+                if (!isContinue){
+                    Logging.info("Canceled import with rejecting survey dialog confirmation.");
+                    return;
+                }
             }
+
+            if (isBuildingValueSimplification(selectedBuilding, importedBuilding)){
+                String oldValue = selectedBuilding.get("building");
+                String newValue = importedBuilding.get("building");
+
+                importedBuilding.put("building", selectedBuilding.get("building"));
+                Logging.info("Avoiding building details simplification ({0} -> {1})", oldValue, newValue);
+            }
+            // temp for testing
+            // if (importedBuilding.hasTag("building", "house")){importedBuilding.put("building", "detached");}
         }
 
+        // general import section
         Way resultBuilding;
-        // if (importedBuilding.hasTag("building", "house")){importedBuilding.put("building", "detached");}
         if (BuildingsDuplicateValidator.isDuplicate(currentDataSet, importedBuilding)){
             if (selectedBuilding == null){
                 Logging.info("Duplicated building geometry. Not selected any building. Canceling!");
@@ -207,6 +221,7 @@ public class BuildingsImportAction extends JosmAction {
         }
         currentDataSet.clearSelection();
 
+        // post-check section
         if (hasUncommonTags(resultBuilding)){
             UncommonTagDialog.show();
         }
