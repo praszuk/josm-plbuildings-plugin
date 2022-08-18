@@ -4,7 +4,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,6 +13,10 @@ public class TagConflictUtils {
 
     public static final Set<String> LIVING_BUILDINGS = Collections.unmodifiableSet(Stream.of(
         "house", "apartments", "detached", "semidetached_house", "terrace"
+    ).collect(Collectors.toSet()));
+
+    public static final Set<String> HOUSE_DETAILS = Collections.unmodifiableSet(Stream.of(
+        "detached", "semidetached_house", "terrace"
     ).collect(Collectors.toSet()));
 
     /**
@@ -69,10 +72,7 @@ public class TagConflictUtils {
                 }
 
                 // details of house
-                else if (
-                    currentValue.equals("house") &&
-                    Arrays.asList("detached", "semidetached_house", "terrace").contains(newValue)
-                ){
+                else if (currentValue.equals("house") && HOUSE_DETAILS.contains(newValue)){
                     return true;
                 }
                 break;
