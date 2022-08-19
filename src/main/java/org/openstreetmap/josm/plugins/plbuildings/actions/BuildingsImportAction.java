@@ -28,8 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.hasUncommonTags;
-import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.hasSurveyValue;
-import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.isBuildingValueSimplification;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.*;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class BuildingsImportAction extends JosmAction {
@@ -121,7 +120,19 @@ public class BuildingsImportAction extends JosmAction {
                 String newValue = importedBuilding.get("building");
 
                 importedBuilding.put("building", selectedBuilding.get("building"));
-                Logging.info("Avoiding building details simplification ({0} -> {1})", oldValue, newValue);
+                Logging.info("Avoiding building details simplification ({0} -\\> {1})", oldValue, newValue);
+            }
+
+            if (isBuildingLevelsWithRoofEquals(selectedBuilding, importedBuilding)){
+                String oldValue = selectedBuilding.get("building:levels");
+                String newValue = importedBuilding.get("building:levels");
+
+                importedBuilding.put("building:levels", selectedBuilding.get("building:levels"));
+                Logging.info(
+                    "Avoiding breaking building:levels caused by roof levels ({0} -\\> {1})",
+                    oldValue,
+                    newValue
+                );
             }
             // temp for testing
             // if (importedBuilding.hasTag("building", "house")){importedBuilding.put("building", "detached");}
