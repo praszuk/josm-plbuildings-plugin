@@ -13,7 +13,10 @@ It communicates with the [PLBuildings server](https://github.com/praszuk/josm-pl
 - Avoiding duplicated imports.
 - Simple statistics (counting imported buildings).
 - Multilingual with i18n (English and Polish).
-- Pre-checking buildings before replacing (looking for "survey" value).
+- Pre-checking buildings before replacing:
+  - Looking for "survey" value.
+  - Preventing house details simplification (e.g. detached->house)
+  - Avoiding breaking `building:levels` if selected `building:levels` + `roof:levels` are equal to a new `building:levels`.
 - Post-checking imported building (looking for uncommon tags).
 
 ## How to use it
