@@ -327,6 +327,6 @@ public class BuildingsImportAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        performBuildingImport(getLayerManager().getEditDataSet());
+        MainApplication.worker.execute(() -> performBuildingImport(getLayerManager().getEditDataSet()));
     }
 }
