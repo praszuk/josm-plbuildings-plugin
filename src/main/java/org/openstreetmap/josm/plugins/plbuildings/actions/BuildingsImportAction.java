@@ -76,45 +76,18 @@ public class BuildingsImportAction extends JosmAction {
         boolean autoChangeToDefault;
         switch(status) {
             case IDLE:
-                autoChangeToDefault = false;
-                // TODO color black
-                break;
             case DOWNLOADING:
-                autoChangeToDefault = false;
-                // TODO color black
-                break;
             case ACTION_REQUIRED:
                 autoChangeToDefault = false;
-                // TODO color orange?
                 break;
-
             case DONE:
-                autoChangeToDefault = true;
-                // TODO color black or blue
-                break;
             case NO_DATA:
-                autoChangeToDefault = true;
-                // TODO color gray
-                break;
             case NO_UPDATE:
-                autoChangeToDefault = true;
-                // TODO color gray
-                break;
             case CANCELED:
-                autoChangeToDefault = true;
-                // TODO color red
-                break;
             case CONNECTION_ERROR:
-                autoChangeToDefault = true;
-                // TODO color red
-                break;
             case IMPORT_ERROR:
+            default: // DONE, NO_DATA, NO_UPDATE
                 autoChangeToDefault = true;
-                // TODO color red
-                break;
-            default:
-                autoChangeToDefault = true;
-                // TODO color black
         }
         BuildingsPlugin.buildingsToggleDialog.setStatus(status, autoChangeToDefault);
     }

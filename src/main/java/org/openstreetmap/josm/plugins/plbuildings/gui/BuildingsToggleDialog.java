@@ -86,11 +86,35 @@ public class BuildingsToggleDialog extends ToggleDialog {
         updateTags("", "", false);
     }
 
+    /**
+     * Select color for the JLabel status text depends on the ImportStatus.
+     */
+    private Color getStatusTextColor(ImportStatus status){
+        Color statusColor;
+        switch(status) {
+            case ACTION_REQUIRED:
+                statusColor = Color.decode("#ff781f"); // orange better than Color.ORANGE
+                break;
+            case CANCELED:
+            case NO_DATA:
+            case NO_UPDATE:
+                statusColor = Color.GRAY;
+                break;
+            case CONNECTION_ERROR:
+            case IMPORT_ERROR:
+                statusColor = Color.RED;
+                break;
+            default: // IDLE, DOWNLOADING, DONE
+                statusColor = Color.BLACK;
+        }
+        return statusColor;
+    }
+
     private void setDefaultStatus(){
         Logging.debug("Changing status to default");
         GuiHelper.scheduleTimer(
             1500,
-            actionEvent -> this.status.setText(ImportStatus.IDLE.toString()),
+            actionEvent -> setStatus(ImportStatus.IDLE, false),
             false
         );
     }
@@ -99,6 +123,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
         GuiHelper.runInEDT(() ->{
             Logging.info("Changing status to: {0}", status);
             this.status.setText(status.toString());
+            this.status.setForeground(getStatusTextColor(status));
         });
 
         if (autoChangeToDefault){
