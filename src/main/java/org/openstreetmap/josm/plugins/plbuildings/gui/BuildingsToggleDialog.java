@@ -149,7 +149,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
             );
             this.building.setText(buildingVal.isEmpty() ? "--":buildingVal);
             this.bLevels.setText(bLevelsVal.isEmpty() ? "--":bLevelsVal);
-            this.uncommonTags.setText(hasUncommonTags ? "true":"false");
+            this.uncommonTags.setText(hasUncommonTags ? tr("Yes"):tr("No"));
 
             this.building.setForeground(hasUncommonTags ? COLOR_ORANGE:COLOR_DEFAULT);
             this.uncommonTags.setForeground(hasUncommonTags ? COLOR_ORANGE:COLOR_DEFAULT);
