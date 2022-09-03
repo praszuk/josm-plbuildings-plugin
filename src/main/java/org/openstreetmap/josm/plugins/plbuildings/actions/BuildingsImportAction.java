@@ -108,6 +108,7 @@ public class BuildingsImportAction extends JosmAction {
 
     /**
      * Flow:
+     * Get selection
      * Download building from server to virtual dataset
      * Check if it's unique (no geometry duplicate):
      * -- duplicate:
@@ -120,7 +121,14 @@ public class BuildingsImportAction extends JosmAction {
      * ------ not selected -> just import new building
      */
     public static void performBuildingImport(DataSet currentDataSet) {
-        // Preparation and obtaining import data/selection section
+        // Get selection section
+        Collection<OsmPrimitive> selected = currentDataSet.getSelected()
+            .stream()
+            .filter(osmPrimitive -> osmPrimitive.getType() == OsmPrimitiveType.WAY)
+            .collect(Collectors.toList());
+        Way selectedBuilding = selected.size() == 1 ? (Way) selected.toArray()[0]:null;
+
+        // Preparation and obtaining import data selection
         BuildingsImportStats.getInstance().addTotalImportActionCounter(1);
         updateGuiStatus(DOWNLOADING);
         DataSet importedBuildingsDataSet = getBuildingsAtCurrentLocation();
@@ -146,12 +154,6 @@ public class BuildingsImportAction extends JosmAction {
             return;
         }
         Way importedBuilding = importedBuildingsCollection.get(0); // just get first building
-
-        Collection<OsmPrimitive> selected = currentDataSet.getSelected()
-            .stream()
-            .filter(osmPrimitive -> osmPrimitive.getType() == OsmPrimitiveType.WAY)
-            .collect(Collectors.toList());
-        Way selectedBuilding = selected.size() == 1 ? (Way) selected.toArray()[0]:null;
 
         // Pre-check/modify import data section
         if (selectedBuilding != null){
