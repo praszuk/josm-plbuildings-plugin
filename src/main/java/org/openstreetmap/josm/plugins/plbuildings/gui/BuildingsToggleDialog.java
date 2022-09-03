@@ -19,6 +19,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
  * Create sidebar window which contains the latest status of import action and allows to change some cfg.
  */
 public class BuildingsToggleDialog extends ToggleDialog {
+    private static final Color COLOR_DEFAULT = Color.BLACK;
+    private static final Color COLOR_ORANGE = Color.decode("#ff781f"); // hex orange better than Color.ORANGE
+
     private final JLabel status;
     private final JLabel building;
     private final JLabel bLevels;
@@ -93,7 +96,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
         Color statusColor;
         switch(status) {
             case ACTION_REQUIRED:
-                statusColor = Color.decode("#ff781f"); // orange better than Color.ORANGE
+                statusColor = COLOR_ORANGE;
                 break;
             case CANCELED:
             case NO_DATA:
@@ -105,7 +108,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
                 statusColor = Color.RED;
                 break;
             default: // IDLE, DOWNLOADING, DONE
-                statusColor = Color.BLACK;
+                statusColor = COLOR_DEFAULT;
         }
         return statusColor;
     }
@@ -136,17 +139,20 @@ public class BuildingsToggleDialog extends ToggleDialog {
         setStatus(status, true);
     }
 
-    public void updateTags(String buildingVal, String bLevelsVal, boolean extraTags){
+    public void updateTags(String buildingVal, String bLevelsVal, boolean hasUncommonTags){
         GuiHelper.runInEDT(() -> {
             Logging.info(
                 "Updating tags: building: {0}, building:levels: {1}, extraTags: {2}",
                 buildingVal,
                 bLevelsVal,
-                extraTags
+                hasUncommonTags
             );
             this.building.setText(buildingVal.isEmpty() ? "--":buildingVal);
             this.bLevels.setText(bLevelsVal.isEmpty() ? "--":bLevelsVal);
-            this.extraTags.setText(extraTags ? "true":"false");
+            this.extraTags.setText(hasUncommonTags ? "true":"false");
+
+            this.building.setForeground(hasUncommonTags ? COLOR_ORANGE:COLOR_DEFAULT);
+            this.extraTags.setForeground(hasUncommonTags ? COLOR_ORANGE:COLOR_DEFAULT);
         });
     }
 
