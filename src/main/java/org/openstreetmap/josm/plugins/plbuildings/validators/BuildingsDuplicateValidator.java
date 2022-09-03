@@ -29,7 +29,6 @@ public class BuildingsDuplicateValidator {
 
     /**
      * It uses simple detection algorithm of checking duplication. It should be enough for most cases:
-     *
      * It counts all close nodes (bbox of given newBuilding + small offset) as possible duplicated nodes.
      * Then it compares which Way object has the most duplicated nodes with given way
      * and if number of duplicated nodes if equal to nodes of given way, than it is treated a duplicate.

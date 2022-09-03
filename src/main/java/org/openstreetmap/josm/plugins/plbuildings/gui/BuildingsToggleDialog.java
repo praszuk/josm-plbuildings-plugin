@@ -135,10 +135,6 @@ public class BuildingsToggleDialog extends ToggleDialog {
 
     }
 
-    public void setStatus(@Nonnull ImportStatus status) {
-        setStatus(status, true);
-    }
-
     public void updateTags(String buildingVal, String bLevelsVal, boolean hasUncommonTags){
         GuiHelper.runInEDT(() -> {
             Logging.info(
