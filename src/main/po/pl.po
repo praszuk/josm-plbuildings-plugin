@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: josm-plugin_plbuildings 1.4.2-2-gdebafc4-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-03 15:01+0200\n"
-"PO-Revision-Date: 2022-09-03 15:02+0200\n"
+"POT-Creation-Date: 2022-09-03 16:08+0200\n"
+"PO-Revision-Date: 2022-09-03 16:09+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -129,7 +129,7 @@ msgstr ""
 msgid "Import error"
 msgstr "Błąd importowania"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:234
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:236
 msgid "Imported a new building"
 msgstr "Zaimportowano nowy budynek"
 
@@ -140,6 +140,10 @@ msgstr "Ostatnie tagi"
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:32
 msgid "New buildings"
 msgstr "Nowe budynki"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:152
+msgid "No"
+msgstr "Nie"
 
 #. downloaded successfully building
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/data/ImportStatus.java:12
@@ -176,6 +180,10 @@ msgstr "Status"
 msgid "Total number of import actions"
 msgstr "Całkowita liczba akcji importów"
 
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:77
+msgid "Uncommon tags"
+msgstr "Nietypowe tagi"
+
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/UncommonTagDialog.java:16
 msgid "Uncommon tags detected"
 msgstr "Wykryto nietypowe tagi"
@@ -184,9 +192,13 @@ msgstr "Wykryto nietypowe tagi"
 msgid "Updated building tags"
 msgstr "Zaktualizowano tagi budynku"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:268
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:270
 msgid "Updated building tags and geometry"
 msgstr "Zaktualizowano tagi i geometrię budynku"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:152
+msgid "Yes"
+msgstr "Tak"
 
 #. Plugin description for plbuildings
 msgid "Import buildings from Polish public datasets."

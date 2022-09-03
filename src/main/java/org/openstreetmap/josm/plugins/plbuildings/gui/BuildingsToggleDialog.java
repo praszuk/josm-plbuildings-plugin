@@ -25,7 +25,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
     private final JLabel status;
     private final JLabel building;
     private final JLabel bLevels;
-    private final JLabel extraTags;
+    private final JLabel uncommonTags;
 
     private final JComboBox<String> dataSourceComboBox;
 
@@ -47,7 +47,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
         this.dataSourceComboBox = new JComboBox<>(new String[]{"BDOT"});
         this.building = new JLabel("");
         this.bLevels = new JLabel("");
-        this.extraTags = new JLabel("");
+        this.uncommonTags = new JLabel("");
 
         JPanel rootPanel = new JPanel(new GridLayout(0, 1));
 
@@ -74,8 +74,8 @@ public class BuildingsToggleDialog extends ToggleDialog {
         lastImportTagsPanel.add(new JLabel("building:levels: "));
         lastImportTagsPanel.add(bLevels);
 
-        lastImportTagsPanel.add(new JLabel("extraTags: "));
-        lastImportTagsPanel.add(extraTags);
+        lastImportTagsPanel.add(new JLabel(tr("Uncommon tags") +": "));
+        lastImportTagsPanel.add(uncommonTags);
 
         lastImportTagsPanel.setBorder(BorderFactory.createTitledBorder(tr("Latest tags")));
         rootPanel.add(configPanel);
@@ -142,17 +142,17 @@ public class BuildingsToggleDialog extends ToggleDialog {
     public void updateTags(String buildingVal, String bLevelsVal, boolean hasUncommonTags){
         GuiHelper.runInEDT(() -> {
             Logging.info(
-                "Updating tags: building: {0}, building:levels: {1}, extraTags: {2}",
+                "Updating tags: building: {0}, building:levels: {1}, uncommonTags: {2}",
                 buildingVal,
                 bLevelsVal,
                 hasUncommonTags
             );
             this.building.setText(buildingVal.isEmpty() ? "--":buildingVal);
             this.bLevels.setText(bLevelsVal.isEmpty() ? "--":bLevelsVal);
-            this.extraTags.setText(hasUncommonTags ? "true":"false");
+            this.uncommonTags.setText(hasUncommonTags ? tr("Yes"):tr("No"));
 
             this.building.setForeground(hasUncommonTags ? COLOR_ORANGE:COLOR_DEFAULT);
-            this.extraTags.setForeground(hasUncommonTags ? COLOR_ORANGE:COLOR_DEFAULT);
+            this.uncommonTags.setForeground(hasUncommonTags ? COLOR_ORANGE:COLOR_DEFAULT);
         });
     }
 
