@@ -11,15 +11,18 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsDownloader;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportStats;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
 import org.openstreetmap.josm.plugins.plbuildings.commands.AddBuildingGeometryCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceBuildingGeometryCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
+import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SurveyConfirmationDialog;
 import org.openstreetmap.josm.plugins.plbuildings.gui.UncommonTagDialog;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsDuplicateValidator;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
+import javax.annotation.Nonnull;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
@@ -27,6 +30,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.DOWNLOADING;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.hasUncommonTags;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.*;
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -63,6 +67,46 @@ public class BuildingsImportAction extends JosmAction {
     }
 
     /**
+     * Helper function to updating GUI status from action
+     */
+    private static void updateGuiStatus(@Nonnull ImportStatus status){
+        if (BuildingsPlugin.buildingsToggleDialog == null)  // for tests and no-gui execution of method
+            return;
+
+        boolean autoChangeToDefault;
+        switch(status) {
+            case IDLE:
+            case DOWNLOADING:
+            case ACTION_REQUIRED:
+                autoChangeToDefault = false;
+                break;
+            case DONE:
+            case NO_DATA:
+            case NO_UPDATE:
+            case CANCELED:
+            case CONNECTION_ERROR:
+            case IMPORT_ERROR:
+            default: // DONE, NO_DATA, NO_UPDATE
+                autoChangeToDefault = true;
+        }
+        BuildingsPlugin.buildingsToggleDialog.setStatus(status, autoChangeToDefault);
+    }
+
+    /**
+     * Helper function to updating GUI latest tags from action
+     */
+    private static void updateGuiTags(OsmPrimitive resultBuilding, boolean hasUncommonTags){
+        if (BuildingsPlugin.buildingsToggleDialog == null)  // for tests and no-gui execution of method
+            return;
+
+        BuildingsPlugin.buildingsToggleDialog.updateTags(
+            resultBuilding.getKeys().getOrDefault("building", ""),
+            resultBuilding.getKeys().getOrDefault("building:levels", ""),
+            hasUncommonTags
+        );
+    }
+
+    /**
      * Flow:
      * Download building from server to virtual dataset
      * Check if it's unique (no geometry duplicate):
@@ -78,13 +122,16 @@ public class BuildingsImportAction extends JosmAction {
     public static void performBuildingImport(DataSet currentDataSet) {
         // Preparation and obtaining import data/selection section
         BuildingsImportStats.getInstance().addTotalImportActionCounter(1);
+        updateGuiStatus(DOWNLOADING);
         DataSet importedBuildingsDataSet = getBuildingsAtCurrentLocation();
         if (importedBuildingsDataSet == null){
             Logging.warn("Downloading error: Cannot import building!");
+            updateGuiStatus(ImportStatus.CONNECTION_ERROR);
             return;
         }
         if (importedBuildingsDataSet.isEmpty()) {
             Logging.info("Imported empty dataset.");
+            updateGuiStatus(ImportStatus.NO_DATA);
             return;
         }
 
@@ -95,6 +142,7 @@ public class BuildingsImportAction extends JosmAction {
 
         if (importedBuildingsCollection.isEmpty()){
             Logging.warn("Imported dataset with some data, but without buildings!");
+            updateGuiStatus(ImportStatus.NO_DATA);
             return;
         }
         Way importedBuilding = importedBuildingsCollection.get(0); // just get first building
@@ -108,9 +156,11 @@ public class BuildingsImportAction extends JosmAction {
         // Pre-check/modify import data section
         if (selectedBuilding != null){
             if (hasSurveyValue(selectedBuilding)){
+                updateGuiStatus(ImportStatus.ACTION_REQUIRED);
                 boolean isContinue = SurveyConfirmationDialog.show();
                 if (!isContinue){
                     Logging.info("Canceled import with rejecting survey dialog confirmation.");
+                    updateGuiStatus(ImportStatus.CANCELED);
                     return;
                 }
             }
@@ -134,15 +184,16 @@ public class BuildingsImportAction extends JosmAction {
                     newValue
                 );
             }
-            // temp for testing
-            // if (importedBuilding.hasTag("building", "house")){importedBuilding.put("building", "detached");}
         }
+        // temp for testing
+        // if (importedBuilding.hasTag("building", "house")){importedBuilding.put("building", "detached");}
 
         // general import section
         Way resultBuilding;
         if (BuildingsDuplicateValidator.isDuplicate(currentDataSet, importedBuilding)){
             if (selectedBuilding == null){
                 Logging.info("Duplicated building geometry. Not selected any building. Canceling!");
+                updateGuiStatus(ImportStatus.NO_UPDATE);
                 return;
             }
 
@@ -156,6 +207,7 @@ public class BuildingsImportAction extends JosmAction {
                 boolean isUpdated = updateBuildingTagsCommand.executeCommand();
                 if (!isUpdated){
                     Logging.info("Error with updating tags!");
+                    updateGuiStatus(ImportStatus.IMPORT_ERROR);
                     return;
                 }
                 UndoRedoHandler.getInstance().add(updateBuildingTagsCommand, false);
@@ -185,6 +237,7 @@ public class BuildingsImportAction extends JosmAction {
                 boolean isSuccess = importedANewBuildingSequence.executeCommand();
                 if(!isSuccess){
                     Logging.debug("Import of a new building failed!");
+                    updateGuiStatus(ImportStatus.IMPORT_ERROR);
                     return;
                 }
                 UndoRedoHandler.getInstance().add(importedANewBuildingSequence, false);
@@ -222,6 +275,7 @@ public class BuildingsImportAction extends JosmAction {
                 boolean isSuccess = mergedGeometryAndUpdatedTagsBuildingSequence.executeCommand();
                 if(!isSuccess){
                     Logging.debug("Update (geometry and tags) building failed!");
+                    updateGuiStatus(ImportStatus.IMPORT_ERROR);
                     return;
                 }
                 UndoRedoHandler.getInstance().add(mergedGeometryAndUpdatedTagsBuildingSequence, false);
@@ -233,13 +287,19 @@ public class BuildingsImportAction extends JosmAction {
         currentDataSet.clearSelection();
 
         // post-check section
+        boolean hasUncommonTags = false;
         if (hasUncommonTags(resultBuilding)){
+            updateGuiStatus(ImportStatus.ACTION_REQUIRED);
+            hasUncommonTags = true;
             UncommonTagDialog.show();
         }
+
+        updateGuiStatus(ImportStatus.DONE);
+        updateGuiTags(resultBuilding, hasUncommonTags);
     }
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        performBuildingImport(getLayerManager().getEditDataSet());
+        MainApplication.worker.execute(() -> performBuildingImport(getLayerManager().getEditDataSet()));
     }
 }
