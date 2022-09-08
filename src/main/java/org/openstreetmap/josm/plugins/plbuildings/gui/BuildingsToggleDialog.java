@@ -3,7 +3,9 @@ package org.openstreetmap.josm.plugins.plbuildings.gui;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
+import org.openstreetmap.josm.plugins.plbuildings.data.ImportDataSource;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
+import org.openstreetmap.josm.plugins.plbuildings.models.ImportDataSourceConfig;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -11,7 +13,9 @@ import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -27,8 +31,6 @@ public class BuildingsToggleDialog extends ToggleDialog {
     private final JLabel bLevels;
     private final JLabel uncommonTags;
 
-    private final JComboBox<String> dataSourceComboBox;
-
     public BuildingsToggleDialog() {
         super(
             "PlBuildings",
@@ -42,9 +44,23 @@ public class BuildingsToggleDialog extends ToggleDialog {
             150
         );
 
-        // this.setPreferredSize(new Dimension(0, 50));
         this.status = new JLabel("");
-        this.dataSourceComboBox = new JComboBox<>(new String[]{"BDOT"});
+
+        final JComboBox<String> dataSourceComboBox = new JComboBox<>(
+            Arrays.stream(ImportDataSource.values())
+                .map(ImportDataSource::toString)
+                .toArray(String[]::new)
+        );
+
+        dataSourceComboBox.addItemListener(event -> {
+            if (event.getStateChange() == ItemEvent.SELECTED) {
+                ImportDataSource newDataSource = ImportDataSource.fromString((String)event.getItem());
+                ImportDataSourceConfig.getInstance().changeDataSource(newDataSource);
+            }
+        });
+        dataSourceComboBox.setEnabled(false);
+        dataSourceComboBox.setSelectedItem(0);
+
         this.building = new JLabel("");
         this.bLevels = new JLabel("");
         this.uncommonTags = new JLabel("");
@@ -60,8 +76,6 @@ public class BuildingsToggleDialog extends ToggleDialog {
 
         JLabel dataSourceLabel = new JLabel(tr("Data source") + ": ");
         dataSourceLabel.setBorder(new EmptyBorder(0,5,0,0));
-        dataSourceComboBox.setEnabled(false);
-        dataSourceComboBox.setSelectedIndex(0);
 
         configPanel.add(dataSourceLabel);
         configPanel.add(dataSourceComboBox);
