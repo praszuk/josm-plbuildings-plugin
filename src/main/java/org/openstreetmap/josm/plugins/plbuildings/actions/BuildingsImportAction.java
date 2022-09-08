@@ -18,6 +18,7 @@ import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCom
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SurveyConfirmationDialog;
 import org.openstreetmap.josm.plugins.plbuildings.gui.UncommonTagDialog;
+import org.openstreetmap.josm.plugins.plbuildings.models.ImportDataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsDuplicateValidator;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -59,7 +60,7 @@ public class BuildingsImportAction extends JosmAction {
                 MainApplication.getMap().mapView.getMousePosition().getX(),
                 MainApplication.getMap().mapView.getMousePosition().getY()
             );
-            return BuildingsDownloader.downloadBuildings(latLonPoint, "bdot");
+            return BuildingsDownloader.downloadBuildings(latLonPoint, ImportDataSourceConfig.getInstance());
         }
         catch (NullPointerException exception){
             return null;

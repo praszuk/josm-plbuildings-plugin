@@ -5,6 +5,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.plugins.plbuildings.data.ImportDataSource;
+import org.openstreetmap.josm.plugins.plbuildings.models.ImportDataSourceConfig;
 import org.openstreetmap.josm.tools.Http1Client;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
@@ -23,11 +25,24 @@ public class BuildingsDownloader {
      * Download buildings from PLBuildings Server API and parse it as DataSet
      * Use default search_distance parameter.
      * @param latLon location of searching building (EPSG 4386)
-     * @param dataSource dataSource of buildings. Currently, only "bdot" is available
+     * @param dataSourceCfg dataSource of buildings. Currently, only "bdot" is available
      * @return DataSet with "raw building" from .osm response or null
      */
-    public static DataSet downloadBuildings(LatLon latLon, String dataSource){
-        return downloadBuildings(latLon, dataSource, BuildingsSettings.SEARCH_DISTANCE.get());
+    public static DataSet downloadBuildings(LatLon latLon, ImportDataSourceConfig dataSourceCfg){
+        if (dataSourceCfg.isSimple()){
+            String dataSourceParam;
+            if (dataSourceCfg.getTagsSource() == ImportDataSource.BDOT){
+                dataSourceParam = "bdot";
+            }
+            else {
+                Logging.error("Unsupported data source parameter: {0}", dataSourceCfg.getTagsSource());
+                return null;
+            }
+            return downloadBuildings(latLon, dataSourceParam, BuildingsSettings.SEARCH_DISTANCE.get());
+        }
+        Logging.error("Unsupported data source. Custom data source config is not implemented yet!");
+        // TODO handle custom cfg (implementation needed on the server side)
+        return null;
     }
 
     /**
