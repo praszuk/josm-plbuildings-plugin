@@ -20,6 +20,7 @@ import org.openstreetmap.josm.plugins.plbuildings.gui.SurveyConfirmationDialog;
 import org.openstreetmap.josm.plugins.plbuildings.gui.UncommonTagDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.ImportDataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsDuplicateValidator;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -42,7 +43,7 @@ public class BuildingsImportAction extends JosmAction {
     public BuildingsImportAction() {
         super(
             TITLE,
-            null,
+            (ImageProvider) null,
             DESCRIPTION,
             Shortcut.registerShortcut(
                 "download:building",
@@ -50,7 +51,9 @@ public class BuildingsImportAction extends JosmAction {
                 KeyEvent.VK_1,
                 Shortcut.CTRL_SHIFT
             ),
-            true
+            false,
+            String.format("%s:buildings_import", BuildingsPlugin.info.name),
+            false
         );
     }
 
