@@ -2,6 +2,8 @@ package org.openstreetmap.josm.plugins.plbuildings.models;
 
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportDataSource;
 
+import static org.openstreetmap.josm.tools.I18n.trc;
+
 /**
  * Manages providing selected data source for given import.
  * For now, "only one" option works, but in future it can be extended to use mixed data sources:
@@ -56,5 +58,15 @@ public class ImportDataSourceConfig {
      */
     public boolean isSimple(){
         return this.geometry == this.tags;
+    }
+
+    @Override
+    public String toString() {
+        if (isSimple()){
+            return this.geometry.toString();
+        }
+        else {
+            return String.format(trc("G – geometry, T – tags ", "G: %s, T: %s"), this.geometry, this.tags);
+        }
     }
 }

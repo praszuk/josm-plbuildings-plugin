@@ -3,7 +3,6 @@ package org.openstreetmap.josm.plugins.plbuildings.gui;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
-import org.openstreetmap.josm.plugins.plbuildings.data.ImportDataSource;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.models.ImportDataSourceConfig;
 import org.openstreetmap.josm.tools.Logging;
@@ -13,9 +12,7 @@ import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -27,6 +24,8 @@ public class BuildingsToggleDialog extends ToggleDialog {
     private static final Color COLOR_ORANGE = Color.decode("#ff781f"); // hex orange better than Color.ORANGE
 
     private final JLabel status;
+    private final JLabel dataSource;
+
     private final JLabel building;
     private final JLabel bLevels;
     private final JLabel uncommonTags;
@@ -45,21 +44,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
         );
 
         this.status = new JLabel("");
-
-        final JComboBox<String> dataSourceComboBox = new JComboBox<>(
-            Arrays.stream(ImportDataSource.values())
-                .map(ImportDataSource::toString)
-                .toArray(String[]::new)
-        );
-
-        dataSourceComboBox.addItemListener(event -> {
-            if (event.getStateChange() == ItemEvent.SELECTED) {
-                ImportDataSource newDataSource = ImportDataSource.fromString((String)event.getItem());
-                ImportDataSourceConfig.getInstance().changeDataSource(newDataSource);
-            }
-        });
-        dataSourceComboBox.setEnabled(false);
-        dataSourceComboBox.setSelectedItem(0);
+        this.dataSource = new JLabel(ImportDataSourceConfig.getInstance().toString());
 
         this.building = new JLabel("");
         this.bLevels = new JLabel("");
@@ -78,7 +63,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
         dataSourceLabel.setBorder(new EmptyBorder(0,5,0,0));
 
         configPanel.add(dataSourceLabel);
-        configPanel.add(dataSourceComboBox);
+        configPanel.add(dataSource);
 
         JPanel lastImportTagsPanel = new JPanel(new GridLayout(0, 2));
 
@@ -166,6 +151,8 @@ public class BuildingsToggleDialog extends ToggleDialog {
         });
     }
 
-
+    public void setDataSource(String newDataSource){
+        this.dataSource.setText(newDataSource);
+    }
 
 }
