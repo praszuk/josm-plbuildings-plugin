@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: josm-plugin_plbuildings 1.4.2-2-gdebafc4-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-03 16:08+0200\n"
-"PO-Revision-Date: 2022-09-03 16:09+0200\n"
+"POT-Creation-Date: 2022-09-10 15:13+0200\n"
+"PO-Revision-Date: 2022-09-10 15:23+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -32,15 +32,15 @@ msgstr "Dodano zaimportowany budynek"
 msgid "Building import confirmation"
 msgstr "Potwierdzenie importu budynku"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:16
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:18
 msgid "Buildings import stats"
 msgstr "Statystyki importowania budynków"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:36
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:40
 msgid "Buildings with full replace"
 msgstr "Budynki z pełną podmianą"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:40
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:44
 msgid "Buildings with tags update"
 msgstr "Budynki z aktualizacją tagów"
 
@@ -80,7 +80,7 @@ msgstr "Nie można scalić budynków! Nieznany błąd!"
 msgid "Connection error"
 msgstr "Błąd połączenia"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:61
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:62
 msgid "Data source"
 msgstr "Źródło danych"
 
@@ -92,20 +92,12 @@ msgstr ""
 "Wykryto wartość \"survey\" w tagach.\n"
 "Czy chcesz kontynuować aktualizowanie tego obiektu?"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/UncommonTagDialog.java:15
-msgid ""
-"Detected uncommon tags.\n"
-"You can check if they are correct and add more details."
-msgstr ""
-"Wykryto nietypowe tagi.\n"
-"Możesz sprawdzić czy są poprawne i dodać więcej szczegółów."
-
 #. connecting/downloading data from import server
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/data/ImportStatus.java:11
 msgid "Done"
 msgstr "Gotowe"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:40
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:39
 msgid "Download building"
 msgstr "Pobierz budynek"
 
@@ -114,11 +106,16 @@ msgstr "Pobierz budynek"
 msgid "Downloading"
 msgstr "Pobieranie"
 
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/models/ImportDataSourceConfig.java:69
+msgctxt "G – geometry, T – tags "
+msgid "G: %s, T: %s"
+msgstr "G: %s, T: %s"
+
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/data/ImportStatus.java:9
 msgid "Idle"
 msgstr "Bezczynny"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:39
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:38
 msgid "Import building at cursor position or replace/update selected."
 msgstr ""
 "Importuj budynek w miejscu wskazywanym przez kursor lub/i wymień/aktualizuj "
@@ -129,19 +126,19 @@ msgstr ""
 msgid "Import error"
 msgstr "Błąd importowania"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:236
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:237
 msgid "Imported a new building"
 msgstr "Zaimportowano nowy budynek"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:80
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:79
 msgid "Latest tags"
 msgstr "Ostatnie tagi"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:32
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:36
 msgid "New buildings"
 msgstr "Nowe budynki"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:152
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:147
 msgid "No"
 msgstr "Nie"
 
@@ -155,12 +152,12 @@ msgstr "Brak danych"
 msgid "No update"
 msgstr "Brak aktualizacji"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:36
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:37
 #, java-format
 msgid "Open the {0} window"
 msgstr "Otwiera okno {0}"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:39
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:40
 msgid "PlBuildings window"
 msgstr "Okno PlBuildings"
 
@@ -168,35 +165,44 @@ msgstr "Okno PlBuildings"
 msgid "Replaced building geometry"
 msgstr "Podmieniono geometrię budynku"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:15
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:17
 msgid "Show buildings import stats"
 msgstr "Pokaż statystyki importowania budynków"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:55
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:56
 msgid "Status"
 msgstr "Status"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:44
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:48
 msgid "Total number of import actions"
 msgstr "Całkowita liczba akcji importów"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:77
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:76
 msgid "Uncommon tags"
 msgstr "Nietypowe tagi"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/UncommonTagDialog.java:16
+#, java-format
+msgid ""
+"Uncommon tags ({0}) has been detected.\n"
+"You can verify that are correct and add more details."
+msgstr ""
+"Wykryto specyficzne tagi ({0}).\n"
+"Możesz zweryfikować, czy są poprawne i dodać więcej szczegółów."
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/UncommonTagDialog.java:20
 msgid "Uncommon tags detected"
-msgstr "Wykryto nietypowe tagi"
+msgstr "Wykryto specyficzne tagi"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/UpdateBuildingTagsCommand.java:18
 msgid "Updated building tags"
 msgstr "Zaktualizowano tagi budynku"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:270
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:271
 msgid "Updated building tags and geometry"
 msgstr "Zaktualizowano tagi i geometrię budynku"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:152
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:147
 msgid "Yes"
 msgstr "Tak"
 
