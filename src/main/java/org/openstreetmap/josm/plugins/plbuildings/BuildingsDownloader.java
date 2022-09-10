@@ -6,6 +6,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportDataSource;
+import org.openstreetmap.josm.plugins.plbuildings.data.ImportDataSourceConfigType;
 import org.openstreetmap.josm.plugins.plbuildings.models.ImportDataSourceConfig;
 import org.openstreetmap.josm.tools.Http1Client;
 import org.openstreetmap.josm.tools.HttpClient;
@@ -13,6 +14,7 @@ import org.openstreetmap.josm.tools.Logging;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.stream.Collectors;
 
 public class BuildingsDownloader {
     public static final String USER_AGENT = String.format(
@@ -29,20 +31,18 @@ public class BuildingsDownloader {
      * @return DataSet with "raw building" from .osm response or null
      */
     public static DataSet downloadBuildings(LatLon latLon, ImportDataSourceConfig dataSourceCfg){
-        if (dataSourceCfg.isSimple()){
-            String dataSourceParam;
-            if (dataSourceCfg.getTagsSource() == ImportDataSource.BDOT){
-                dataSourceParam = "bdot";
-            }
-            else {
-                Logging.error("Unsupported data source parameter: {0}", dataSourceCfg.getTagsSource());
-                return null;
-            }
-            return downloadBuildings(latLon, dataSourceParam, BuildingsSettings.SEARCH_DISTANCE.get());
+        String dataSourceQueryParam = dataSourceCfg.getDataSources()
+            .stream()
+            .map(ImportDataSource::toString)
+            .collect(Collectors.joining(",")).toLowerCase();
+
+        // TODO above will be enough for all types when multiple source will be implemented on the server side
+        if (dataSourceCfg.getConfigType() != ImportDataSourceConfigType.SIMPLE){
+            Logging.error("Unsupported data source query param: {0}", dataSourceQueryParam);
+            return null;
         }
-        Logging.error("Unsupported data source. Custom data source config is not implemented yet!");
-        // TODO handle custom cfg (implementation needed on the server side)
-        return null;
+
+        return downloadBuildings(latLon, dataSourceQueryParam, BuildingsSettings.SEARCH_DISTANCE.get());
     }
 
     /**
