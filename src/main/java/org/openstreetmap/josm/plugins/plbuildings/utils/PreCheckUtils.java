@@ -5,7 +5,7 @@ import org.openstreetmap.josm.tools.Logging;
 
 import javax.annotation.Nonnull;
 
-import static org.openstreetmap.josm.plugins.plbuildings.utils.TagConflictUtils.HOUSE_DETAILS;
+import static org.openstreetmap.josm.plugins.plbuildings.data.BuildingsTags.HOUSE_DETAILS;
 
 public class PreCheckUtils {
     /**
