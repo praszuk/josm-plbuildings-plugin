@@ -1,5 +1,6 @@
-package org.openstreetmap.josm.plugins.plbuildings;
+package org.openstreetmap.josm.plugins.plbuildings.models;
 
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.tools.Logging;
 
 import javax.json.Json;

@@ -10,7 +10,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsDownloader;
-import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportStats;
+import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
 import org.openstreetmap.josm.plugins.plbuildings.commands.AddBuildingGeometryCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceBuildingGeometryCommand;

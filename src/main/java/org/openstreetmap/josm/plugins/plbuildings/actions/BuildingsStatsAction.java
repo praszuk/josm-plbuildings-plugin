@@ -1,7 +1,7 @@
 package org.openstreetmap.josm.plugins.plbuildings.actions;
 
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportStats;
+import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
 import org.openstreetmap.josm.plugins.plbuildings.gui.BuildingsImportStatsPanel;
 import org.openstreetmap.josm.tools.ImageProvider;
