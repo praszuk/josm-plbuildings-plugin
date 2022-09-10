@@ -10,9 +10,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
  */
 public class UncommonTagDialog {
 
-    public static void show(){
+    public static void show(String uncommonTags){
         JOptionPane.showMessageDialog(null,
-            tr("Detected uncommon tags.\nYou can check if they are correct and add more details."),
+            tr(
+                "Uncommon tags ({0}) has been detected." +
+                    "\nYou can verify that are correct and add more details.",
+                uncommonTags
+            ),
             tr("Uncommon tags detected"),
             JOptionPane.INFORMATION_MESSAGE
         );
