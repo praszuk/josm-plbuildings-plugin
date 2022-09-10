@@ -3,21 +3,11 @@ package org.openstreetmap.josm.plugins.plbuildings.utils;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
+import org.openstreetmap.josm.plugins.plbuildings.data.BuildingsTags;
 
-import java.util.Collections;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class TagConflictUtils {
-
-    public static final Set<String> LIVING_BUILDINGS = Collections.unmodifiableSet(Stream.of(
-        "house", "apartments", "detached", "semidetached_house", "terrace"
-    ).collect(Collectors.toSet()));
-
-    public static final Set<String> HOUSE_DETAILS = Collections.unmodifiableSet(Stream.of(
-        "detached", "semidetached_house", "terrace"
-    ).collect(Collectors.toSet()));
 
     /**
      * Try to remove some conflicts which can be avoided using function isTagConflictCanBeSkipped
@@ -67,12 +57,12 @@ public class TagConflictUtils {
                 }
 
                 // residential can be changed to any living building
-                else if (currentValue.equals("residential") && LIVING_BUILDINGS.contains(newValue)){
+                else if (currentValue.equals("residential") && BuildingsTags.LIVING_BUILDINGS.contains(newValue)){
                     return true;
                 }
 
                 // details of house
-                else if (currentValue.equals("house") && HOUSE_DETAILS.contains(newValue)){
+                else if (currentValue.equals("house") && BuildingsTags.HOUSE_DETAILS.contains(newValue)){
                     return true;
                 }
                 break;
