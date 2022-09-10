@@ -4,10 +4,7 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.*;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsDownloader;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
@@ -33,7 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.DOWNLOADING;
-import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.hasUncommonTags;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.findUncommonTags;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.*;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -294,7 +291,9 @@ public class BuildingsImportAction extends JosmAction {
 
         // post-check section
         boolean hasUncommonTags = false;
-        if (hasUncommonTags(resultBuilding)){
+        TagMap uncommon = findUncommonTags(resultBuilding);
+        if (!uncommon.isEmpty()){
+            Logging.debug("Found uncommon tags {0}", uncommon);
             updateGuiStatus(ImportStatus.ACTION_REQUIRED);
             hasUncommonTags = true;
             UncommonTagDialog.show();
