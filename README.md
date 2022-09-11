@@ -18,6 +18,8 @@ It communicates with the [PLBuildings server](https://github.com/praszuk/josm-pl
   - Preventing house details simplification (e.g. detached->house)
   - Avoiding breaking `building:levels` if selected `building:levels` + `roof:levels` are equal to a new `building:levels`.
 - Post-checking imported building (looking for uncommon tags).
+- Statuses (current state of import action).
+- GUI Sidebar (Toggle Dialog) with (current: status, data source, section with the latest tags and uncommon tag indicator).
 
 ## How to use it
 Move the cursor to a building and press `CTRL + SHIFT + 1`.
@@ -35,6 +37,11 @@ To show statistics, go to:`Menu->Data->Buildings import stats`
 Example stats:
 
 ![Buildings import statistics](media/import_stats.jpg)
+
+GUI with status changing at import:
+
+![Toggle dialog at import action](media/toggledialog.gif)
+
 
 ### Simplified buildings import action flow
 ![Simplified buildings import action flow](media/simple_import_activity_diagram.jpg)
