@@ -29,12 +29,9 @@ public class UpdateTagsTest {
 
     @Test
     public void testNoTagsChangeCancel(){
-        new MockUp<BuildingsImportAction>(){
-            @Mock
-            public DataSet getBuildingsAtCurrentLocation(){
-                return importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
-            }
-        };
+        DataSet importDataSet = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
+        assertNotNull(importDataSet);
+
         DataSet ds = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
         assertNotNull(ds);
 
@@ -44,19 +41,13 @@ public class UpdateTagsTest {
         int version = buildingToReplace.getVersion();
         ds.setSelected(buildingToReplace);
 
-        BuildingsImportAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds, importDataSet, buildingToReplace);
 
         assertEquals(buildingToReplace.getVersion(), version);
     }
 
     @Test
     public void testNewTagsNoConflict(){
-        new MockUp<BuildingsImportAction>(){
-            @Mock
-            public DataSet getBuildingsAtCurrentLocation(){
-                return importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
-            }
-        };
         new MockUp<UpdateBuildingTagsCommand>(){
             @Mock
             private List<Command> prepareUpdateTagsCommands(Way selectedBuilding, Way newBuilding){
@@ -68,6 +59,8 @@ public class UpdateTagsTest {
                     ));
             }
         };
+        DataSet importDataSet = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
+        assertNotNull(importDataSet);
 
         DataSet ds = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
         assertNotNull(ds);
@@ -78,7 +71,7 @@ public class UpdateTagsTest {
         buildingToReplace.put("roof:shape", "flat");
         ds.setSelected(buildingToReplace);
 
-        BuildingsImportAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds, importDataSet, buildingToReplace);
 
         assertEquals(ds.getWays().size(), 1);
         assertEquals(ds.getWays().stream()
@@ -88,16 +81,6 @@ public class UpdateTagsTest {
 
     @Test
     public void testNewTagsConflict(){
-        new MockUp<BuildingsImportAction>(){
-            @Mock
-            public DataSet getBuildingsAtCurrentLocation(){
-                DataSet ds = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
-                assertNotNull(ds);
-                Way building = (Way) ds.getWays().toArray()[0];
-                building.put("building", "detached");
-                return ds;
-            }
-        };
         new MockUp<UpdateBuildingTagsCommand>(){
             @Mock
             private List<Command> prepareUpdateTagsCommands(Way selectedBuilding, Way newBuilding){
@@ -109,6 +92,10 @@ public class UpdateTagsTest {
                     ));
             }
         };
+        DataSet importDataSet = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
+        assertNotNull(importDataSet);
+        Way building = (Way) importDataSet.getWays().toArray()[0];
+        building.put("building", "detached");
 
         DataSet ds = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
         assertNotNull(ds);
@@ -119,7 +106,7 @@ public class UpdateTagsTest {
 
         ds.setSelected(buildingToReplace);
 
-        BuildingsImportAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds, importDataSet, buildingToReplace);
 
         assertEquals(ds.getWays().size(), 1);
         assertEquals(ds.getWays().stream().filter(way -> way.hasTag("building", "detached")).count(), 1);
@@ -127,16 +114,6 @@ public class UpdateTagsTest {
 
     @Test
     public void testNewTagsCanceledByUser(){
-        new MockUp<BuildingsImportAction>(){
-            @Mock
-            public DataSet getBuildingsAtCurrentLocation(){
-                DataSet ds = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
-                assertNotNull(ds);
-                Way building = (Way) ds.getWays().toArray()[0];
-                building.put("building", "detached");
-                return ds;
-            }
-        };
         new MockUp<UpdateBuildingTagsCommand>(){
             @Mock
             private List<Command> prepareUpdateTagsCommands(
@@ -146,6 +123,10 @@ public class UpdateTagsTest {
                 throw new UserCancelException("Canceled by user");
             }
         };
+        DataSet importDataSet = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
+        assertNotNull(importDataSet);
+        Way building = (Way) importDataSet.getWays().toArray()[0];
+        building.put("building", "detached");
 
         DataSet ds = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
         assertNotNull(ds);
@@ -157,7 +138,7 @@ public class UpdateTagsTest {
 
         ds.setSelected(buildingToReplace);
 
-        BuildingsImportAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds, importDataSet, buildingToReplace);
 
         assertEquals(ds.getWays().size(), 1);
         assertEquals(ds.getWays().stream().filter(way -> way.hasTag("building", "detached")).count(), 0);

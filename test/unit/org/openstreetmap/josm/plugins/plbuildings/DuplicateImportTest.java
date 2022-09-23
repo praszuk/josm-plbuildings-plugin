@@ -41,44 +41,30 @@ public class DuplicateImportTest {
     }
     @Test
     public void testSimpleDuplicateCheckNotDuplicate(){
-        new MockUp<BuildingsImportAction>(){
-            @Mock
-            public DataSet getBuildingsAtCurrentLocation(){
-                return importOsmFile(new File("test/data/duplicate_import/import_building.osm"), "");
-            }
-        };
-
-        DataSet ds = importOsmFile(
-            new File("test/data/duplicate_import/simple_replace_base.osm"),
-            "");
+        DataSet importDataSet = importOsmFile(new File("test/data/duplicate_import/import_building.osm"), "");
+        DataSet ds = importOsmFile(new File("test/data/duplicate_import/simple_replace_base.osm"), "");
+        assertNotNull(importDataSet);
         assertNotNull(ds);
 
         Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.hasTag("building", "yes")).toArray()[0];
         ds.setSelected(buildingToReplace);
 
-        BuildingsImportAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds, importDataSet, buildingToReplace);
 
         assertEquals(ds.getWays().stream().filter(BuildingsWayValidator::isBuildingWayValid).count(), 1);
     }
 
     @Test
     public void testSimpleDuplicateCheckDuplicateAllNodesEqualAndSameTags(){
-        new MockUp<BuildingsImportAction>(){
-            @Mock
-            public DataSet getBuildingsAtCurrentLocation(){
-                return importOsmFile(new File("test/data/duplicate_import/import_building.osm"), "");
-            }
-        };
-
-        DataSet ds = importOsmFile(
-            new File("test/data/duplicate_import/simple_duplicate_base.osm"),
-            "");
+        DataSet importDataSet = importOsmFile(new File("test/data/duplicate_import/import_building.osm"), "");
+        DataSet ds = importOsmFile(new File("test/data/duplicate_import/simple_duplicate_base.osm"), "");
+        assertNotNull(importDataSet);
         assertNotNull(ds);
 
         Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.hasTag("building", "house")).toArray()[0];
         ds.setSelected(buildingToReplace);
 
-        BuildingsImportAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds, importDataSet, buildingToReplace);
 
         assertEquals(ds.getWays().size(), 1);
         assertEquals(ds.getWays().stream().filter(way -> way.hasTag("building", "house")).count(), 1);
@@ -86,16 +72,11 @@ public class DuplicateImportTest {
 
     @Test
     public void testSimpleDuplicateCheckNotDuplicateAllNodesEqualAndDifferentTags(){
-        new MockUp<BuildingsImportAction>(){
-            @Mock
-            public DataSet getBuildingsAtCurrentLocation(){
-                return importOsmFile(new File("test/data/duplicate_import/import_building.osm"), "");
-            }
-        };
-
+        DataSet importDataSet = importOsmFile(new File("test/data/duplicate_import/import_building.osm"), "");
         DataSet ds = importOsmFile(
             new File("test/data/duplicate_import/simple_duplicate_different_tags_base.osm"),
             "");
+        assertNotNull(importDataSet);
         assertNotNull(ds);
 
         Way buildingToReplace = (Way) ds.getWays().stream()
@@ -103,7 +84,7 @@ public class DuplicateImportTest {
             .toArray()[0];
         ds.setSelected(buildingToReplace);
 
-        BuildingsImportAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds, importDataSet, buildingToReplace);
 
         assertEquals(ds.getWays().size(), 1);
         assertEquals(ds.getWays().stream().filter(way -> way.hasTag("building", "house")).count(), 1);
@@ -111,22 +92,15 @@ public class DuplicateImportTest {
 
     @Test
     public void testDuplicateBaseMoreNodesImportBuildingAllNodesEqual(){
-        new MockUp<BuildingsImportAction>(){
-            @Mock
-            public DataSet getBuildingsAtCurrentLocation(){
-                return importOsmFile(new File("test/data/duplicate_import/import_building.osm"), "");
-            }
-        };
-
-        DataSet ds = importOsmFile(
-            new File("test/data/duplicate_import/duplicate_more_nodes_base.osm"),
-            "");
+        DataSet importDataSet = importOsmFile(new File("test/data/duplicate_import/import_building.osm"), "");
+        DataSet ds = importOsmFile(new File("test/data/duplicate_import/duplicate_more_nodes_base.osm"), "");
+        assertNotNull(importDataSet);
         assertNotNull(ds);
 
         Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.hasTag("building", "yes")).toArray()[0];
         ds.setSelected(buildingToReplace);
 
-        BuildingsImportAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds, importDataSet, buildingToReplace);
 
         assertEquals(ds.getWays().stream().filter(way -> way.hasTag("building", "house")).count(), 1);
     }

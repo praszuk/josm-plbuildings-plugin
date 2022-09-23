@@ -1,7 +1,5 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
-import mockit.Mock;
-import mockit.MockUp;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -11,8 +9,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import java.io.File;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
 
 public class SimpleBuildingImportTest {
@@ -21,15 +18,11 @@ public class SimpleBuildingImportTest {
 
     @Test
     public void testImportBuildingNoCloseNodesJustOneBuildingInDataset(){
-        new MockUp<BuildingsImportAction>(){
-            @Mock
-            public DataSet getBuildingsAtCurrentLocation(){
-                return importOsmFile(new File("test/data/simple_building.osm"), "");
-            }
-        };
+        DataSet importDataSet = importOsmFile(new File("test/data/simple_building.osm"), "");
+        assertNotNull(importDataSet);
 
         DataSet ds = new DataSet();
-        BuildingsImportAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds, importDataSet, null);
 
         assertEquals(ds.getWays().size(), 1);
         Way building = (Way) ds.getWays().toArray()[0];
@@ -40,33 +33,21 @@ public class SimpleBuildingImportTest {
 
     @Test
     public void testImportEmptyDataSet(){
-        new MockUp<BuildingsImportAction>(){
-            @Mock
-            public DataSet getBuildingsAtCurrentLocation(){
-                return new DataSet();
-            }
-        };
+        DataSet importDataSet = new DataSet();
 
         DataSet ds = new DataSet();
-        BuildingsImportAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds, importDataSet, null);
         assertTrue(ds.isEmpty());
     }
 
     @Test
     public void testImportDataSetWithMultipleBuildingsButImportOnlyOne(){
-        new MockUp<BuildingsImportAction>(){
-            @Mock
-            public DataSet getBuildingsAtCurrentLocation(){
-
-                DataSet data = importOsmFile(new File("test/data/simple_multiple_buildings.osm"), "");
-                assert data != null;
-                assertTrue(data.getWays().size() > 1);
-                return data;
-            }
-        };
+        DataSet importDataSet = importOsmFile(new File("test/data/simple_multiple_buildings.osm"), "");
+        assertNotNull(importDataSet);
+        assertTrue(importDataSet.getWays().size() > 1);
 
         DataSet ds = new DataSet();
-        BuildingsImportAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds, importDataSet, null);
         assertEquals(ds.getWays().size(), 1);
     }
 }
