@@ -1,7 +1,5 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
-import mockit.Mock;
-import mockit.MockUp;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.UndoRedoHandler;
@@ -25,39 +23,29 @@ public class ReplaceOldBuildingImportTest {
 
     @Test
     public void testImportBuildingWithReplaceWithOneBuildingIsSelected(){
-        new MockUp<BuildingsImportAction>(){
-            @Mock
-            public DataSet getBuildingsAtCurrentLocation(){
-                DataSet importData = importOsmFile(new File("test/data/replace_building_1.osm"), "");
-                assertNotNull(importData);
-                Way buildingToImport = (Way) importData.getWays().toArray()[0];
-                assertEquals(buildingToImport.getNodesCount() - 1, 4);
+        DataSet importData = importOsmFile(new File("test/data/replace_building_1.osm"), "");
+        assertNotNull(importData);
 
-                return importOsmFile(new File("test/data/replace_building_1.osm"), "");
-            }
-        };
+        Way buildingToImport = (Way) importData.getWays().toArray()[0];
+        assertEquals(buildingToImport.getNodesCount() - 1, 4);
 
         DataSet ds = importOsmFile(new File("test/data/replace_multiple_buildings.osm"), "");
         assertNotNull(ds);
 
+
         Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.getNodesCount() == 5).toArray()[0];
         ds.setSelected(buildingToReplace);
 
-        BuildingsImportAction.performBuildingImport(ds);
-
+        BuildingsImportAction.performBuildingImport(ds, importData, buildingToReplace);
 
         assertEquals(buildingToReplace.getNodesCount() - 1, 4);
         assertTrue(isBuildingWayValid(buildingToReplace));
     }
 
     @Test
-    public void testImportBuildingWithReplaceButMoreThanOneBuildingIsSelectedSoCancelImport(){
-        new MockUp<BuildingsImportAction>(){
-            @Mock
-            public DataSet getBuildingsAtCurrentLocation(){
-                return importOsmFile(new File("test/data/replace_building_1.osm"), "");
-            }
-        };
+    public void testImportBuildingWithReplaceButMoreThanOneSoNullSoBuildingIsSelectedSoCancelImport(){
+        DataSet importData = importOsmFile(new File("test/data/replace_building_1.osm"), "");
+        assertNotNull(importData);
 
         DataSet ds = importOsmFile(new File("test/data/replace_multiple_buildings.osm"), "");
         assertNotNull(ds);
@@ -66,24 +54,18 @@ public class ReplaceOldBuildingImportTest {
 
         Set<Integer> versions = ds.getWays().stream().map(AbstractPrimitive::getVersion).collect(Collectors.toSet());
 
-        BuildingsImportAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds, importData, null);
 
         assertTrue(ds.getWays().stream().allMatch(way -> versions.contains(way.getVersion())));
     }
 
     @Test
     public void testImportBuildingWithReplaceWithOneBuildingIsSelectedUndoRedo(){
-        new MockUp<BuildingsImportAction>(){
-            @Mock
-            public DataSet getBuildingsAtCurrentLocation(){
-                DataSet importData = importOsmFile(new File("test/data/replace_building_1.osm"), "");
-                assertNotNull(importData);
-                Way buildingToImport = (Way) importData.getWays().toArray()[0];
-                assertEquals(buildingToImport.getNodesCount() - 1, 4);
+        DataSet importData = importOsmFile(new File("test/data/replace_building_1.osm"), "");
+        assertNotNull(importData);
 
-                return importOsmFile(new File("test/data/replace_building_1.osm"), "");
-            }
-        };
+        Way buildingToImport = (Way) importData.getWays().toArray()[0];
+        assertEquals(buildingToImport.getNodesCount() - 1, 4);
 
         DataSet ds = importOsmFile(new File("test/data/replace_multiple_buildings.osm"), "");
         assertNotNull(ds);
@@ -91,7 +73,7 @@ public class ReplaceOldBuildingImportTest {
         Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.getNodesCount() == 5).toArray()[0];
         ds.setSelected(buildingToReplace);
 
-        BuildingsImportAction.performBuildingImport(ds);
+        BuildingsImportAction.performBuildingImport(ds, importData, buildingToReplace);
 
         assertTrue(isBuildingWayValid(buildingToReplace));
         assertEquals(buildingToReplace.getNodesCount() - 1, 4);

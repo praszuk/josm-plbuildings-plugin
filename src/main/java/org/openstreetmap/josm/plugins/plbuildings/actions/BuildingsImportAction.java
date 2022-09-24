@@ -22,11 +22,13 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 import javax.annotation.Nonnull;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.DOWNLOADING;
@@ -54,17 +56,38 @@ public class BuildingsImportAction extends JosmAction {
         );
     }
 
-    public static DataSet getBuildingsAtCurrentLocation(){
+    public static LatLon getCurrentCursorLocation(){
         try {
-            LatLon latLonPoint = MainApplication.getMap().mapView.getLatLon(
+            return MainApplication.getMap().mapView.getLatLon(
                 MainApplication.getMap().mapView.getMousePosition().getX(),
                 MainApplication.getMap().mapView.getMousePosition().getY()
             );
-            return BuildingsDownloader.downloadBuildings(latLonPoint, ImportDataSourceConfig.getInstance());
         }
         catch (NullPointerException exception){
             return null;
         }
+    }
+
+    /**
+     * @return – download building at latLonPoint or null if any problems with downloading
+     */
+    public static DataSet getBuildingsAt(LatLon latLonPoint){
+        try {
+            return BuildingsDownloader.downloadBuildings(latLonPoint, ImportDataSourceConfig.getInstance());
+        }catch (NullPointerException exception){
+            return null;
+        }
+    }
+
+    /**
+     * @return – selected building in give dataset or null
+     */
+    public static Way getSelectedBuilding(DataSet ds){
+        Collection<OsmPrimitive> selected = ds.getSelected()
+            .stream()
+            .filter(osmPrimitive -> osmPrimitive.getType() == OsmPrimitiveType.WAY)
+            .collect(Collectors.toList());
+        return selected.size() == 1 ? (Way) selected.toArray()[0]:null;
     }
 
     /**
@@ -109,8 +132,7 @@ public class BuildingsImportAction extends JosmAction {
 
     /**
      * Flow:
-     * Get selection
-     * Download building from server to virtual dataset
+     * Validate imported dataset
      * Check if it's unique (no geometry duplicate):
      * -- duplicate:
      * ---- check if 1 building is selected:
@@ -121,18 +143,14 @@ public class BuildingsImportAction extends JosmAction {
      * ------ selected -> try to replace geometry and update tags
      * ------ not selected -> just import new building
      */
-    public static void performBuildingImport(DataSet currentDataSet) {
-        // Get selection section
-        Collection<OsmPrimitive> selected = currentDataSet.getSelected()
-            .stream()
-            .filter(osmPrimitive -> osmPrimitive.getType() == OsmPrimitiveType.WAY)
-            .collect(Collectors.toList());
-        Way selectedBuilding = selected.size() == 1 ? (Way) selected.toArray()[0]:null;
-
-        // Preparation and obtaining import data selection
+    public static void performBuildingImport(
+        DataSet currentDataSet,
+        DataSet importedBuildingsDataSet,
+        Way selectedBuilding
+    ) {
         BuildingsImportStats.getInstance().addTotalImportActionCounter(1);
-        updateGuiStatus(DOWNLOADING);
-        DataSet importedBuildingsDataSet = getBuildingsAtCurrentLocation();
+
+        // Imported data validation and getting building
         if (importedBuildingsDataSet == null){
             Logging.warn("Downloading error: Cannot import building!");
             updateGuiStatus(ImportStatus.CONNECTION_ERROR);
@@ -308,8 +326,42 @@ public class BuildingsImportAction extends JosmAction {
         updateGuiTags(resultBuilding, hasUncommonTags);
     }
 
+    class BuildingImportTask extends SwingWorker<DataSet, Object>{
+        private final LatLon cursorLatLon;
+        private final Way selectedBuilding;
+
+        public BuildingImportTask(LatLon cursorLatLon, Way selectedBuilding) {
+            this.cursorLatLon = cursorLatLon;
+            this.selectedBuilding = selectedBuilding;
+        }
+
+        @Override
+        protected DataSet doInBackground() {
+            updateGuiStatus(DOWNLOADING);
+            return getBuildingsAt(this.cursorLatLon);
+        }
+
+        @Override
+        protected void done() {
+            try {
+                performBuildingImport(getLayerManager().getEditDataSet(), this.get(), selectedBuilding);
+            } catch (InterruptedException | ExecutionException e) {
+                Logging.error("PlBuildings runtime error at SwingWorker BuildingImportTask: {0}", e);
+            }
+        }
+
+    }
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        MainApplication.worker.execute(() -> performBuildingImport(getLayerManager().getEditDataSet()));
+        DataSet currentDataSet = getLayerManager().getEditDataSet();
+
+        // Get selection first – it must be got before starting downloading
+        // to avoid changing incorrect building in future – which is possible if user importing so fast and
+        // downloading takes longer then selecting next building to update
+        Way selectedBuilding = getSelectedBuilding(currentDataSet);
+        LatLon cursorLatLon = getCurrentCursorLocation();
+
+        BuildingImportTask buildingImportTask = new BuildingImportTask(cursorLatLon, selectedBuilding);
+        buildingImportTask.execute();
     }
 }

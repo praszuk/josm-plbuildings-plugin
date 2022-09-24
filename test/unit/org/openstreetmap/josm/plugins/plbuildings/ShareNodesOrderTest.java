@@ -1,7 +1,5 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
-import mockit.Mock;
-import mockit.MockUp;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -27,17 +25,11 @@ public class ShareNodesOrderTest {
 
     @Test
     public void testImportBuildingShareFourNodesWithTwoOppositeBuildings(){
-        new MockUp<BuildingsImportAction>(){
-            @Mock
-            public DataSet getBuildingsAtCurrentLocation(){
-                return importOsmFile(new File("test/data/share_nodes_order/import_building.osm"), "");
-            }
-        };
+        DataSet importDataSet = importOsmFile(new File("test/data/share_nodes_order/import_building.osm"), "");
+        assertNotNull(importDataSet);
 
-        DataSet ds = importOsmFile(
-            new File("test/data/share_nodes_order/two_opposite_buildings_base.osm"),
-            "");
-        BuildingsImportAction.performBuildingImport(ds);
+        DataSet ds = importOsmFile(new File("test/data/share_nodes_order/two_opposite_buildings_base.osm"), "");
+        BuildingsImportAction.performBuildingImport(ds, importDataSet, null);
 
         assertNotNull(ds);
         assertEquals(ds.getWays().stream().filter(BuildingsWayValidator::isBuildingWayValid).count(), 3);
