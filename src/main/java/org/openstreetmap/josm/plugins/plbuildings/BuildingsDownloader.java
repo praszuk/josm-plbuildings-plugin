@@ -2,10 +2,10 @@ package org.openstreetmap.josm.plugins.plbuildings;
 
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.io.GeoJSONReader;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmJsonReader;
+import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportDataSource;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportDataSourceConfigType;
 import org.openstreetmap.josm.plugins.plbuildings.models.ImportDataSourceConfig;
@@ -20,7 +20,6 @@ import javax.json.JsonReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.stream.Collectors;
 
 public class BuildingsDownloader {
@@ -36,9 +35,9 @@ public class BuildingsDownloader {
      *
      * @param latLon        location of searching building (EPSG 4386)
      * @param dataSourceCfg dataSource config of buildings.
-     * @return Map with <Source, DataSet> with buildings or null if IO/parse error
+     * @return BuildingsImportData with downloaded data or empty datasets or empty obj if IO/parse error
      */
-    public static HashMap<String, DataSet> downloadBuildings(LatLon latLon, ImportDataSourceConfig dataSourceCfg){
+    public static BuildingsImportData downloadBuildings(LatLon latLon, ImportDataSourceConfig dataSourceCfg){
         String dataSourceQueryParam = dataSourceCfg.getDataSources()
             .stream()
             .map(ImportDataSource::toString)
@@ -59,9 +58,9 @@ public class BuildingsDownloader {
      * @param latLon         location of searching building (EPSG 4386)
      * @param dataSources    dataSources of buildings
      * @param searchDistance distance in meters to find the nearest building from latLon
-     * @return Map with <Source, DataSet> with buildings or null if IO/parse error
+     * @return BuildingsImportData with downloaded data or empty datasets or empty obj if IO/parse error
      */
-    public static HashMap<String, DataSet> downloadBuildings(LatLon latLon, String dataSources, Double searchDistance){
+    public static BuildingsImportData downloadBuildings(LatLon latLon, String dataSources, Double searchDistance){
 
         StringBuilder urlBuilder = new StringBuilder(BuildingsSettings.SERVER_URL.get());
         urlBuilder.append("?");
@@ -82,7 +81,7 @@ public class BuildingsDownloader {
 
         Logging.info("Getting building data from: {0}", urlBuilder);
 
-        HashMap<String, DataSet> dataSourceBuildingsData = new HashMap<>();
+        BuildingsImportData dataSourceBuildingsData = new BuildingsImportData();
         JsonReader reader = null;
         try {
             URL url = new URL(urlBuilder.toString());
@@ -103,22 +102,19 @@ public class BuildingsDownloader {
                 // TODO add check if source is in all available data sources
 
                 if (format.equals("geojson")){
-                    dataSourceBuildingsData.put(
+                    dataSourceBuildingsData.add(
                         source,
                         GeoJSONReader.parseDataSet(new ByteArrayInputStream(data.getBytes()), null)
                     );
                 }else if(format.equals("osmjson")){
-                    dataSourceBuildingsData.put(
+                    dataSourceBuildingsData.add(
                         source,
                         OsmJsonReader.parseDataSet(new ByteArrayInputStream(data.getBytes()), null)
                     );
                 } else {
                     Logging.error("Downloading error: Incorrect data format!");
-                    return null;
                 }
             }
-            return dataSourceBuildingsData;
-
         } catch (IOException ioException) {
             Logging.warn("Connection error with getting building data: {0}", ioException.getMessage());
         } catch (IllegalDataException|ClassCastException exception) {
@@ -129,6 +125,6 @@ public class BuildingsDownloader {
                 reader.close();
             }
         }
-        return null;
+        return dataSourceBuildingsData;
     }
 }
