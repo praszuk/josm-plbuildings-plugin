@@ -73,7 +73,8 @@ public class BuildingsImportAction extends JosmAction {
      */
     public static DataSet getBuildingsAt(LatLon latLonPoint){
         try {
-            return BuildingsDownloader.downloadBuildings(latLonPoint, ImportDataSourceConfig.getInstance());
+            // TODO temporary only BDOT is available
+            return BuildingsDownloader.downloadBuildings(latLonPoint, ImportDataSourceConfig.getInstance()).get("bdot");
         }catch (NullPointerException exception){
             return null;
         }
