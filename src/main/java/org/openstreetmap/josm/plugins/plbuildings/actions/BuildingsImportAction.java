@@ -7,6 +7,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.*;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsDownloader;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
+import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
 import org.openstreetmap.josm.plugins.plbuildings.commands.AddBuildingGeometryCommand;
@@ -21,17 +23,14 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
-import jakarta.annotation.Nonnull;
-import javax.swing.*;
+import javax.annotation.Nonnull;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.DOWNLOADING;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.findUncommonTags;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.*;
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -71,13 +70,8 @@ public class BuildingsImportAction extends JosmAction {
     /**
      * @return – download building at latLonPoint or null if any problems with downloading
      */
-    public static DataSet getBuildingsAt(LatLon latLonPoint){
-        try {
-            // TODO temporary only BDOT is available
-            return BuildingsDownloader.downloadBuildings(latLonPoint, ImportDataSourceConfig.getInstance()).get("bdot");
-        }catch (NullPointerException exception){
-            return null;
-        }
+    public static BuildingsImportData getBuildingsAt(LatLon latLonPoint){
+        return BuildingsDownloader.downloadBuildings(latLonPoint, ImportDataSourceConfig.getInstance());
     }
 
     /**
@@ -94,7 +88,7 @@ public class BuildingsImportAction extends JosmAction {
     /**
      * Helper function to updating GUI status from action
      */
-    private static void updateGuiStatus(@Nonnull ImportStatus status){
+    public static void updateGuiStatus(@Nonnull ImportStatus status){
         if (BuildingsPlugin.buildingsToggleDialog == null)  // for tests and no-gui execution of method
             return;
 
@@ -327,31 +321,6 @@ public class BuildingsImportAction extends JosmAction {
         updateGuiTags(resultBuilding, hasUncommonTags);
     }
 
-    class BuildingImportTask extends SwingWorker<DataSet, Object>{
-        private final LatLon cursorLatLon;
-        private final Way selectedBuilding;
-
-        public BuildingImportTask(LatLon cursorLatLon, Way selectedBuilding) {
-            this.cursorLatLon = cursorLatLon;
-            this.selectedBuilding = selectedBuilding;
-        }
-
-        @Override
-        protected DataSet doInBackground() {
-            updateGuiStatus(DOWNLOADING);
-            return getBuildingsAt(this.cursorLatLon);
-        }
-
-        @Override
-        protected void done() {
-            try {
-                performBuildingImport(getLayerManager().getEditDataSet(), this.get(), selectedBuilding);
-            } catch (InterruptedException | ExecutionException e) {
-                Logging.error("PlBuildings runtime error at SwingWorker BuildingImportTask: {0}", e);
-            }
-        }
-
-    }
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         DataSet currentDataSet = getLayerManager().getEditDataSet();
@@ -362,7 +331,7 @@ public class BuildingsImportAction extends JosmAction {
         Way selectedBuilding = getSelectedBuilding(currentDataSet);
         LatLon cursorLatLon = getCurrentCursorLocation();
 
-        BuildingImportTask buildingImportTask = new BuildingImportTask(cursorLatLon, selectedBuilding);
-        buildingImportTask.execute();
+        BuildingsImportManager buildingsImportManager = new BuildingsImportManager(cursorLatLon, selectedBuilding);
+        buildingsImportManager.run();
     }
 }
