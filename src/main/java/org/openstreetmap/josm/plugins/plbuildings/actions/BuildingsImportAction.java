@@ -138,11 +138,10 @@ public class BuildingsImportAction extends JosmAction {
      * ------ selected -> try to replace geometry and update tags
      * ------ not selected -> just import new building
      */
-    public static void performBuildingImport(
-        DataSet currentDataSet,
-        DataSet importedBuildingsDataSet,
-        Way selectedBuilding
-    ) {
+    public static void performBuildingImport(BuildingsImportManager manager) {
+        DataSet currentDataSet = manager.getEditLayer();
+        DataSet importedBuildingsDataSet = manager.getImportedData().get("bdot"); // TODO temporary
+
         BuildingsImportStats.getInstance().addTotalImportActionCounter(1);
 
         // Imported data validation and getting building
@@ -170,6 +169,7 @@ public class BuildingsImportAction extends JosmAction {
         Way importedBuilding = importedBuildingsCollection.get(0); // just get first building
 
         // Pre-check/modify import data section
+        Way selectedBuilding = manager.getSelectedBuilding();
         if (selectedBuilding != null){
             if (hasSurveyValue(selectedBuilding)){
                 updateGuiStatus(ImportStatus.ACTION_REQUIRED);
@@ -331,7 +331,11 @@ public class BuildingsImportAction extends JosmAction {
         Way selectedBuilding = getSelectedBuilding(currentDataSet);
         LatLon cursorLatLon = getCurrentCursorLocation();
 
-        BuildingsImportManager buildingsImportManager = new BuildingsImportManager(cursorLatLon, selectedBuilding);
+        BuildingsImportManager buildingsImportManager = new BuildingsImportManager(
+            currentDataSet,
+            cursorLatLon,
+            selectedBuilding
+        );
         buildingsImportManager.run();
     }
 }
