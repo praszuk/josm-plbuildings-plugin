@@ -8,8 +8,6 @@ import javax.swing.*;
 import java.util.concurrent.ExecutionException;
 
 import static org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction.getBuildingsAt;
-import static org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction.updateGuiStatus;
-import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.DOWNLOADING;
 
 /**
  * responsible for running SwingWorker for doing background (downloading) task to avoid freezing GUI.
@@ -23,7 +21,6 @@ public class BuildingsDownloadTask extends SwingWorker<BuildingsImportData, Obje
 
     @Override
     protected BuildingsImportData doInBackground() {
-        updateGuiStatus(DOWNLOADING);
         return getBuildingsAt(this.buildingsImportManager.getCursorLatLon());
     }
 
