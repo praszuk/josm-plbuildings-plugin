@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction;
+import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -12,6 +13,7 @@ import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
 
 /**
@@ -29,7 +31,9 @@ public class ShareNodesOrderTest {
         assertNotNull(importDataSet);
 
         DataSet ds = importOsmFile(new File("test/data/share_nodes_order/two_opposite_buildings_base.osm"), "");
-        BuildingsImportAction.performBuildingImport(ds, importDataSet, null);
+        BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
+        manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.processDownloadedData();
 
         assertNotNull(ds);
         assertEquals(ds.getWays().stream().filter(BuildingsWayValidator::isBuildingWayValid).count(), 3);

@@ -4,12 +4,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction;
+import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import java.io.File;
 
 import static org.junit.Assert.*;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
 
 public class SimpleBuildingImportTest {
@@ -22,7 +23,9 @@ public class SimpleBuildingImportTest {
         assertNotNull(importDataSet);
 
         DataSet ds = new DataSet();
-        BuildingsImportAction.performBuildingImport(ds, importDataSet, null);
+        BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
+        manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.processDownloadedData();
 
         assertEquals(ds.getWays().size(), 1);
         Way building = (Way) ds.getWays().toArray()[0];
@@ -36,7 +39,9 @@ public class SimpleBuildingImportTest {
         DataSet importDataSet = new DataSet();
 
         DataSet ds = new DataSet();
-        BuildingsImportAction.performBuildingImport(ds, importDataSet, null);
+        BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
+        manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.processDownloadedData();
         assertTrue(ds.isEmpty());
     }
 
@@ -47,7 +52,9 @@ public class SimpleBuildingImportTest {
         assertTrue(importDataSet.getWays().size() > 1);
 
         DataSet ds = new DataSet();
-        BuildingsImportAction.performBuildingImport(ds, importDataSet, null);
+        BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
+        manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.processDownloadedData();
         assertEquals(ds.getWays().size(), 1);
     }
 }

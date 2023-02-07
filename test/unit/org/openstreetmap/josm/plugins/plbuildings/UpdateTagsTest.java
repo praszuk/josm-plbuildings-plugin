@@ -8,8 +8,8 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction;
 import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
+import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.UserCancelException;
 
@@ -19,6 +19,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
 
 
@@ -41,7 +42,9 @@ public class UpdateTagsTest {
         int version = buildingToReplace.getVersion();
         ds.setSelected(buildingToReplace);
 
-        BuildingsImportAction.performBuildingImport(ds, importDataSet, buildingToReplace);
+        BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
+        manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.processDownloadedData();
 
         assertEquals(buildingToReplace.getVersion(), version);
     }
@@ -71,7 +74,9 @@ public class UpdateTagsTest {
         buildingToReplace.put("roof:shape", "flat");
         ds.setSelected(buildingToReplace);
 
-        BuildingsImportAction.performBuildingImport(ds, importDataSet, buildingToReplace);
+        BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
+        manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.processDownloadedData();
 
         assertEquals(ds.getWays().size(), 1);
         assertEquals(ds.getWays().stream()
@@ -106,7 +111,9 @@ public class UpdateTagsTest {
 
         ds.setSelected(buildingToReplace);
 
-        BuildingsImportAction.performBuildingImport(ds, importDataSet, buildingToReplace);
+        BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
+        manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.processDownloadedData();
 
         assertEquals(ds.getWays().size(), 1);
         assertEquals(ds.getWays().stream().filter(way -> way.hasTag("building", "detached")).count(), 1);
@@ -138,7 +145,9 @@ public class UpdateTagsTest {
 
         ds.setSelected(buildingToReplace);
 
-        BuildingsImportAction.performBuildingImport(ds, importDataSet, buildingToReplace);
+        BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
+        manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.processDownloadedData();
 
         assertEquals(ds.getWays().size(), 1);
         assertEquals(ds.getWays().stream().filter(way -> way.hasTag("building", "detached")).count(), 0);

@@ -17,6 +17,8 @@ import java.io.InputStream;
  */
 public final class ImportUtils {
 
+    public static final String DATA_SOURCE = "bdot";  // TODO temporary until datasource cfg will be rewritten
+
     private ImportUtils() {}
 
     public static DataSet importOsmFile(File file, String layerName) {
