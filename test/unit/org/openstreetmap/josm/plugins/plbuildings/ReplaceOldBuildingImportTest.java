@@ -6,7 +6,7 @@ import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction;
+import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import java.io.File;
@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
 import static org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator.isBuildingWayValid;
 
@@ -36,7 +37,9 @@ public class ReplaceOldBuildingImportTest {
         Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.getNodesCount() == 5).toArray()[0];
         ds.setSelected(buildingToReplace);
 
-        BuildingsImportAction.performBuildingImport(ds, importData, buildingToReplace);
+        BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
+        manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importData));
+        manager.processDownloadedData();
 
         assertEquals(buildingToReplace.getNodesCount() - 1, 4);
         assertTrue(isBuildingWayValid(buildingToReplace));
@@ -54,7 +57,9 @@ public class ReplaceOldBuildingImportTest {
 
         Set<Integer> versions = ds.getWays().stream().map(AbstractPrimitive::getVersion).collect(Collectors.toSet());
 
-        BuildingsImportAction.performBuildingImport(ds, importData, null);
+        BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
+        manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importData));
+        manager.processDownloadedData();
 
         assertTrue(ds.getWays().stream().allMatch(way -> versions.contains(way.getVersion())));
     }
@@ -73,7 +78,9 @@ public class ReplaceOldBuildingImportTest {
         Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.getNodesCount() == 5).toArray()[0];
         ds.setSelected(buildingToReplace);
 
-        BuildingsImportAction.performBuildingImport(ds, importData, buildingToReplace);
+        BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
+        manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importData));
+        manager.processDownloadedData();
 
         assertTrue(isBuildingWayValid(buildingToReplace));
         assertEquals(buildingToReplace.getNodesCount() - 1, 4);
