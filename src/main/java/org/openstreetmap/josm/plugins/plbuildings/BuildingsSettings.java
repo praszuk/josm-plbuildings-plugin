@@ -34,4 +34,9 @@ public class BuildingsSettings {
             ))).toString()
     );
 
+    public static final StringProperty DATA_SOURCE_PROFILES = new StringProperty(
+        "plbuildings.data_source_profiles",
+        "[]"
+    );
+
 }
