@@ -59,6 +59,4 @@ public class DataSourceServer {
 
         return collection;
     }
-
-    // TODO setter need some logic with related DataSourceProfile
 }
