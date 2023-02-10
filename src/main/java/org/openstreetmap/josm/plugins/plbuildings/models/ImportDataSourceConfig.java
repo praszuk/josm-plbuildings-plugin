@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 
 import static org.openstreetmap.josm.tools.I18n.trc;
 
+
+// TODO Whole class need to be refactored or removed and rewritten from scratch
+
 /**
  * Manages providing selected data source for given import.
  * For now, "only one" option works, but in future it can be extended to use DUAL or COMPLEX (multiple) data sources.
