@@ -10,6 +10,8 @@ public class DataSourceConfig {
     private final LinkedHashMap<String, DataSourceServer> servers;
     private final LinkedHashMap<String, DataSourceProfile> profiles;
 
+    private DataSourceProfile currentProfile;
+
     private static DataSourceConfig instance;
 
     public static DataSourceConfig getInstance() {
@@ -24,6 +26,7 @@ public class DataSourceConfig {
         this.profiles = new LinkedHashMap<>();
 
         load();
+        this.currentProfile = profiles.values().stream().findFirst().orElse(null);
     }
 
     public DataSourceServer getServerByName(String name){
@@ -40,6 +43,13 @@ public class DataSourceConfig {
 
     public Collection<DataSourceProfile> getProfiles(){
         return new ArrayList<>(profiles.values());
+    }
+
+    public DataSourceProfile getCurrentProfile() {
+        return this.currentProfile;
+    }
+    public void setCurrentProfile(DataSourceProfile profile){
+        this.currentProfile = profile;
     }
 
     public Collection<DataSourceProfile> getServerProfiles(DataSourceServer server){
