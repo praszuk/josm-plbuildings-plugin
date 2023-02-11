@@ -7,6 +7,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.gui.UncommonTagDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.tools.Logging;
 
 import static org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction.performBuildingImport;
@@ -21,6 +23,7 @@ import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.fi
 public class BuildingsImportManager {
     private final LatLon cursorLatLon;
     private final Way selectedBuilding;
+    private final DataSourceProfile dataSourceProfile;
 
     private final DataSet editLayer;
     private BuildingsImportData importedData;
@@ -31,6 +34,7 @@ public class BuildingsImportManager {
         this.editLayer = editLayer;
         this.cursorLatLon = cursorLatLon;
         this.selectedBuilding = selectedBuilding;
+        this.dataSourceProfile = DataSourceConfig.getInstance().getCurrentProfile();
 
         this.importedData = null;
         this.resultBuilding = null;
@@ -51,6 +55,10 @@ public class BuildingsImportManager {
 
     public DataSet getEditLayer() {
         return editLayer;
+    }
+
+    public DataSourceProfile getDataSourceProfile(){
+        return this.dataSourceProfile;
     }
 
     public void setImportedData(BuildingsImportData importedData) {

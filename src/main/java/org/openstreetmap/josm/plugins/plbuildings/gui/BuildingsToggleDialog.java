@@ -4,7 +4,6 @@ import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
-import org.openstreetmap.josm.plugins.plbuildings.models.ImportDataSourceConfig;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -44,7 +43,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
         );
 
         this.status = new JLabel("");
-        this.dataSource = new JLabel(ImportDataSourceConfig.getInstance().toString());
+        this.dataSource = new JLabel("BDOT"); // TODO temp hardcoded
 
         this.building = new JLabel("");
         this.bLevels = new JLabel("");

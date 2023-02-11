@@ -4,19 +4,19 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.*;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.plugins.plbuildings.BuildingsDownloader;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
-import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
-import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
 import org.openstreetmap.josm.plugins.plbuildings.commands.AddBuildingGeometryCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceBuildingGeometryCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SurveyConfirmationDialog;
-import org.openstreetmap.josm.plugins.plbuildings.models.ImportDataSourceConfig;
+import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsDuplicateValidator;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -65,13 +65,6 @@ public class BuildingsImportAction extends JosmAction {
     }
 
     /**
-     * @return – download building at latLonPoint or null if any problems with downloading
-     */
-    public static BuildingsImportData getBuildingsAt(LatLon latLonPoint){
-        return BuildingsDownloader.downloadBuildings(latLonPoint, ImportDataSourceConfig.getInstance());
-    }
-
-    /**
      * @return – selected building in give dataset or null
      */
     public static Way getSelectedBuilding(DataSet ds){
@@ -97,7 +90,7 @@ public class BuildingsImportAction extends JosmAction {
      */
     public static void performBuildingImport(BuildingsImportManager manager) {
         DataSet currentDataSet = manager.getEditLayer();
-        DataSet importedBuildingsDataSet = manager.getImportedData().get("bdot"); // TODO temporary
+        DataSet importedBuildingsDataSet = manager.getImportedData().get("--");
 
         BuildingsImportStats.getInstance().addTotalImportActionCounter(1);
 
@@ -276,6 +269,10 @@ public class BuildingsImportAction extends JosmAction {
             cursorLatLon,
             selectedBuilding
         );
+        if (buildingsImportManager.getDataSourceProfile() == null){
+            Logging.info("BuildingsImportAction canceled! No DataSourceProfile selected!");
+            return;
+        }
         buildingsImportManager.run();
     }
 }
