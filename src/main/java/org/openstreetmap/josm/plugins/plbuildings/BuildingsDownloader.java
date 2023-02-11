@@ -6,9 +6,6 @@ import org.openstreetmap.josm.io.GeoJSONReader;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmJsonReader;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
-import org.openstreetmap.josm.plugins.plbuildings.data.ImportDataSource;
-import org.openstreetmap.josm.plugins.plbuildings.data.ImportDataSourceConfigType;
-import org.openstreetmap.josm.plugins.plbuildings.models.ImportDataSourceConfig;
 import org.openstreetmap.josm.tools.Http1Client;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
@@ -20,7 +17,6 @@ import javax.json.JsonReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.stream.Collectors;
 
 public class BuildingsDownloader {
     public static final String USER_AGENT = String.format(
@@ -33,23 +29,21 @@ public class BuildingsDownloader {
      * Download buildings from PLBuildings Server API and parse it as DataSet
      * Use default search_distance parameter.
      *
-     * @param latLon        location of searching building (EPSG 4386)
-     * @param dataSourceCfg dataSource config of buildings.
+     * @param manager  ImportManager which contains DataSourceConfig for current download.
      * @return BuildingsImportData with downloaded data or empty datasets or empty obj if IO/parse error
      */
-    public static BuildingsImportData downloadBuildings(LatLon latLon, ImportDataSourceConfig dataSourceCfg){
-        String dataSourceQueryParam = dataSourceCfg.getDataSources()
-            .stream()
-            .map(ImportDataSource::toString)
-            .collect(Collectors.joining(",")).toLowerCase();
-
-        // TODO above will be enough for all types when multiple source will be implemented on the server side
-        if (dataSourceCfg.getConfigType() != ImportDataSourceConfigType.SIMPLE){
-            Logging.error("Unsupported data source query param: {0}", dataSourceQueryParam);
-            return null;
+    public static BuildingsImportData downloadBuildings(BuildingsImportManager manager){
+        String dataSourceQueryParam = manager.getDataSourceProfile().getGeometry();
+        if (!manager.getDataSourceProfile().getGeometry().equals(manager.getDataSourceProfile().getTags())){
+            dataSourceQueryParam += "," + manager.getDataSourceProfile().getTags();
         }
+        dataSourceQueryParam = dataSourceQueryParam.toLowerCase();
 
-        return downloadBuildings(latLon, dataSourceQueryParam, BuildingsSettings.SEARCH_DISTANCE.get());
+        return downloadBuildings(
+                manager.getCursorLatLon(),
+                dataSourceQueryParam,
+                BuildingsSettings.SEARCH_DISTANCE.get()
+        );
     }
 
     /**
