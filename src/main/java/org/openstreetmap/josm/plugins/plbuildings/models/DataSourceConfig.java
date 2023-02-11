@@ -70,8 +70,7 @@ public class DataSourceConfig {
      * It removes server and all related profiles.
      */
     public void removeServer(DataSourceServer server) {
-        profiles
-            .values()
+        new LinkedList<>(profiles.values())
             .stream()
             .filter(p -> p.getDataSourceServerName().equals(server.getName()))
             .forEach(this::removeProfile);
