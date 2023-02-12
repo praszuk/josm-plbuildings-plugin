@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.plugins.plbuildings.models;
 
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
+import org.openstreetmap.josm.plugins.plbuildings.io.DataSourceProfileDownloader;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -111,6 +112,46 @@ public class DataSourceConfig {
 
         String serializedProfiles = DataSourceProfile.toJson(profiles).toString();
         BuildingsSettings.DATA_SOURCE_PROFILES.put(serializedProfiles);
+    }
+
+    /**
+     * It fetches data to update DataSourceProfiles from each server.
+     * @param save – save all config to JOSM settings
+     */
+    public void refresh(boolean save){
+        // Download data
+        Map<String, DataSourceProfile> currentProfiles = getProfiles()
+                .stream()
+                .collect(Collectors.toMap(DataSourceProfile::getName, (d) -> d));
+
+        // Update profiles
+        for (DataSourceServer server : getServers()){
+            Map<String, DataSourceProfile> newServerProfiles = DataSourceProfileDownloader.downloadProfiles(server)
+                    .stream()
+                    .collect(Collectors.toMap(DataSourceProfile::getName, (d) -> d));
+
+            Map<String, DataSourceProfile> currentServerProfiles = getServerProfiles(server)
+                    .stream()
+                    .collect(Collectors.toMap(DataSourceProfile::getName, (d) -> d));
+
+            // Remove old profiles from config which don't appear in newServerProfiles
+            currentServerProfiles.keySet().stream()
+                .filter(key -> !newServerProfiles.containsKey(key))
+                .forEach(key -> profiles.remove(currentServerProfiles.get(key)));
+
+            // Update existing profiles
+            currentServerProfiles.keySet().stream()
+                .filter(newServerProfiles::containsKey)
+                .forEach(key -> getProfileByName(server.getName(), key).updateProfile(newServerProfiles.get(key)));
+
+            // Add missing profiles
+            newServerProfiles.entrySet().stream()
+                .filter(e -> !currentServerProfiles.containsKey(e.getKey()))
+                .forEach(e -> addProfile(e.getValue()));
+        }
+        if (save){
+            save();
+        }
     }
 
     private void validateServer(DataSourceServer newServer) throws IllegalArgumentException {
