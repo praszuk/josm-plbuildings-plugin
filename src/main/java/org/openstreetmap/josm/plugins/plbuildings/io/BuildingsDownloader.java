@@ -7,6 +7,8 @@ import org.openstreetmap.josm.io.OsmJsonReader;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.tools.Http1Client;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
@@ -28,13 +30,21 @@ public class BuildingsDownloader {
      * @return BuildingsImportData with downloaded data or empty datasets or empty obj if IO/parse error
      */
     public static BuildingsImportData downloadBuildings(BuildingsImportManager manager){
-        String dataSourceQueryParam = manager.getDataSourceProfile().getGeometry();
-        if (!manager.getDataSourceProfile().getGeometry().equals(manager.getDataSourceProfile().getTags())){
-            dataSourceQueryParam += "," + manager.getDataSourceProfile().getTags();
+        DataSourceProfile currentProfile = manager.getDataSourceProfile();
+
+        String dataSourceQueryParam = currentProfile.getGeometry();
+        if (!currentProfile.getGeometry().equals(currentProfile.getTags())){
+            dataSourceQueryParam += "," + currentProfile.getTags();
         }
         dataSourceQueryParam = dataSourceQueryParam.toLowerCase();
 
+        String serverUrl = DataSourceConfig
+                .getInstance()
+                .getServerByName(currentProfile.getDataSourceServerName())
+                .getUrl();
+
         return downloadBuildings(
+                serverUrl,
                 manager.getCursorLatLon(),
                 dataSourceQueryParam,
                 BuildingsSettings.SEARCH_DISTANCE.get()
@@ -44,14 +54,22 @@ public class BuildingsDownloader {
     /**
      * Download buildings from PLBuildings Server API and parse it as DataSet
      *
-     * @param latLon         location of searching building (EPSG 4386)
+     * @param serverUrl      root url to server api e.g. "http://127.0.0.1/api/v1"
+     * @param latLon         location of searching building (EPSG 4326)
      * @param dataSources    dataSources of buildings separated with comma
      * @param searchDistance distance in meters to find the nearest building from latLon
      * @return BuildingsImportData with downloaded data or empty datasets or empty obj if IO/parse error
      */
-    public static BuildingsImportData downloadBuildings(LatLon latLon, String dataSources, Double searchDistance){
+    public static BuildingsImportData downloadBuildings(
+        String serverUrl,
+        LatLon latLon,
+        String dataSources,
+        Double searchDistance
+    ){
 
-        StringBuilder urlBuilder = new StringBuilder(BuildingsSettings.SERVER_URL.get());
+        StringBuilder urlBuilder = new StringBuilder(serverUrl);
+        urlBuilder.append(DownloaderConstants.API_NEAREST_BUILDING);
+
         urlBuilder.append("?");
         urlBuilder.append("lat=");
         urlBuilder.append(latLon.lat());
