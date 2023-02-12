@@ -1,5 +1,6 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import org.openstreetmap.josm.plugins.plbuildings.io.BuildingsDownloader;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.tools.Logging;
 
