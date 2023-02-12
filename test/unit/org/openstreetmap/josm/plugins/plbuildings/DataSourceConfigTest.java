@@ -70,6 +70,23 @@ public class DataSourceConfigTest {
         assertThrows(IllegalArgumentException.class, () -> dataSourceConfig.addProfile(profile1server1));
         assertEquals(dataSourceConfig.getProfiles().size(), 1);
     }
+
+    @Test
+    public void canAddDuplicatedProfileNameForDifferentServerTest(){
+        clearDataSourceConfig();
+        dataSourceConfig.addServer(server1);
+        dataSourceConfig.addServer(server2);
+
+        dataSourceConfig.addProfile(profile1server1);
+        DataSourceProfile duplicatedProfile = new DataSourceProfile(
+                server2.getName(),
+                profile1server1.getGeometry(),
+                profile1server1.getTags(),
+                profile1server1.getName()
+        );
+        dataSourceConfig.addProfile(duplicatedProfile);
+        assertEquals(dataSourceConfig.getProfiles().size(), 2);
+    }
     @Test
     public void getServerProfilesTest(){
         clearDataSourceConfig();
