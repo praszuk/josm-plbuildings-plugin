@@ -12,6 +12,7 @@ public final class DownloaderConstants {
     );
 
     public static final String API_NEAREST_BUILDING = "/buildings/nearest";
+    public static final String API_DATA_SOURCES_PROFILES = "/profiles";
 
     private DownloaderConstants(){}
 }
