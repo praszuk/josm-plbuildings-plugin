@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 
 public class DataSourceConfig {
-    private final LinkedHashMap<String, DataSourceServer> servers;
-    private final LinkedHashMap<String, DataSourceProfile> profiles;
+    private final ArrayList<DataSourceServer> servers;
+    private final ArrayList<DataSourceProfile> profiles;
 
     private DataSourceProfile currentProfile;
 
@@ -22,39 +22,46 @@ public class DataSourceConfig {
     }
 
     private DataSourceConfig(){
-        this.servers = new LinkedHashMap<>();
-        this.profiles = new LinkedHashMap<>();
+        this.servers = new ArrayList<>();
+        this.profiles = new ArrayList<>();
 
         load();
-        this.currentProfile = profiles.values().stream().findFirst().orElse(null);
+        this.currentProfile = profiles.isEmpty() ? null:profiles.get(0);
     }
 
     public DataSourceServer getServerByName(String name){
-        return servers.get(name);
+        return servers.stream()
+            .filter(dataSourceServer -> dataSourceServer.getName().equals(name))
+            .findFirst()
+            .orElse(null);
     }
 
-    public DataSourceProfile getProfileByName(String name){
-        return profiles.get(name);
+    public DataSourceProfile getProfileByName(String serverName, String profileName){
+        return profiles.stream()
+            .filter(dataSourceProfile -> dataSourceProfile.getDataSourceServerName().equals(serverName) &&
+                    dataSourceProfile.getName().equals(profileName))
+            .findFirst()
+            .orElse(null);
     }
 
     public Collection<DataSourceServer> getServers(){
-        return new ArrayList<>(servers.values());
+        return new ArrayList<>(servers);
     }
 
     public Collection<DataSourceProfile> getProfiles(){
-        return new ArrayList<>(profiles.values());
+        return new ArrayList<>(profiles);
     }
 
     public DataSourceProfile getCurrentProfile() {
         return this.currentProfile;
     }
+
     public void setCurrentProfile(DataSourceProfile profile){
         this.currentProfile = profile;
     }
 
     public Collection<DataSourceProfile> getServerProfiles(DataSourceServer server){
         return profiles
-            .values()
             .stream()
             .filter(p -> p.getDataSourceServerName().equals(server.getName()))
             .collect(Collectors.toList());
@@ -62,7 +69,7 @@ public class DataSourceConfig {
 
     public void addServer(DataSourceServer newServer){
         validateServer(newServer);
-        servers.put(newServer.getName(), newServer);
+        servers.add(newServer);
     }
 
 
@@ -70,21 +77,21 @@ public class DataSourceConfig {
      * It removes server and all related profiles.
      */
     public void removeServer(DataSourceServer server) {
-        new LinkedList<>(profiles.values())
+        new ArrayList<>(profiles)
             .stream()
             .filter(p -> p.getDataSourceServerName().equals(server.getName()))
             .forEach(this::removeProfile);
 
-        servers.remove(server.getName());
+        servers.remove(server);
     }
 
     public void addProfile(DataSourceProfile newProfile){
         validateProfile(newProfile);
-        profiles.put(newProfile.getName(), newProfile);
+        profiles.add(newProfile);
     }
 
     public void removeProfile(DataSourceProfile profile){
-        profiles.remove(profile.getName());
+        profiles.remove(profile);
     }
 
     private void load(){
@@ -92,29 +99,29 @@ public class DataSourceConfig {
         profiles.clear();
 
         String serializedServers = BuildingsSettings.DATA_SOURCE_SERVERS.get();
-        DataSourceServer.fromStringJson(serializedServers).forEach(dss -> servers.put(dss.getName(), dss));
+        servers.addAll(DataSourceServer.fromStringJson(serializedServers));
 
         String serializedProfiles = BuildingsSettings.DATA_SOURCE_PROFILES.get();
-        DataSourceProfile.fromStringJson(serializedProfiles).forEach(dsp -> profiles.put(dsp.getName(), dsp));
+        profiles.addAll(DataSourceProfile.fromStringJson(serializedProfiles));
     }
 
     private void save(){
-        String serializedServers = DataSourceServer.toJson(servers.values()).toString();
+        String serializedServers = DataSourceServer.toJson(servers).toString();
         BuildingsSettings.DATA_SOURCE_SERVERS.put(serializedServers);
 
-        String serializedProfiles = DataSourceProfile.toJson(profiles.values()).toString();
+        String serializedProfiles = DataSourceProfile.toJson(profiles).toString();
         BuildingsSettings.DATA_SOURCE_PROFILES.put(serializedProfiles);
     }
 
     private void validateServer(DataSourceServer newServer) throws IllegalArgumentException {
-        if (servers.containsKey(newServer.getName())){
+        if (servers.stream().anyMatch(s -> s.getName().equals(newServer.getName()))){
             throw new IllegalArgumentException("DataSourceServer name must be unique!");
         }
     }
-    private void validateProfile(DataSourceProfile profile) throws IllegalArgumentException {
-        if (profiles.containsKey(profile.getName())){
-            throw new IllegalArgumentException("DataSourceProfile name must be unique!");
+    private void validateProfile(DataSourceProfile newProfile) throws IllegalArgumentException {
+        if (profiles.stream().anyMatch(p -> p.getName().equals(newProfile.getName())
+                && p.getDataSourceServerName().equals(newProfile.getDataSourceServerName()))){
+            throw new IllegalArgumentException("DataSourceProfile name must be unique per server!");
         }
-        assert servers.containsKey(profile.getDataSourceServerName());
     }
 }
