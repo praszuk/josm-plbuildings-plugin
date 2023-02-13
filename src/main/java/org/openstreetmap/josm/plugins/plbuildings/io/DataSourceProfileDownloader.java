@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class DataSourceProfileDownloader {
+    /**
+     * @return profiles collection if response is parsed ok (might be empty), else return null if parse/request error
+     */
     public static Collection<DataSourceProfile> downloadProfiles(DataSourceServer server){
         String rawUrl = server.getUrl() + DownloaderConstants.API_DATA_SOURCES_PROFILES;
 
@@ -42,8 +45,10 @@ public class DataSourceProfileDownloader {
             }
         } catch (IOException ioException) {
             Logging.warn("Connection error with getting profiles data: {0}", ioException.getMessage());
+            dataSourcesProfiles = null;
         } catch (IllegalArgumentException | ClassCastException exception) {
             Logging.error("Cannot parse data set from the server: {0}", exception.getMessage());
+            dataSourcesProfiles = null;
         }
         finally {
             if (reader != null){
