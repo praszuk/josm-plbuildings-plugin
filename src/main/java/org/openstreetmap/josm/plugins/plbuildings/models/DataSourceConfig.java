@@ -2,6 +2,7 @@ package org.openstreetmap.josm.plugins.plbuildings.models;
 
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.io.DataSourceProfileDownloader;
+import org.openstreetmap.josm.tools.Logging;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -126,13 +127,18 @@ public class DataSourceConfig {
 
         // Update profiles
         for (DataSourceServer server : getServers()){
-            Map<String, DataSourceProfile> newServerProfiles = DataSourceProfileDownloader.downloadProfiles(server)
-                    .stream()
-                    .collect(Collectors.toMap(DataSourceProfile::getName, (d) -> d));
+            Collection<DataSourceProfile> downloadedCollection = DataSourceProfileDownloader.downloadProfiles(server);
+            if (downloadedCollection == null){
+                Logging.warn("Error at refreshing profiles from server: " + server.getName());
+                continue;
+            }
+            Map<String, DataSourceProfile> newServerProfiles = downloadedCollection
+                .stream()
+                .collect(Collectors.toMap(DataSourceProfile::getName, (d) -> d));
 
             Map<String, DataSourceProfile> currentServerProfiles = getServerProfiles(server)
-                    .stream()
-                    .collect(Collectors.toMap(DataSourceProfile::getName, (d) -> d));
+                .stream()
+                .collect(Collectors.toMap(DataSourceProfile::getName, (d) -> d));
 
             // Remove old profiles from config which don't appear in newServerProfiles
             currentServerProfiles.keySet().stream()
