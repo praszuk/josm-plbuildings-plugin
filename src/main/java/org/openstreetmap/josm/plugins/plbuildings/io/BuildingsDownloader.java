@@ -1,11 +1,14 @@
-package org.openstreetmap.josm.plugins.plbuildings;
+package org.openstreetmap.josm.plugins.plbuildings.io;
 
-import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.io.GeoJSONReader;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmJsonReader;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.tools.Http1Client;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
@@ -19,12 +22,6 @@ import java.io.IOException;
 import java.net.URL;
 
 public class BuildingsDownloader {
-    public static final String USER_AGENT = String.format(
-        "%s/%s %s",
-        BuildingsPlugin.info.name,
-        BuildingsPlugin.info.version,
-        Version.getInstance().getFullAgentString()
-    );
     /**
      * Download buildings from PLBuildings Server API and parse it as DataSet
      * Use default search_distance parameter.
@@ -33,13 +30,21 @@ public class BuildingsDownloader {
      * @return BuildingsImportData with downloaded data or empty datasets or empty obj if IO/parse error
      */
     public static BuildingsImportData downloadBuildings(BuildingsImportManager manager){
-        String dataSourceQueryParam = manager.getDataSourceProfile().getGeometry();
-        if (!manager.getDataSourceProfile().getGeometry().equals(manager.getDataSourceProfile().getTags())){
-            dataSourceQueryParam += "," + manager.getDataSourceProfile().getTags();
+        DataSourceProfile currentProfile = manager.getDataSourceProfile();
+
+        String dataSourceQueryParam = currentProfile.getGeometry();
+        if (!currentProfile.getGeometry().equals(currentProfile.getTags())){
+            dataSourceQueryParam += "," + currentProfile.getTags();
         }
         dataSourceQueryParam = dataSourceQueryParam.toLowerCase();
 
+        String serverUrl = DataSourceConfig
+                .getInstance()
+                .getServerByName(currentProfile.getDataSourceServerName())
+                .getUrl();
+
         return downloadBuildings(
+                serverUrl,
                 manager.getCursorLatLon(),
                 dataSourceQueryParam,
                 BuildingsSettings.SEARCH_DISTANCE.get()
@@ -49,14 +54,22 @@ public class BuildingsDownloader {
     /**
      * Download buildings from PLBuildings Server API and parse it as DataSet
      *
-     * @param latLon         location of searching building (EPSG 4386)
-     * @param dataSources    dataSources of buildings
+     * @param serverUrl      root url to server api e.g. "http://127.0.0.1/api/v1"
+     * @param latLon         location of searching building (EPSG 4326)
+     * @param dataSources    dataSources of buildings separated with comma
      * @param searchDistance distance in meters to find the nearest building from latLon
      * @return BuildingsImportData with downloaded data or empty datasets or empty obj if IO/parse error
      */
-    public static BuildingsImportData downloadBuildings(LatLon latLon, String dataSources, Double searchDistance){
+    public static BuildingsImportData downloadBuildings(
+        String serverUrl,
+        LatLon latLon,
+        String dataSources,
+        Double searchDistance
+    ){
 
-        StringBuilder urlBuilder = new StringBuilder(BuildingsSettings.SERVER_URL.get());
+        StringBuilder urlBuilder = new StringBuilder(serverUrl);
+        urlBuilder.append(DownloaderConstants.API_NEAREST_BUILDING);
+
         urlBuilder.append("?");
         urlBuilder.append("lat=");
         urlBuilder.append(latLon.lat());
@@ -80,7 +93,7 @@ public class BuildingsDownloader {
         try {
             URL url = new URL(urlBuilder.toString());
             HttpClient httpClient = new Http1Client(url, "GET");
-            httpClient.setHeader("User-Agent", USER_AGENT);
+            httpClient.setHeader("User-Agent", DownloaderConstants.USER_AGENT);
             httpClient.connect();
             HttpClient.Response response = httpClient.getResponse();
 
@@ -111,7 +124,7 @@ public class BuildingsDownloader {
             }
         } catch (IOException ioException) {
             Logging.warn("Connection error with getting building data: {0}", ioException.getMessage());
-        } catch (IllegalDataException|ClassCastException exception) {
+        } catch (Exception exception) {
             Logging.error("Cannot parse data set from the server: {0}", exception.getMessage());
         }
         finally {

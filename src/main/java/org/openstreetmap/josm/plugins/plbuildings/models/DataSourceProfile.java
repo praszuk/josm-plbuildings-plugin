@@ -40,16 +40,22 @@ public class DataSourceProfile {
         return name;
     }
 
-    public void setGeometry(String geometry) {
+    private void setGeometry(String geometry) {
         this.geometry = geometry;
     }
 
-    public void setTags(String tags) {
+    private void setTags(String tags) {
         this.tags = tags;
     }
 
-    public void setName(String name) {
+    private void setName(String name) {
         this.name = name;
+    }
+
+    public void updateProfile(DataSourceProfile newProfile){
+        setName(newProfile.getName());
+        setTags(newProfile.getTags());
+        setGeometry(newProfile.getGeometry());
     }
 
     public static JsonArray toJson(Collection<DataSourceProfile> collection){
