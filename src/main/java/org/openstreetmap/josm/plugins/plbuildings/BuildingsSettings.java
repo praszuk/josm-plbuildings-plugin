@@ -12,10 +12,6 @@ public class BuildingsSettings {
         "plbuildings.bbox_offset",
         0.0000005
     );
-    public static final StringProperty SERVER_URL = new StringProperty(
-        "plbuildings.server_url",
-        "https://josm-plbuildings-server.openstreetmap.org.pl/api/v1/buildings"
-    );
     public static final DoubleProperty SEARCH_DISTANCE = new DoubleProperty(
         "plbuildings.search_distance",
         3.0 // meters
