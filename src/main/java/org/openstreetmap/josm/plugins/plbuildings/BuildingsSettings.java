@@ -30,7 +30,7 @@ public class BuildingsSettings {
         "plbuildings.data_source_servers",
             DataSourceServer.toJson(List.of(new DataSourceServer(
                 "plbuildings",
-                "https://josm-plbuildings-server.openstreetmap.org.pl/api/v2/buildings"
+                "https://josm-plbuildings-server.openstreetmap.org.pl/api/v2"
             ))).toString()
     );
 
