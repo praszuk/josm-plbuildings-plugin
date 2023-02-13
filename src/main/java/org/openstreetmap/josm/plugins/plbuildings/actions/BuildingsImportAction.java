@@ -90,7 +90,7 @@ public class BuildingsImportAction extends JosmAction {
      */
     public static void performBuildingImport(BuildingsImportManager manager) {
         DataSet currentDataSet = manager.getEditLayer();
-        DataSet importedBuildingsDataSet = manager.getImportedData().get("--");
+        DataSet importedBuildingsDataSet = manager.getImportedData().get("bdot"); // TODO temporary only 1
 
         BuildingsImportStats.getInstance().addTotalImportActionCounter(1);
 
