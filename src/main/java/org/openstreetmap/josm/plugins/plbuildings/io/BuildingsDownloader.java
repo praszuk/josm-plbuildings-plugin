@@ -124,7 +124,7 @@ public class BuildingsDownloader {
             }
         } catch (IOException ioException) {
             Logging.warn("Connection error with getting building data: {0}", ioException.getMessage());
-        } catch (IllegalDataException|ClassCastException exception) {
+        } catch (Exception exception) {
             Logging.error("Cannot parse data set from the server: {0}", exception.getMessage());
         }
         finally {

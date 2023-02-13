@@ -46,7 +46,7 @@ public class DataSourceProfileDownloader {
         } catch (IOException ioException) {
             Logging.warn("Connection error with getting profiles data: {0}", ioException.getMessage());
             dataSourcesProfiles = null;
-        } catch (IllegalArgumentException | ClassCastException exception) {
+        } catch (Exception exception) {
             Logging.error("Cannot parse data set from the server: {0}", exception.getMessage());
             dataSourcesProfiles = null;
         }
