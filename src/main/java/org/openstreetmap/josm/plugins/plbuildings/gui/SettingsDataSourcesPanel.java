@@ -63,6 +63,11 @@ public class SettingsDataSourcesPanel extends JPanel {
         return serverPanel;
     }
 
+    private void refreshServerList(){
+        DefaultListModel<DataSourceServer> listModel = new DefaultListModel<>();
+        listModel.addAll(this.dataSourceConfig.getServers());
+        this.serverJList.setModel(listModel);
+    }
     private void addServerDialog(){
         JPanel dialogPanel = new JPanel();
         GroupLayout groupLayout = new GroupLayout(dialogPanel);
@@ -117,6 +122,7 @@ public class SettingsDataSourcesPanel extends JPanel {
             try{
                 DataSourceServer newServer = new DataSourceServer(serverNameField.getText(), serverUrlField.getText());
                 dataSourceConfig.addServer(newServer);
+                refreshServerList();
             } catch (IllegalArgumentException exception){
                 JOptionPane.showMessageDialog(
                     null,
