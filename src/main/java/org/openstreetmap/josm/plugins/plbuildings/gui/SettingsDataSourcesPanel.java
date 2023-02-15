@@ -14,6 +14,7 @@ public class SettingsDataSourcesPanel extends JPanel {
     private final DataSourceConfig dataSourceConfig;
     public final String SERVERS = tr("Servers");
     public final String ADD_SERVER_TITLE = tr("Add new server");
+    public final String REMOVE_SERVER_TITLE = tr("Remove server");
     public SettingsDataSourcesPanel(){
         super();
         this.dataSourceConfig = DataSourceConfig.getInstance();
@@ -33,6 +34,7 @@ public class SettingsDataSourcesPanel extends JPanel {
         ));
 
         this.serverJList = new JList<>(this.dataSourceConfig.getServers().toArray(new DataSourceServer[0]));
+        this.serverJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.serverJList.setCellRenderer(new DefaultListCellRenderer(){
             @Override
             public Component getListCellRendererComponent(
@@ -55,7 +57,11 @@ public class SettingsDataSourcesPanel extends JPanel {
         buttonsPanel.add(addButton);
         buttonsPanel.add(removeButton);
 
-        addButton.addActionListener((event) -> addServerDialog());
+        this.serverJList.addListSelectionListener(
+            (listSelectionEvent -> removeButton.setEnabled(this.serverJList.getSelectedValue() != null))
+        );
+        addButton.addActionListener((event) -> addServerAction());
+        removeButton.addActionListener((event) -> removeServerAction());
 
         serverPanel.add(jScrollPane, BorderLayout.CENTER);
         serverPanel.add(buttonsPanel, BorderLayout.SOUTH);
@@ -68,7 +74,7 @@ public class SettingsDataSourcesPanel extends JPanel {
         listModel.addAll(this.dataSourceConfig.getServers());
         this.serverJList.setModel(listModel);
     }
-    private void addServerDialog(){
+    private void addServerAction(){
         JPanel dialogPanel = new JPanel();
         GroupLayout groupLayout = new GroupLayout(dialogPanel);
         dialogPanel.setLayout(groupLayout);
@@ -131,6 +137,22 @@ public class SettingsDataSourcesPanel extends JPanel {
                         JOptionPane.ERROR_MESSAGE
                 );
             }
+        }
+    }
+
+    private void removeServerAction(){
+        DataSourceServer selectedServer = this.serverJList.getSelectedValue();
+
+        int result = JOptionPane.showConfirmDialog(
+            null,
+            tr("Are you sure to remove server") + ": " + selectedServer.getName(),
+            REMOVE_SERVER_TITLE,
+            JOptionPane.OK_CANCEL_OPTION
+        );
+        if (result == JOptionPane.OK_OPTION){
+            this.dataSourceConfig.removeServer(selectedServer);
+            refreshServerList();
+            // TODO refreshProfilesList
         }
     }
 }
