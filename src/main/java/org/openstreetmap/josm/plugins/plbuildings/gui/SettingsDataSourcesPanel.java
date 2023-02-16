@@ -5,14 +5,17 @@ import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class SettingsDataSourcesPanel extends JPanel {
     private JList<DataSourceServer> serverJList;
+    private JTable profileJTable;
     private final DataSourceConfig dataSourceConfig;
     public final String SERVERS = tr("Servers");
+    public final String PROFILES = tr("Profiles");
     public final String ADD_SERVER_TITLE = tr("Add new server");
     public final String REMOVE_SERVER_TITLE = tr("Remove server");
     public SettingsDataSourcesPanel(){
@@ -21,6 +24,7 @@ public class SettingsDataSourcesPanel extends JPanel {
 
         JPanel rootPanel = new JPanel(new GridLayout(2, 1));
         rootPanel.add(createServerListPanel());
+        rootPanel.add(createProfileTablePanel());
 
         setLayout(new BorderLayout());
         add(rootPanel, BorderLayout.CENTER);
@@ -154,5 +158,44 @@ public class SettingsDataSourcesPanel extends JPanel {
             refreshServerList();
             // TODO refreshProfilesList
         }
+    }
+
+    private Component createProfileTablePanel(){
+        JPanel profilePanel = new JPanel(new BorderLayout());
+        profilePanel.setBorder(BorderFactory.createCompoundBorder(
+                new EmptyBorder(10, 10, 10, 10),
+                BorderFactory.createTitledBorder(PROFILES)
+        ));
+
+        this.profileJTable = new JTable();
+        this.profileJTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        refreshProfileTable();
+
+        // TODO Button
+
+        JScrollPane jScrollPane = new JScrollPane(profileJTable);
+        profilePanel.add(jScrollPane);
+        return profilePanel;
+    }
+
+    private void refreshProfileTable(){
+        DefaultTableModel tableModel = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tableModel.addColumn(tr("Profile"));
+        tableModel.addColumn(tr("Server"));
+        tableModel.addColumn(tr("Tags"));
+        tableModel.addColumn(tr("Geometry"));
+
+        this.dataSourceConfig.getProfiles().forEach(profile -> tableModel.addRow(new String[]{
+            profile.getName(),
+            profile.getDataSourceServerName(),
+            profile.getTags(),
+            profile.getGeometry()
+        }));
+        this.profileJTable.setModel(tableModel);
     }
 }
