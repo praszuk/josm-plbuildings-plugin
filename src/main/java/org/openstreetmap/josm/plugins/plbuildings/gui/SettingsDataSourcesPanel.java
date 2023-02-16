@@ -73,7 +73,7 @@ public class SettingsDataSourcesPanel extends JPanel {
         return serverPanel;
     }
 
-    private void refreshServerList(){
+    private void updateServerList(){
         DefaultListModel<DataSourceServer> listModel = new DefaultListModel<>();
         listModel.addAll(this.dataSourceConfig.getServers());
         this.serverJList.setModel(listModel);
@@ -132,7 +132,8 @@ public class SettingsDataSourcesPanel extends JPanel {
             try{
                 DataSourceServer newServer = new DataSourceServer(serverNameField.getText(), serverUrlField.getText());
                 dataSourceConfig.addServer(newServer);
-                refreshServerList();
+                this.dataSourceConfig.refresh(true);
+                updateServerList();
             } catch (IllegalArgumentException exception){
                 JOptionPane.showMessageDialog(
                     null,
@@ -155,7 +156,8 @@ public class SettingsDataSourcesPanel extends JPanel {
         );
         if (result == JOptionPane.OK_OPTION){
             this.dataSourceConfig.removeServer(selectedServer);
-            refreshServerList();
+            this.dataSourceConfig.refresh(true);
+            updateServerList();
             // TODO refreshProfilesList
         }
     }
@@ -169,7 +171,7 @@ public class SettingsDataSourcesPanel extends JPanel {
 
         this.profileJTable = new JTable();
         this.profileJTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        refreshProfileTable();
+        updateProfileTable();
 
         // TODO Button
 
@@ -178,7 +180,7 @@ public class SettingsDataSourcesPanel extends JPanel {
         return profilePanel;
     }
 
-    private void refreshProfileTable(){
+    private void updateProfileTable(){
         DefaultTableModel tableModel = new DefaultTableModel(){
             @Override
             public boolean isCellEditable(int row, int column) {
