@@ -160,6 +160,22 @@ public class DataSourceConfig {
         }
     }
 
+    /**
+     * Swap data source profile order in collection
+     * @param src object to move to dst position
+     * @param dst object which will be swapped with src object
+     */
+    public void swapProfileOrder(DataSourceProfile src, DataSourceProfile dst){
+        assert profiles.contains(src);
+        assert profiles.contains(dst);
+
+        int srcIndex = profiles.indexOf(src);
+        int dstIndex = profiles.indexOf(dst);
+
+        profiles.set(srcIndex, dst);
+        profiles.set(dstIndex, src);
+    }
+
     private void validateServer(DataSourceServer newServer) throws IllegalArgumentException {
         if (servers.stream().anyMatch(s -> s.getName().equals(newServer.getName()))){
             throw new IllegalArgumentException("DataSourceServer name must be unique!");

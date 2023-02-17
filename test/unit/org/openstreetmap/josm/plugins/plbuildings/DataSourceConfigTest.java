@@ -293,4 +293,25 @@ public class DataSourceConfigTest {
         assertEquals(dataSourceConfig.getProfiles(), correctOrder);
         assertNotEquals(dataSourceConfig.getProfiles(), remoteOrder);
     }
+
+    @Test
+    public void swapProfileOrderTest(){
+        clearDataSourceConfig();
+        dataSourceConfig.addServer(server1);
+        dataSourceConfig.addServer(server2);
+
+        ArrayList<DataSourceProfile> currentOrder = new ArrayList<>(Arrays.asList(
+                profile1server1, profile2server1, profile3server2
+        ));
+        ArrayList<DataSourceProfile> expectedOrder = new ArrayList<>(Arrays.asList(
+                profile3server2, profile2server1, profile1server1
+        ));
+        assertNotEquals(currentOrder, expectedOrder);
+        currentOrder.forEach(dataSourceConfig::addProfile);
+
+
+        dataSourceConfig.swapProfileOrder(profile1server1, profile3server2);
+
+        assertEquals(dataSourceConfig.getProfiles(), expectedOrder);
+    }
 }
