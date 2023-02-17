@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.plugins.plbuildings.gui;
 
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -20,6 +21,11 @@ public class SettingsDataSourcesPanel extends JPanel {
     public final String PROFILES = tr("Profiles");
     public final String ADD_SERVER_TITLE = tr("Add new server");
     public final String REMOVE_SERVER_TITLE = tr("Remove server");
+
+    private final String COL_PROFILE = tr("Profile");
+    private final String COL_SERVER = tr("Server");
+    private final String COL_TAGS = tr("Tags");
+    private final String COL_GEOMETRY = tr("Geometry");
 
 
     public SettingsDataSourcesPanel(){
@@ -189,6 +195,16 @@ public class SettingsDataSourcesPanel extends JPanel {
         upBtn.setEnabled(false);
         downBtn.setEnabled(false);
 
+        upBtn.addActionListener(actionEvent -> {
+            upBtn.setEnabled(false);
+            moveProfileUp();
+            updateProfileTable();
+        });
+        downBtn.addActionListener(actionEvent -> {
+            downBtn.setEnabled(false);
+            moveProfileDown();
+            updateProfileTable();
+        });
         refreshBtn.addActionListener(actionEvent -> {
             this.setEnabled(false);
             try {
@@ -197,6 +213,24 @@ public class SettingsDataSourcesPanel extends JPanel {
                 Logging.warn("Error at refreshing GUI data");
             }
             this.setEnabled(true);
+        });
+
+        this.profileJTable.getSelectionModel().addListSelectionListener((listSelectionEvent) -> {
+            int index = this.profileJTable.getSelectedRow();
+
+            if (index == 0){
+                upBtn.setEnabled(false);
+                downBtn.setEnabled(true);
+            } else if (index == this.profileJTable.getRowCount() - 1){
+                upBtn.setEnabled(true);
+                downBtn.setEnabled(false);
+            } else if (index == -1) { // no selection
+                upBtn.setEnabled(false);
+                downBtn.setEnabled(false);
+            } else {
+                upBtn.setEnabled(true);
+                downBtn.setEnabled(true);
+            }
         });
 
         jToolBar.add(upBtn);
@@ -210,6 +244,38 @@ public class SettingsDataSourcesPanel extends JPanel {
         return profilePanel;
     }
 
+    private void moveProfile(int srcRowIndex, int dstRowIndex){
+        int indexColServer = this.profileJTable.getColumnModel().getColumnIndex(COL_SERVER);
+        int indexColProfile = this.profileJTable.getColumnModel().getColumnIndex(COL_PROFILE);
+
+        DataSourceProfile srcProfile = this.dataSourceConfig.getProfileByName(
+                (String) this.profileJTable.getValueAt(srcRowIndex, indexColServer),
+                (String) this.profileJTable.getValueAt(srcRowIndex, indexColProfile)
+        );
+        DataSourceProfile dstProfile = this.dataSourceConfig.getProfileByName(
+                (String) this.profileJTable.getValueAt(dstRowIndex, indexColServer),
+                (String) this.profileJTable.getValueAt(dstRowIndex, indexColProfile)
+        );
+        this.dataSourceConfig.swapProfileOrder(srcProfile, dstProfile);
+    }
+    private void moveProfileUp() {
+        int rowIndex = this.profileJTable.getSelectedRow();
+        if (rowIndex == 0){
+            Logging.error("Trying to move up first profile in the table!");
+            return;
+        }
+        moveProfile(rowIndex, rowIndex - 1);
+    }
+
+    private void moveProfileDown() {
+        int rowIndex = this.profileJTable.getSelectedRow();
+        if (rowIndex == this.dataSourceConfig.getProfiles().size() - 1){
+            Logging.error("Trying to move down last profile in the table!");
+            return;
+        }
+        moveProfile(rowIndex, rowIndex + 1);
+    }
+
     private void updateProfileTable(){
         DefaultTableModel tableModel = new DefaultTableModel(){
             @Override
@@ -217,10 +283,10 @@ public class SettingsDataSourcesPanel extends JPanel {
                 return false;
             }
         };
-        tableModel.addColumn(tr("Profile"));
-        tableModel.addColumn(tr("Server"));
-        tableModel.addColumn(tr("Tags"));
-        tableModel.addColumn(tr("Geometry"));
+        tableModel.addColumn(COL_PROFILE);
+        tableModel.addColumn(COL_SERVER);
+        tableModel.addColumn(COL_TAGS);
+        tableModel.addColumn(COL_GEOMETRY);
 
         this.dataSourceConfig.getProfiles().forEach(profile -> tableModel.addRow(new String[]{
             profile.getName(),
