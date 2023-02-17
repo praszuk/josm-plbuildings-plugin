@@ -2,6 +2,7 @@ package org.openstreetmap.josm.plugins.plbuildings.gui;
 
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -18,6 +19,8 @@ public class SettingsDataSourcesPanel extends JPanel {
     public final String PROFILES = tr("Profiles");
     public final String ADD_SERVER_TITLE = tr("Add new server");
     public final String REMOVE_SERVER_TITLE = tr("Remove server");
+
+
     public SettingsDataSourcesPanel(){
         super();
         this.dataSourceConfig = DataSourceConfig.getInstance();
@@ -173,10 +176,29 @@ public class SettingsDataSourcesPanel extends JPanel {
         this.profileJTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         updateProfileTable();
 
-        // TODO Button
+        JToolBar jToolBar = new JToolBar(SwingConstants.VERTICAL);
+        jToolBar.setFloatable(false);
+
+        JButton upBtn = new JButton();
+        JButton downBtn = new JButton();
+        JButton refreshBtn = new JButton();
+
+        // All icons have same size (35x35). To set different icon size it must be rescaled manually.
+        upBtn.setIcon(ImageProvider.get("dialogs/up.svg"));
+        downBtn.setIcon(ImageProvider.get("dialogs/down.svg"));
+        refreshBtn.setIcon(ImageProvider.get("dialogs/refresh.svg"));
+
+        upBtn.setEnabled(false);
+        downBtn.setEnabled(false);
+
+        jToolBar.add(upBtn);
+        jToolBar.add(downBtn);
+        jToolBar.add(refreshBtn);
 
         JScrollPane jScrollPane = new JScrollPane(profileJTable);
-        profilePanel.add(jScrollPane);
+        profilePanel.add(jScrollPane, BorderLayout.CENTER);
+        profilePanel.add(jToolBar, BorderLayout.EAST);
+
         return profilePanel;
     }
 
