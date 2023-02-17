@@ -3,6 +3,7 @@ package org.openstreetmap.josm.plugins.plbuildings.gui;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -135,8 +136,7 @@ public class SettingsDataSourcesPanel extends JPanel {
             try{
                 DataSourceServer newServer = new DataSourceServer(serverNameField.getText(), serverUrlField.getText());
                 dataSourceConfig.addServer(newServer);
-                this.dataSourceConfig.refresh(true);
-                updateServerList();
+                refreshData();
             } catch (IllegalArgumentException exception){
                 JOptionPane.showMessageDialog(
                     null,
@@ -159,9 +159,7 @@ public class SettingsDataSourcesPanel extends JPanel {
         );
         if (result == JOptionPane.OK_OPTION){
             this.dataSourceConfig.removeServer(selectedServer);
-            this.dataSourceConfig.refresh(true);
-            updateServerList();
-            // TODO refreshProfilesList
+            refreshData();
         }
     }
 
@@ -190,6 +188,16 @@ public class SettingsDataSourcesPanel extends JPanel {
 
         upBtn.setEnabled(false);
         downBtn.setEnabled(false);
+
+        refreshBtn.addActionListener(actionEvent -> {
+            this.setEnabled(false);
+            try {
+                refreshData();
+            }catch (Exception exception){
+                Logging.warn("Error at refreshing GUI data");
+            }
+            this.setEnabled(true);
+        });
 
         jToolBar.add(upBtn);
         jToolBar.add(downBtn);
@@ -221,5 +229,11 @@ public class SettingsDataSourcesPanel extends JPanel {
             profile.getGeometry()
         }));
         this.profileJTable.setModel(tableModel);
+    }
+
+    private void refreshData(){
+        this.dataSourceConfig.refresh(true);
+        updateServerList();
+        updateProfileTable();
     }
 }
