@@ -13,6 +13,17 @@ public class BuildingsSettings {
         "plbuildings.bbox_offset",
         0.0000005
     );
+
+    /**
+     * It is used to generate points for BuildingsOverlapDetector Smaller == better accuracy but slower. Approximation:
+     * 0.00001 ~100 points ~0.02 seconds per building
+     * 0.000001 ~10_000 points ~0.06 seconds per building <- RECOMMENDED
+     * 0.0000001 ~1_000_000 points ~1 seconds per building
+     */
+    public static final DoubleProperty OVERLAP_DETECT_FREQ_DEGREE_STEP = new DoubleProperty(
+        "plbuildings.overlap_detect_freq_degree_step",
+        0.000001
+    );
     public static final DoubleProperty SEARCH_DISTANCE = new DoubleProperty(
         "plbuildings.search_distance",
         3.0 // meters
