@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <bounds minlat='50.3382777' minlon='19.4856172' maxlat='50.3404957' maxlon='19.490832' origin='CGImap 0.8.6 (2879931 spike-07.openstreetmap.org)' />
+  <bounds minlat='50.3382777' minlon='19.4856172' maxlat='50.3404957' maxlon='19.490832' origin='OpenStreetMap server' />
+  <node id='-138459' action='modify' visible='true' lat='50.3394412569' lon='19.48688418645' />
+  <node id='-138460' action='modify' visible='true' lat='50.33910918017' lon='19.48688481421' />
+  <node id='-138461' action='modify' visible='true' lat='50.33910988924' lon='19.48780528401' />
+  <node id='-138462' action='modify' visible='true' lat='50.33944196596' lon='19.48780466267' />
+  <node id='-138463' action='modify' visible='true' lat='50.33853310246' lon='19.488862926' />
+  <node id='-138464' action='modify' visible='true' lat='50.33850548264' lon='19.48951383876' />
+  <node id='-138465' action='modify' visible='true' lat='50.33882430008' lon='19.48954686874' />
+  <node id='-138466' action='modify' visible='true' lat='50.3389971283' lon='19.48945904087' />
+  <node id='-138467' action='modify' visible='true' lat='50.33901848506' lon='19.48890881889' />
+  <node id='-138469' action='modify' visible='true' lat='50.3399781603' lon='19.48882122599' />
+  <node id='-138470' action='modify' visible='true' lat='50.33951989282' lon='19.48881167549' />
+  <node id='-138471' action='modify' visible='true' lat='50.33951525468' lon='19.48935803003' />
+  <node id='-138472' action='modify' visible='true' lat='50.33974790077' lon='19.48936287847' />
+  <node id='-138473' action='modify' visible='true' lat='50.33974563269' lon='19.48963005115' />
+  <node id='-138474' action='modify' visible='true' lat='50.33997125413' lon='19.48963475322' />
+  <node id='-138475' action='modify' visible='true' lat='50.3388326855' lon='19.48669239916' />
+  <node id='-138476' action='modify' visible='true' lat='50.33843497191' lon='19.48669171962' />
+  <node id='-138477' action='modify' visible='true' lat='50.33843422474' lon='19.48776520464' />
+  <node id='-138478' action='modify' visible='true' lat='50.33859018701' lon='19.48776547111' />
+  <node id='-138479' action='modify' visible='true' lat='50.33859079517' lon='19.48689170175' />
+  <node id='-138480' action='modify' visible='true' lat='50.3388325465' lon='19.48689211481' />
+  <way id='-105449' action='modify' visible='true'>
+    <nd ref='-138459' />
+    <nd ref='-138460' />
+    <nd ref='-138461' />
+    <nd ref='-138462' />
+    <nd ref='-138459' />
+    <tag k='building' v='house' />
+  </way>
+  <way id='-105450' action='modify' visible='true'>
+    <nd ref='-138463' />
+    <nd ref='-138464' />
+    <nd ref='-138465' />
+    <nd ref='-138466' />
+    <nd ref='-138467' />
+    <nd ref='-138463' />
+    <tag k='building' v='outbuilding' />
+  </way>
+  <way id='-105458' action='modify' visible='true'>
+    <nd ref='-138469' />
+    <nd ref='-138470' />
+    <nd ref='-138471' />
+    <nd ref='-138472' />
+    <nd ref='-138473' />
+    <nd ref='-138474' />
+    <nd ref='-138469' />
+    <tag k='building' v='detached' />
+  </way>
+  <way id='-105464' action='modify' visible='true'>
+    <nd ref='-138475' />
+    <nd ref='-138476' />
+    <nd ref='-138477' />
+    <nd ref='-138478' />
+    <nd ref='-138479' />
+    <nd ref='-138480' />
+    <nd ref='-138475' />
+    <tag k='building' v='retail' />
+  </way>
+</osm>
