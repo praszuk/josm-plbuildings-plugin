@@ -47,7 +47,7 @@ public class ImportDataCombineNearestTest {
     @Test
     public void testOneDSEmptyDS(){
         BuildingsImportManager manager = new BuildingsImportManager(null,null, null);
-        manager.setImportedData(new BuildingsImportData(profileOneDS.getName(), emptyDS));
+        manager.setImportedData(new BuildingsImportData(profileOneDS.getGeometry(), emptyDS));
         manager.setDataSourceProfile(profileOneDS);
 
         Way nearestBuilding = manager.getNearestBuildingFromImportData();
@@ -62,7 +62,7 @@ public class ImportDataCombineNearestTest {
         LatLon latLon = new LatLon(buildingNode.lat(), buildingNode.lon());
 
         BuildingsImportManager manager = new BuildingsImportManager(null, latLon, null);
-        manager.setImportedData(new BuildingsImportData(profileOneDS.getName(), oneBuildingDS));
+        manager.setImportedData(new BuildingsImportData(profileOneDS.getGeometry(), oneBuildingDS));
         manager.setDataSourceProfile(profileOneDS);
 
         Way nearestBuilding = manager.getNearestBuildingFromImportData();
@@ -80,7 +80,7 @@ public class ImportDataCombineNearestTest {
         LatLon latLon = new LatLon(buildingNode.lat(), buildingNode.lon());
 
         BuildingsImportManager manager = new BuildingsImportManager(null, latLon, null);
-        manager.setImportedData(new BuildingsImportData(profileOneDS.getName(), oneBuildingDS));
+        manager.setImportedData(new BuildingsImportData(profileOneDS.getGeometry(), multipleBuildingDS));
         manager.setDataSourceProfile(profileOneDS);
 
         Way nearestBuilding = manager.getNearestBuildingFromImportData();
