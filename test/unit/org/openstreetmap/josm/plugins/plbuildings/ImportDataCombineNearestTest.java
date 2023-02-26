@@ -9,6 +9,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
@@ -37,6 +39,8 @@ public class ImportDataCombineNearestTest {
 
     @Before
     public void setUp(){
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:4326"));
+
         DataSourceServer server = new DataSourceServer("server", "127.0.0.1");
 
         this.profileOneDS = new DataSourceProfile(server.getName(), "ds1", "ds1", "profile1");
@@ -72,6 +76,10 @@ public class ImportDataCombineNearestTest {
 
     }
 
+    public boolean isSameBuilding(Way way1, Way way2){
+        return way1.getNodes().equals(way2.getNodes()) && way1.getKeys().equals(way2.getKeys());
+    }
+
     @Test
     public void testOneDSEmptyDS(){
         BuildingsImportManager manager = new BuildingsImportManager(null,null, null);
@@ -96,7 +104,7 @@ public class ImportDataCombineNearestTest {
         Way nearestBuilding = manager.getNearestBuildingFromImportData();
 
         assertNotNull(nearestBuilding);
-        assertEquals(expectedBuilding, nearestBuilding);
+        assertTrue(isSameBuilding(expectedBuilding, nearestBuilding));
     }
 
     @Test
@@ -115,7 +123,7 @@ public class ImportDataCombineNearestTest {
 
         assertTrue(multipleBuildingDS.getWays().size() > 2);
         assertNotNull(nearestBuilding);
-        assertEquals(expectedBuilding, nearestBuilding);
+        assertTrue(isSameBuilding(expectedBuilding, nearestBuilding));
     }
 
     @Test
@@ -151,7 +159,7 @@ public class ImportDataCombineNearestTest {
 
         Way nearestBuilding = manager.getNearestBuildingFromImportData();
 
-        assertEquals(nearestBuilding, expectedBuilding);
+        assertTrue(isSameBuilding(expectedBuilding, nearestBuilding));
     }
 
     @Test
@@ -176,7 +184,7 @@ public class ImportDataCombineNearestTest {
 
         assertTrue(multipleBuildingDS.getWays().size() > 2);
         assertNotNull(nearestBuilding);
-        assertEquals(expectedBuilding, nearestBuilding);
+        assertTrue(isSameBuilding(expectedBuilding, nearestBuilding));
     }
 
     @Test
@@ -211,13 +219,13 @@ public class ImportDataCombineNearestTest {
 
         new MockUp<BuildingsImportManager>(){
             @Mock
-            public CombineNearestStrategy askUserToUseOneDS(){
-                return CombineNearestStrategy.ACCEPT;
+            boolean isImportBuildingDataOneDSStrategy(String availableDataSource){
+                return true;
             }
         };
         Way nearestBuilding = manager.getNearestBuildingFromImportData();
 
-        assertEquals(nearestBuilding, expectedBuilding);
+        assertTrue(isSameBuilding(expectedBuilding, nearestBuilding));
     }
 
     @Test
@@ -232,8 +240,8 @@ public class ImportDataCombineNearestTest {
 
         new MockUp<BuildingsImportManager>(){
             @Mock
-            public CombineNearestStrategy askUserToUseOneDS(){
-                return CombineNearestStrategy.CANCEL;
+            boolean isImportBuildingDataOneDSStrategy(String availableDataSource){
+                return false;
             }
         };
         Way nearestBuilding = manager.getNearestBuildingFromImportData();
@@ -262,7 +270,7 @@ public class ImportDataCombineNearestTest {
 
         Way nearestBuilding = manager.getNearestBuildingFromImportData();
 
-        assertEquals(nearestBuilding, expectedBuilding);
+        assertTrue(isSameBuilding(expectedBuilding, nearestBuilding));
     }
 
     @Test
@@ -286,14 +294,16 @@ public class ImportDataCombineNearestTest {
 
         new MockUp<BuildingsImportManager>(){
             @Mock
-            public CombineNearestStrategy askUserToUseBothDS(){
+            CombineNearestStrategy getImportBuildingOverlapStrategy(
+                    String geomDS, String tagsDS, double overlapPercentage){
                 return CombineNearestStrategy.ACCEPT;
             }
         };
 
         Way nearestBuilding = manager.getNearestBuildingFromImportData();
-
-        assertEquals(nearestBuilding, expectedBuilding);
+        System.out.println(expectedBuilding.getKeys());
+        System.out.println(nearestBuilding.getKeys());
+        assertTrue(isSameBuilding(expectedBuilding, nearestBuilding));
     }
 
     @Test
@@ -313,7 +323,9 @@ public class ImportDataCombineNearestTest {
 
         new MockUp<BuildingsImportManager>(){
             @Mock
-            public CombineNearestStrategy askUserToUseBothDS(){
+            CombineNearestStrategy getImportBuildingOverlapStrategy(
+                    String geomDS, String tagsDS, double overlapPercentage
+            ){
                 return CombineNearestStrategy.ACCEPT_GEOMETRY;
             }
         };
@@ -322,7 +334,7 @@ public class ImportDataCombineNearestTest {
 
         assertTrue(expectedTagsBuilding.getKeys().containsKey("building"));
         assertFalse(nearestBuilding.getKeys().containsKey("building"));
-        assertEquals(nearestBuilding, expectedGeometryBuilding);
+        assertTrue(isSameBuilding(nearestBuilding, expectedGeometryBuilding));
     }
 
     @Test
@@ -342,14 +354,18 @@ public class ImportDataCombineNearestTest {
 
         new MockUp<BuildingsImportManager>(){
             @Mock
-            public CombineNearestStrategy askUserToUseBothDS(){
+            CombineNearestStrategy getImportBuildingOverlapStrategy(
+                    String geomDS, String tagsDS, double overlapPercentage
+            ){
                 return CombineNearestStrategy.ACCEPT_TAGS;
             }
         };
 
         Way nearestBuilding = manager.getNearestBuildingFromImportData();
 
-        assertEquals(nearestBuilding, expectedTagsBuilding);
+        System.out.println(nearestBuilding);
+        System.out.println(expectedTagsBuilding);
+        assertTrue(isSameBuilding(nearestBuilding, expectedTagsBuilding));
     }
 
     @Test
@@ -363,7 +379,9 @@ public class ImportDataCombineNearestTest {
 
         new MockUp<BuildingsImportManager>(){
             @Mock
-            public CombineNearestStrategy askUserToUseBothDS(){
+            CombineNearestStrategy getImportBuildingOverlapStrategy(
+                    String geomDS, String tagsDS, double overlapPercentage
+            ){
                 return CombineNearestStrategy.CANCEL;
             }
         };
