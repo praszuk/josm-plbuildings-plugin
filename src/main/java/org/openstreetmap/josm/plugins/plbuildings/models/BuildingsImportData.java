@@ -25,8 +25,12 @@ public class BuildingsImportData {
         this.data.put(source, dataSet);
     }
 
+    /**
+     * @param source – geometry/tags source
+     * @return dataset for given source or new empty dataset if no found any source. It's never return null;
+     */
     public DataSet get(String source){
-        return this.data.getOrDefault(source, null);
+        return this.data.getOrDefault(source, new DataSet());
     }
 
 }

@@ -171,7 +171,7 @@ public class BuildingsImportManager {
     public Way getNearestBuildingFromImportData() {
         if (this.dataSourceProfile.isOneDataSource()) {
             DataSet singleDataset = importedData.get(dataSourceProfile.getGeometry());
-            if (singleDataset == null){
+            if (singleDataset.isEmpty()){
                 return null;
             }
             return singleDataset.getWays()
