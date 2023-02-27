@@ -12,8 +12,7 @@ import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.*;
 
 public class ShareNodesBuildingImportTest {
     @Rule
@@ -27,6 +26,7 @@ public class ShareNodesBuildingImportTest {
         DataSet ds = importOsmFile(new File("test/data/share_nodes/building_base.osm"), "");
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertNotNull(ds);
@@ -48,6 +48,7 @@ public class ShareNodesBuildingImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertNotNull(ds);
@@ -62,6 +63,7 @@ public class ShareNodesBuildingImportTest {
         DataSet ds = importOsmFile(new File("test/data/share_nodes/two_adjacent_sides_merged_building_base.osm"), "");
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertNotNull(ds);
@@ -82,6 +84,7 @@ public class ShareNodesBuildingImportTest {
         DataSet ds = importOsmFile(new File("test/data/share_nodes/two_opposite_building_base.osm"), "");
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertNotNull(ds);
@@ -102,6 +105,7 @@ public class ShareNodesBuildingImportTest {
         DataSet ds = importOsmFile(new File("test/data/share_nodes/three_adjacent_nwe_building_base.osm"), "");
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertNotNull(ds);

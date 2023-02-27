@@ -19,8 +19,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.*;
 
 
 public class UpdateTagsTest {
@@ -44,6 +43,7 @@ public class UpdateTagsTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(buildingToReplace.getVersion(), version);
@@ -76,6 +76,7 @@ public class UpdateTagsTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(ds.getWays().size(), 1);
@@ -113,6 +114,7 @@ public class UpdateTagsTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(ds.getWays().size(), 1);
@@ -147,6 +149,7 @@ public class UpdateTagsTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(ds.getWays().size(), 1);

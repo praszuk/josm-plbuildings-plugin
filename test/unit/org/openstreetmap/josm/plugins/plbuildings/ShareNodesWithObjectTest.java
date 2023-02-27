@@ -10,8 +10,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import java.io.File;
 
 import static org.junit.Assert.*;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.*;
 
 public class ShareNodesWithObjectTest {
     @Rule
@@ -27,6 +26,7 @@ public class ShareNodesWithObjectTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         Way building = (Way) ds.getWays().toArray()[0]; // doesn't matter which one
@@ -48,6 +48,7 @@ public class ShareNodesWithObjectTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];
@@ -69,6 +70,7 @@ public class ShareNodesWithObjectTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];
@@ -90,6 +92,7 @@ public class ShareNodesWithObjectTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];

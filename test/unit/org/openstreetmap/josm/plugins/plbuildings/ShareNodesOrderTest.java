@@ -13,8 +13,7 @@ import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.*;
 
 /**
  * This test class is to prevent messing with low-level building model
@@ -33,6 +32,7 @@ public class ShareNodesOrderTest {
         DataSet ds = importOsmFile(new File("test/data/share_nodes_order/two_opposite_buildings_base.osm"), "");
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertNotNull(ds);

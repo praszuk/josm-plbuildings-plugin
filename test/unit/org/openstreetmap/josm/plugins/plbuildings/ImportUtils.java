@@ -6,6 +6,8 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,7 +19,11 @@ import java.io.InputStream;
  */
 public final class ImportUtils {
 
-    public static final String DATA_SOURCE = "bdot";  // TODO temporary until datasource cfg will be rewritten
+    public static final String DATA_SOURCE = "test_source";
+    public static final DataSourceServer testServer = new DataSourceServer("server", "127.0.0.1");
+    public static final DataSourceProfile testProfile = new DataSourceProfile(
+        testServer.getName(), DATA_SOURCE, DATA_SOURCE, "profile1"
+    );
 
     private ImportUtils() {}
 
