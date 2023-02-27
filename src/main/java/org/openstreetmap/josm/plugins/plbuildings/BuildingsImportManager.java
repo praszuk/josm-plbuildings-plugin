@@ -2,6 +2,7 @@ package org.openstreetmap.josm.plugins.plbuildings;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
@@ -13,7 +14,7 @@ import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.utils.BuildingsOverlapDetector;
-import org.openstreetmap.josm.plugins.plbuildings.utils.LatLonToWayDistance;
+import org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding;
 import org.openstreetmap.josm.tools.Logging;
 
 import static org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction.performBuildingImport;
@@ -148,7 +149,7 @@ public class BuildingsImportManager {
         );
     }
 
-    boolean isImportBuildingDataOneDSStrategy(String availableDataSource) {
+    static boolean isImportBuildingDataOneDSStrategy(String availableDataSource) {
         CombineNearestStrategy strategy = CombineNearestStrategy.fromString(
             BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.get()
         );
@@ -164,7 +165,11 @@ public class BuildingsImportManager {
         }
     }
 
-    CombineNearestStrategy getImportBuildingOverlapStrategy(String geomDS, String tagsDS, double overlapPercentage) {
+    static CombineNearestStrategy getImportBuildingOverlapStrategy(
+            String geomDS,
+            String tagsDS,
+            double overlapPercentage
+    ) {
         CombineNearestStrategy strategy = CombineNearestStrategy.fromString(
             BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_STRATEGY.get()
         );
@@ -196,27 +201,41 @@ public class BuildingsImportManager {
      * ---- user pick "geometry" data source -> return based on geometry data source
      * ---- user doesn't allow -> return null
      *
+     * @param importedData – should be matched to profile parameter and contain 1 or 2 data sources with buildings data
+     * @param profile – should be matched with importData parameter
+     * @param latLon – cursor/start point location which is used to get the nearest building
      * @return building or null if it couldn't combine building or datasets empty/user decision/settings etc.
      * @throws NullPointerException if dataSourceProfile is not set
      */
-    public Way getNearestBuildingFromImportData() {
-        if (this.dataSourceProfile.isOneDataSource()) {
-            return (Way) getNearestBuilding(importedData.get(dataSourceProfile.getGeometry()), this.cursorLatLon);
-        } else {
-            DataSet geometryDS = importedData.get(dataSourceProfile.getGeometry());
-            DataSet tagsDS = importedData.get(dataSourceProfile.getTags());
+    public static OsmPrimitive getNearestImportedBuilding(
+        BuildingsImportData importedData,
+        DataSourceProfile profile,
+        LatLon latLon
+    ) {
+        // One data source
+        if (profile.isOneDataSource()) {
+            return getNearestBuilding(importedData.get(profile.getGeometry()), latLon);
+        }
+        // Multiple data source
+        else {
+            DataSet geometryDS = importedData.get(profile.getGeometry());
+            DataSet tagsDS = importedData.get(profile.getTags());
 
+            // Both empty
             if (geometryDS.isEmpty() && tagsDS.isEmpty()){
                 return null;
-            } else if (geometryDS.isEmpty() != tagsDS.isEmpty()){
-                String availableDS = geometryDS.isEmpty() ? dataSourceProfile.getTags():dataSourceProfile.getGeometry();
-                if (isImportBuildingDataOneDSStrategy(availableDS)){
-                    return (Way) getNearestBuilding(this.importedData.get(availableDS), this.cursorLatLon);
+            }
+            // One empty
+            else if (geometryDS.isEmpty() != tagsDS.isEmpty()){
+                String availableDSName = geometryDS.isEmpty() ? profile.getTags() : profile.getGeometry();
+
+                if (isImportBuildingDataOneDSStrategy(availableDSName)){
+                    return NearestBuilding.getNearestBuilding(importedData.get(availableDSName), latLon);
                 } else {
                     return null;
                 }
             }
-            // both available
+            // Both available
             else {
                 Way geometryBuilding = geometryDS.getWays().iterator().next();
                 Way tagsBuilding = tagsDS.getWays().iterator().next();
@@ -229,8 +248,8 @@ public class BuildingsImportManager {
                     return geometryBuilding;
                 } else{
                     CombineNearestStrategy strategy = getImportBuildingOverlapStrategy(
-                        this.dataSourceProfile.getGeometry(),
-                        this.dataSourceProfile.getTags(),
+                        profile.getGeometry(),
+                        profile.getTags(),
                         overlapPercentage
                     );
                     switch (strategy) {

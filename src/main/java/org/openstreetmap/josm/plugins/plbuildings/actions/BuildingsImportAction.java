@@ -91,7 +91,11 @@ public class BuildingsImportAction extends JosmAction {
         DataSet currentDataSet = manager.getEditLayer();
         BuildingsImportStats.getInstance().addTotalImportActionCounter(1);
 
-        Way importedBuilding = manager.getNearestBuildingFromImportData();
+        Way importedBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
+            manager.getImportedData(),
+            manager.getDataSourceProfile(),
+            manager.getCursorLatLon()
+        );
         if (importedBuilding == null) {
             Logging.info("Cannot get imported building.");
             manager.setStatus(ImportStatus.NO_DATA);
