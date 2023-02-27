@@ -3,6 +3,7 @@ package org.openstreetmap.josm.plugins.plbuildings;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
+import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 
 import java.util.List;
@@ -27,6 +28,26 @@ public class BuildingsSettings {
     public static final DoubleProperty SEARCH_DISTANCE = new DoubleProperty(
         "plbuildings.search_distance",
         3.0 // meters
+    );
+
+    public static final StringProperty COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY = new StringProperty(
+        "plbuildings.combine_nearest_building_one_ds_strategy",
+        CombineNearestStrategy.ASK_USER.toString()
+    );
+
+    public static final StringProperty COMBINE_NEAREST_BUILDING_OVERLAP_STRATEGY = new StringProperty(
+        "plbuildings.combine_nearest_building_both_ds_strategy",
+        CombineNearestStrategy.ASK_USER.toString()
+    );
+    /**
+     * Percentage value. It is used when both datasets are available and plugin try to
+     * combine buildings from both into one. It measures overlapping percentage firstly,
+     * so if both buildings don't overlap above given threshold then use COMBINE_NEAREST_BUILDING_BOTH_DS_STRATEGY
+     * to decide
+     */
+    public static final DoubleProperty COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD = new DoubleProperty(
+        "plbuildings.combine_nearest_building_overlap_threshold",
+        60.0
     );
 
     public static final StringProperty IMPORT_STATS = new StringProperty(
