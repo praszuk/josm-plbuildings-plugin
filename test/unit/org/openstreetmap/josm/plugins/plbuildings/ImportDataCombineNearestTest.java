@@ -21,6 +21,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.openstreetmap.josm.data.coor.ILatLon.MAX_SERVER_PRECISION;
 
 public class ImportDataCombineNearestTest {
     @Rule
@@ -77,8 +78,24 @@ public class ImportDataCombineNearestTest {
 
     }
 
-    public boolean isSameBuilding(Way way1, Way way2){
-        return way1.getNodes().equals(way2.getNodes()) && way1.getKeys().equals(way2.getKeys());
+    public boolean isSameButClonedBuilding(Way way1, Way way2){
+        if (!way1.getKeys().equals(way2.getKeys())){
+            return false;
+        }
+        if (way1.getNodes().size() != way2.getNodes().size()){
+            return false;
+        }
+        for (int i = 0; i < way1.getNodes().size(); i++){
+            // check if id is not the same or other fields
+            if (way1.getNode(i).equals(way2.getNode(i))){
+                return false;
+            }
+            // check if lat and lon is same
+            if (!way1.getNode(i).getCoor().equalsEpsilon(way1.getNode(i).getCoor(), MAX_SERVER_PRECISION)){
+                return false;
+            }
+        }
+        return true;
     }
 
     @Test
@@ -104,7 +121,7 @@ public class ImportDataCombineNearestTest {
         );
 
         assertNotNull(nearestBuilding);
-        assertTrue(isSameBuilding(expectedBuilding, nearestBuilding));
+        assertTrue(isSameButClonedBuilding(expectedBuilding, nearestBuilding));
     }
 
     @Test
@@ -123,7 +140,7 @@ public class ImportDataCombineNearestTest {
 
         assertTrue(multipleBuildingDS.getWays().size() > 2);
         assertNotNull(nearestBuilding);
-        assertTrue(isSameBuilding(expectedBuilding, nearestBuilding));
+        assertTrue(isSameButClonedBuilding(expectedBuilding, nearestBuilding));
     }
 
     @Test
@@ -156,7 +173,7 @@ public class ImportDataCombineNearestTest {
         );
 
         assertNotNull(nearestBuilding);
-        assertTrue(isSameBuilding(expectedBuilding, nearestBuilding));
+        assertTrue(isSameButClonedBuilding(expectedBuilding, nearestBuilding));
     }
 
     @Test
@@ -180,7 +197,7 @@ public class ImportDataCombineNearestTest {
 
         assertTrue(multipleBuildingDS.getWays().size() > 2);
         assertNotNull(nearestBuilding);
-        assertTrue(isSameBuilding(expectedBuilding, nearestBuilding));
+        assertTrue(isSameButClonedBuilding(expectedBuilding, nearestBuilding));
     }
 
     @Test
@@ -224,7 +241,7 @@ public class ImportDataCombineNearestTest {
         );
 
         assertNotNull(nearestBuilding);
-        assertTrue(isSameBuilding(expectedBuilding, nearestBuilding));
+        assertTrue(isSameButClonedBuilding(expectedBuilding, nearestBuilding));
     }
 
     @Test
@@ -271,7 +288,7 @@ public class ImportDataCombineNearestTest {
         );
 
         assertNotNull(nearestBuilding);
-        assertTrue(isSameBuilding(expectedBuilding, nearestBuilding));
+        assertTrue(isSameButClonedBuilding(expectedBuilding, nearestBuilding));
     }
 
     @Test
@@ -304,7 +321,7 @@ public class ImportDataCombineNearestTest {
         );
 
         assertNotNull(nearestBuilding);
-        assertTrue(isSameBuilding(expectedBuilding, nearestBuilding));
+        assertTrue(isSameButClonedBuilding(expectedBuilding, nearestBuilding));
     }
 
     @Test
@@ -336,7 +353,7 @@ public class ImportDataCombineNearestTest {
         assertNotNull(nearestBuilding);
         assertTrue(expectedTagsBuilding.getKeys().containsKey("building"));
         assertFalse(nearestBuilding.getKeys().containsKey("building"));
-        assertTrue(isSameBuilding(nearestBuilding, expectedGeometryBuilding));
+        assertTrue(isSameButClonedBuilding(nearestBuilding, expectedGeometryBuilding));
     }
 
     @Test
@@ -366,7 +383,7 @@ public class ImportDataCombineNearestTest {
         );
 
         assertNotNull(nearestBuilding);
-        assertTrue(isSameBuilding(nearestBuilding, expectedTagsBuilding));
+        assertTrue(isSameButClonedBuilding(nearestBuilding, expectedTagsBuilding));
     }
 
     @Test
