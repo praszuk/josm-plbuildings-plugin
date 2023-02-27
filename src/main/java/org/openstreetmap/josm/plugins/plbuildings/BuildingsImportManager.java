@@ -1,10 +1,7 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.TagMap;
-import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.*;
 import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDSOptionDialog;
@@ -175,6 +172,18 @@ public class BuildingsImportManager {
     }
 
     /**
+     * Create a new building based on provided parameters. It's cloned with new id/nodes.
+     * @param geometryBuilding – building from which only geometry will be reused
+     * @param tagsBuilding – building from which only tags will be reused
+     */
+    static Way combineBuildings(Way geometryBuilding, Way tagsBuilding) {
+        Way newBuilding = new Way();
+        geometryBuilding.getNodes().forEach(n -> newBuilding.addNode(new Node(n.getCoor())));
+        tagsBuilding.getKeys().forEach(newBuilding::put);
+
+        return newBuilding;
+    }
+    /**
      * Get the nearest building object from 1-2 downloaded data sources as 1 building ready to import
      * It will use default strategies from settings for all problematic cases or ask user (GUI).
      * Cases:
@@ -237,10 +246,7 @@ public class BuildingsImportManager {
                 double overlapPercentage = BuildingsOverlapDetector.detect(geometryBuilding, tagsBuilding);
 
                 if (overlapPercentage >= BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD.get()){
-                    geometryBuilding.removeAll();
-                    tagsBuilding.getKeys().forEach(geometryBuilding::put);
-
-                    return geometryBuilding;
+                    return combineBuildings(geometryBuilding, tagsBuilding);
                 } else{
                     CombineNearestStrategy strategy = getImportBuildingOverlapStrategy(
                         profile.getGeometry(),
@@ -249,10 +255,7 @@ public class BuildingsImportManager {
                     );
                     switch (strategy) {
                         case ACCEPT:
-                            geometryBuilding.removeAll();
-                            tagsBuilding.getKeys().forEach(geometryBuilding::put);
-
-                            return geometryBuilding;
+                            return combineBuildings(geometryBuilding, tagsBuilding);
                         case ACCEPT_GEOMETRY:
                             return geometryBuilding;
                         case ACCEPT_TAGS:
