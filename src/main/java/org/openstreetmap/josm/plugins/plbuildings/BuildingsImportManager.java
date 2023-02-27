@@ -172,14 +172,30 @@ public class BuildingsImportManager {
     }
 
     /**
+     *
+     * @param building – to clone
+     * @return cloned building – tags, nodes and id are new. if building is null, then returns null
+     */
+    public static OsmPrimitive cloneBuilding(OsmPrimitive building){
+        if (building == null){
+            return null;
+        }
+        Way newBuilding = new Way();
+        ((Way)(building)).getNodes().forEach(n -> newBuilding.addNode(new Node(n.getCoor())));
+        building.getKeys().forEach(newBuilding::put);
+
+        return newBuilding;
+    }
+
+    /**
      * Create a new building based on provided parameters. It's cloned with new id/nodes.
      * @param geometryBuilding – building from which only geometry will be reused
      * @param tagsBuilding – building from which only tags will be reused
      */
     static Way combineBuildings(Way geometryBuilding, Way tagsBuilding) {
         Way newBuilding = new Way();
-        geometryBuilding.getNodes().forEach(n -> newBuilding.addNode(new Node(n.getCoor())));
-        tagsBuilding.getKeys().forEach(newBuilding::put);
+        newBuilding.setNodes(geometryBuilding.getNodes());
+        newBuilding.setKeys(tagsBuilding.getKeys());
 
         return newBuilding;
     }
@@ -216,9 +232,11 @@ public class BuildingsImportManager {
         DataSourceProfile profile,
         LatLon latLon
     ) {
+        OsmPrimitive importedBuilding;
+
         // One data source
         if (profile.isOneDataSource()) {
-            return getNearestBuilding(importedData.get(profile.getGeometry()), latLon);
+            importedBuilding = getNearestBuilding(importedData.get(profile.getGeometry()), latLon);
         }
         // Multiple data source
         else {
@@ -227,16 +245,16 @@ public class BuildingsImportManager {
 
             // Both empty
             if (geometryDS.isEmpty() && tagsDS.isEmpty()){
-                return null;
+                importedBuilding = null;
             }
             // One empty
             else if (geometryDS.isEmpty() != tagsDS.isEmpty()){
                 String availableDSName = geometryDS.isEmpty() ? profile.getTags() : profile.getGeometry();
 
                 if (getImportBuildingDataOneDSStrategy(availableDSName) == ACCEPT) {
-                    return NearestBuilding.getNearestBuilding(importedData.get(availableDSName), latLon);
+                    importedBuilding = NearestBuilding.getNearestBuilding(importedData.get(availableDSName), latLon);
                 } else {
-                    return null;
+                    importedBuilding = null;
                 }
             }
             // Both available
@@ -246,7 +264,7 @@ public class BuildingsImportManager {
                 double overlapPercentage = BuildingsOverlapDetector.detect(geometryBuilding, tagsBuilding);
 
                 if (overlapPercentage >= BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD.get()){
-                    return combineBuildings(geometryBuilding, tagsBuilding);
+                    importedBuilding = combineBuildings(geometryBuilding, tagsBuilding);
                 } else{
                     CombineNearestStrategy strategy = getImportBuildingOverlapStrategy(
                         profile.getGeometry(),
@@ -255,18 +273,20 @@ public class BuildingsImportManager {
                     );
                     switch (strategy) {
                         case ACCEPT:
-                            return combineBuildings(geometryBuilding, tagsBuilding);
+                            importedBuilding = combineBuildings(geometryBuilding, tagsBuilding);
+                            break;
                         case ACCEPT_GEOMETRY:
-                            return geometryBuilding;
+                            importedBuilding = geometryBuilding;
+                            break;
                         case ACCEPT_TAGS:
-                            return tagsBuilding;
-                        case CANCEL:
-                            return null;
+                            importedBuilding = tagsBuilding;
+                            break;
+                        default:
+                            importedBuilding = null;
                     }
                 }
             }
         }
-        Logging.error("Something went wrong on combining imported building.");
-        return null;
+        return cloneBuilding(importedBuilding);
     }
 }
