@@ -14,8 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.*;
 import static org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator.isBuildingWayValid;
 
 public class ReplaceOldBuildingImportTest {
@@ -39,6 +38,7 @@ public class ReplaceOldBuildingImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importData));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(buildingToReplace.getNodesCount() - 1, 4);
@@ -59,6 +59,7 @@ public class ReplaceOldBuildingImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importData));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertTrue(ds.getWays().stream().allMatch(way -> versions.contains(way.getVersion())));
@@ -80,6 +81,7 @@ public class ReplaceOldBuildingImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importData));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertTrue(isBuildingWayValid(buildingToReplace));

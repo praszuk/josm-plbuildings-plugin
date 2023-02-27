@@ -26,7 +26,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.*;
@@ -77,7 +76,7 @@ public class BuildingsImportAction extends JosmAction {
 
     /**
      * Flow:
-     * Validate imported dataset
+     * Validate imported datasets with preprocessing to get prepared import data (matching multiple datasets)
      * Check if it's unique (no geometry duplicate):
      * -- duplicate:
      * ---- check if 1 building is selected:
@@ -90,33 +89,21 @@ public class BuildingsImportAction extends JosmAction {
      */
     public static void performBuildingImport(BuildingsImportManager manager) {
         DataSet currentDataSet = manager.getEditLayer();
-        DataSet importedBuildingsDataSet = manager.getImportedData().get("bdot"); // TODO temporary only 1
-
         BuildingsImportStats.getInstance().addTotalImportActionCounter(1);
 
-        // Imported data validation and getting building
-        if (importedBuildingsDataSet == null){
-            Logging.warn("Downloading error: Cannot import building!");
-            manager.setStatus(ImportStatus.CONNECTION_ERROR);
-            return;
-        }
-        if (importedBuildingsDataSet.isEmpty()) {
-            Logging.info("Imported empty dataset.");
+        Way importedBuilding = manager.getNearestBuildingFromImportData();
+        if (importedBuilding == null) {
+            Logging.info("Cannot get imported building.");
             manager.setStatus(ImportStatus.NO_DATA);
             return;
         }
-
-        List<Way> importedBuildingsCollection = importedBuildingsDataSet.getWays()
-            .stream()
-            .filter(way -> way.hasKey("building"))
-            .collect(Collectors.toList());
-
-        if (importedBuildingsCollection.isEmpty()){
-            Logging.warn("Imported dataset with some data, but without buildings!");
-            manager.setStatus(ImportStatus.NO_DATA);
-            return;
-        }
-        Way importedBuilding = importedBuildingsCollection.get(0); // just get first building
+//        TODO
+//        // Imported data validation and getting building
+//        if (importedBuildingsDataSet == null){
+//            Logging.warn("Downloading error: Cannot import building!");
+//            manager.setStatus(ImportStatus.CONNECTION_ERROR);
+//            return;
+//        }
 
         // Pre-check/modify import data section
         Way selectedBuilding = manager.getSelectedBuilding();
@@ -253,6 +240,7 @@ public class BuildingsImportAction extends JosmAction {
         manager.setResultBuilding(resultBuilding);
         currentDataSet.clearSelection();
     }
+
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {

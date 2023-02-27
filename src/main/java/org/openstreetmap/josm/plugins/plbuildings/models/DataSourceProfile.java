@@ -92,4 +92,11 @@ public class DataSourceProfile {
 
         return collection;
     }
+
+    /**
+     * @return true if data source for tags and geometry is the same otherwise false
+     */
+    public boolean isOneDataSource() {
+        return this.tags.equals(this.geometry);
+    }
 }

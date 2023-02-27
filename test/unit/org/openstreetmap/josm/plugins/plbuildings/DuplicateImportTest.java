@@ -2,14 +2,19 @@ package org.openstreetmap.josm.plugins.plbuildings;
 
 import mockit.Mock;
 import mockit.MockUp;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -19,12 +24,18 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.*;
 
 public class DuplicateImportTest {
     @Rule
     public JOSMTestRules rules = new JOSMTestRules().main();
+
+    @Before
+    public void setUP(){
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:4326"));
+
+
+    }
 
     static {
         new MockUp<UpdateBuildingTagsCommand>(){
@@ -52,6 +63,7 @@ public class DuplicateImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(ds.getWays().stream().filter(BuildingsWayValidator::isBuildingWayValid).count(), 1);
@@ -69,6 +81,7 @@ public class DuplicateImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(ds.getWays().size(), 1);
@@ -91,6 +104,7 @@ public class DuplicateImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(ds.getWays().size(), 1);
@@ -109,6 +123,7 @@ public class DuplicateImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(ds.getWays().stream().filter(way -> way.hasTag("building", "house")).count(), 1);
