@@ -4,11 +4,15 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
+import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDSOptionDialog;
+import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOverlapOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.gui.UncommonTagDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
+import org.openstreetmap.josm.plugins.plbuildings.utils.BuildingsOverlapDetector;
 import org.openstreetmap.josm.plugins.plbuildings.utils.LatLonToWayDistance;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -143,6 +147,32 @@ public class BuildingsImportManager {
         );
     }
 
+    boolean isImportBuildingDataOneDSStrategy(String availableDataSource) {
+        CombineNearestStrategy strategy = CombineNearestStrategy.fromString(
+            BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.get()
+        );
+        switch (strategy){
+            case ASK_USER:
+                return ImportedBuildingOneDSOptionDialog.show(availableDataSource);
+            case ACCEPT:
+                return true;
+            case CANCEL:
+                return false;
+            default:
+                throw new RuntimeException("IsImportBuildingDataOneDSStrategy received unexpected status!" + strategy);
+        }
+    }
+
+    CombineNearestStrategy getImportBuildingOverlapStrategy(String geomDS, String tagsDS, double overlapPercentage) {
+        CombineNearestStrategy strategy = CombineNearestStrategy.fromString(
+            BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_STRATEGY.get()
+        );
+        if (strategy == CombineNearestStrategy.ASK_USER){
+            strategy = ImportedBuildingOverlapOptionDialog.show(geomDS, tagsDS, overlapPercentage);
+        }
+        return strategy;
+    }
+
     /**
      * Get the nearest building object from 1-2 downloaded data sources as 1 building ready to import
      * It will use default strategies from settings for all problematic cases or ask user (GUI).
@@ -181,7 +211,59 @@ public class BuildingsImportManager {
                     LatLonToWayDistance.minDistance(this.cursorLatLon, w2)
                 ))
                 .orElse(null); // it never should be null
+        } else {
+            DataSet geometryDS = importedData.get(dataSourceProfile.getGeometry());
+            DataSet tagsDS = importedData.get(dataSourceProfile.getTags());
+
+            if (geometryDS.isEmpty() && tagsDS.isEmpty()){
+                return null;
+            } else if (geometryDS.isEmpty() != tagsDS.isEmpty()){
+                String availableDS = geometryDS.isEmpty() ? dataSourceProfile.getTags():dataSourceProfile.getGeometry();
+                if (isImportBuildingDataOneDSStrategy(availableDS)){
+                    return this.importedData.get(availableDS).getWays().stream()
+                        .min((Way w1, Way w2) -> Double.compare(
+                            LatLonToWayDistance.minDistance(this.cursorLatLon, w1),
+                            LatLonToWayDistance.minDistance(this.cursorLatLon, w2)
+                        ))
+                        .orElse(null);
+                } else {
+                    return null;
+                }
+            }
+            // both available
+            else {
+                Way geometryBuilding = geometryDS.getWays().iterator().next();
+                Way tagsBuilding = tagsDS.getWays().iterator().next();
+                double overlapPercentage = BuildingsOverlapDetector.detect(geometryBuilding, tagsBuilding);
+
+                if (overlapPercentage >= BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD.get()){
+                    geometryBuilding.removeAll();
+                    tagsBuilding.getKeys().forEach(geometryBuilding::put);
+
+                    return geometryBuilding;
+                } else{
+                    CombineNearestStrategy strategy = getImportBuildingOverlapStrategy(
+                        this.dataSourceProfile.getGeometry(),
+                        this.dataSourceProfile.getTags(),
+                        overlapPercentage
+                    );
+                    switch (strategy) {
+                        case ACCEPT:
+                            geometryBuilding.removeAll();
+                            tagsBuilding.getKeys().forEach(geometryBuilding::put);
+
+                            return geometryBuilding;
+                        case ACCEPT_GEOMETRY:
+                            return geometryBuilding;
+                        case ACCEPT_TAGS:
+                            return tagsBuilding;
+                        case CANCEL:
+                            return null;
+                    }
+                }
+            }
         }
+        Logging.error("Something went wrong on combining imported building.");
         return null;
     }
 }
