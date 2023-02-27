@@ -11,6 +11,7 @@ import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.utils.BuildingsOverlapDetector;
+import org.openstreetmap.josm.plugins.plbuildings.utils.CloneBuilding;
 import org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -172,22 +173,6 @@ public class BuildingsImportManager {
     }
 
     /**
-     *
-     * @param building – to clone
-     * @return cloned building – tags, nodes and id are new. if building is null, then returns null
-     */
-    public static OsmPrimitive cloneBuilding(OsmPrimitive building){
-        if (building == null){
-            return null;
-        }
-        Way newBuilding = new Way();
-        ((Way)(building)).getNodes().forEach(n -> newBuilding.addNode(new Node(n.getCoor())));
-        building.getKeys().forEach(newBuilding::put);
-
-        return newBuilding;
-    }
-
-    /**
      * Create a new building based on provided parameters. It's cloned with new id/nodes.
      * @param geometryBuilding – building from which only geometry will be reused
      * @param tagsBuilding – building from which only tags will be reused
@@ -287,6 +272,6 @@ public class BuildingsImportManager {
                 }
             }
         }
-        return cloneBuilding(importedBuilding);
+        return CloneBuilding.cloneBuilding(importedBuilding);
     }
 }
