@@ -21,7 +21,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.openstreetmap.josm.data.coor.ILatLon.MAX_SERVER_PRECISION;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.isSameButClonedBuilding;
 
 public class ImportDataCombineNearestTest {
     @Rule
@@ -76,26 +76,6 @@ public class ImportDataCombineNearestTest {
             ""
         );
 
-    }
-
-    public boolean isSameButClonedBuilding(Way way1, Way way2){
-        if (!way1.getKeys().equals(way2.getKeys())){
-            return false;
-        }
-        if (way1.getNodes().size() != way2.getNodes().size()){
-            return false;
-        }
-        for (int i = 0; i < way1.getNodes().size(); i++){
-            // check if id is not the same or other fields
-            if (way1.getNode(i).equals(way2.getNode(i))){
-                return false;
-            }
-            // check if lat and lon is same
-            if (!way1.getNode(i).getCoor().equalsEpsilon(way1.getNode(i).getCoor(), MAX_SERVER_PRECISION)){
-                return false;
-            }
-        }
-        return true;
     }
 
     @Test
