@@ -18,6 +18,7 @@ import org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding;
 import org.openstreetmap.josm.tools.Logging;
 
 import static org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction.performBuildingImport;
+import static org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy.*;
 import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.DOWNLOADING;
 import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.IDLE;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding.getNearestBuilding;
@@ -149,20 +150,14 @@ public class BuildingsImportManager {
         );
     }
 
-    static boolean isImportBuildingDataOneDSStrategy(String availableDataSource) {
+    static CombineNearestStrategy getImportBuildingDataOneDSStrategy(String availableDataSource) {
         CombineNearestStrategy strategy = CombineNearestStrategy.fromString(
             BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.get()
         );
-        switch (strategy){
-            case ASK_USER:
-                return ImportedBuildingOneDSOptionDialog.show(availableDataSource);
-            case ACCEPT:
-                return true;
-            case CANCEL:
-                return false;
-            default:
-                throw new RuntimeException("IsImportBuildingDataOneDSStrategy received unexpected status!" + strategy);
+        if (strategy == ASK_USER){
+            strategy = ImportedBuildingOneDSOptionDialog.show(availableDataSource) ? ACCEPT : CANCEL;
         }
+        return strategy;
     }
 
     static CombineNearestStrategy getImportBuildingOverlapStrategy(
@@ -229,7 +224,7 @@ public class BuildingsImportManager {
             else if (geometryDS.isEmpty() != tagsDS.isEmpty()){
                 String availableDSName = geometryDS.isEmpty() ? profile.getTags() : profile.getGeometry();
 
-                if (isImportBuildingDataOneDSStrategy(availableDSName)){
+                if (getImportBuildingDataOneDSStrategy(availableDSName) == ACCEPT) {
                     return NearestBuilding.getNearestBuilding(importedData.get(availableDSName), latLon);
                 } else {
                     return null;
