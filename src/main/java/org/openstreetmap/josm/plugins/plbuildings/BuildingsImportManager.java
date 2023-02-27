@@ -19,6 +19,7 @@ import org.openstreetmap.josm.tools.Logging;
 import static org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction.performBuildingImport;
 import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.DOWNLOADING;
 import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.IDLE;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding.getNearestBuilding;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.findUncommonTags;
 
 
@@ -200,17 +201,7 @@ public class BuildingsImportManager {
      */
     public Way getNearestBuildingFromImportData() {
         if (this.dataSourceProfile.isOneDataSource()) {
-            DataSet singleDataset = importedData.get(dataSourceProfile.getGeometry());
-            if (singleDataset.isEmpty()){
-                return null;
-            }
-            return singleDataset.getWays()
-                .stream()
-                .min((Way w1, Way w2) -> Double.compare(
-                    LatLonToWayDistance.minDistance(this.cursorLatLon, w1),
-                    LatLonToWayDistance.minDistance(this.cursorLatLon, w2)
-                ))
-                .orElse(null); // it never should be null
+            return (Way) getNearestBuilding(importedData.get(dataSourceProfile.getGeometry()), this.cursorLatLon);
         } else {
             DataSet geometryDS = importedData.get(dataSourceProfile.getGeometry());
             DataSet tagsDS = importedData.get(dataSourceProfile.getTags());
@@ -220,12 +211,7 @@ public class BuildingsImportManager {
             } else if (geometryDS.isEmpty() != tagsDS.isEmpty()){
                 String availableDS = geometryDS.isEmpty() ? dataSourceProfile.getTags():dataSourceProfile.getGeometry();
                 if (isImportBuildingDataOneDSStrategy(availableDS)){
-                    return this.importedData.get(availableDS).getWays().stream()
-                        .min((Way w1, Way w2) -> Double.compare(
-                            LatLonToWayDistance.minDistance(this.cursorLatLon, w1),
-                            LatLonToWayDistance.minDistance(this.cursorLatLon, w2)
-                        ))
-                        .orElse(null);
+                    return (Way) getNearestBuilding(this.importedData.get(availableDS), this.cursorLatLon);
                 } else {
                     return null;
                 }
