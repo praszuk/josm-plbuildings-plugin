@@ -210,8 +210,8 @@ public class ImportDataCombineNearestTest {
 
         new MockUp<BuildingsImportManager>(){
             @Mock
-            boolean isImportBuildingDataOneDSStrategy(String availableDataSource){
-                return true;
+            CombineNearestStrategy getImportBuildingDataOneDSStrategy(String availableDataSource){
+                return CombineNearestStrategy.ACCEPT;
             }
         };
         Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
@@ -233,8 +233,8 @@ public class ImportDataCombineNearestTest {
 
         new MockUp<BuildingsImportManager>(){
             @Mock
-            boolean isImportBuildingDataOneDSStrategy(String availableDataSource){
-                return false;
+            CombineNearestStrategy getImportBuildingDataOneDSStrategy(String availableDataSource){
+                return CombineNearestStrategy.CANCEL;
             }
         };
         Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
