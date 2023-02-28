@@ -13,11 +13,11 @@ public class ImportedBuildingOneDSOptionDialog {
      * @return true if user clicks to use available data source, else false ("no" button/canceled)
      */
     public static boolean show(String availableDatasource){
-        Object[] CHOICES = {tr("Use only") + " : " + availableDatasource, tr("Cancel")};
+        Object[] CHOICES = {tr("Use") + " " + availableDatasource, tr("Cancel")};
 
         int result = JOptionPane.showOptionDialog(
             null,
-            tr("Incomplete data sources. Do you want to use only one of them to import building ?"),
+            tr("Incomplete data. Do you want to use only one data source to import building?"),
             tr("Building import confirmation"),
             JOptionPane.YES_NO_OPTION,
             JOptionPane.QUESTION_MESSAGE,

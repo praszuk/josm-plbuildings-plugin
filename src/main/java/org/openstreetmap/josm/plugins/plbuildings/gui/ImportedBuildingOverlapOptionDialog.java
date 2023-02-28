@@ -26,7 +26,7 @@ public class ImportedBuildingOverlapOptionDialog {
         int result = JOptionPane.showOptionDialog(
             null,
             String.format(
-                tr("Buildings data in different data sources are not overlapping enough (%.2f%%)."),
+                tr("Buildings from different data sources are not overlapping enough (%.2f%%)."),
                 overlapPercentage
             ),
             tr("Building import confirmation"),
