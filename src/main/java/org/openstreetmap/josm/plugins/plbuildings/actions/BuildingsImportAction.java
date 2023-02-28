@@ -101,6 +101,10 @@ public class BuildingsImportAction extends JosmAction {
             manager.setStatus(ImportStatus.NO_DATA);
             return;
         }
+        // Add importedBuilding to DataSet – it's needed to avoid DataIntegrityError (primitives without osm metadata)
+        DataSet importDataSet = new DataSet();
+        importDataSet.addPrimitiveRecursive(importedBuilding);
+
 //        TODO
 //        // Imported data validation and getting building
 //        if (importedBuildingsDataSet == null){

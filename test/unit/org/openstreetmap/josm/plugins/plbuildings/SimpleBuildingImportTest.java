@@ -13,6 +13,7 @@ import java.io.File;
 
 import static org.junit.Assert.*;
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.*;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.CloneBuilding.cloneBuilding;
 
 public class SimpleBuildingImportTest {
     @Rule
@@ -64,6 +65,23 @@ public class SimpleBuildingImportTest {
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
         manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
+        assertEquals(ds.getWays().size(), 1);
+    }
+
+    @Test
+    public void testImportBuildingWithoutOsmMetaData(){
+        DataSet rawDataSet = importOsmFile(new File("test/data/simple_building.osm"), "");
+        assertNotNull(rawDataSet);
+
+        DataSet importDataSet = new DataSet();
+        rawDataSet.getWays().forEach(w -> importDataSet.addPrimitiveRecursive(cloneBuilding(w)));
+
+        DataSet ds = new DataSet();
+        BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
+        manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
+        manager.setDataSourceProfile(testProfile);
+        manager.processDownloadedData();
+
         assertEquals(ds.getWays().size(), 1);
     }
 }
