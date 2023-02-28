@@ -4,6 +4,8 @@ import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -12,6 +14,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -22,10 +25,13 @@ public class BuildingsToggleDialog extends ToggleDialog {
     private static final Color COLOR_DEFAULT = Color.BLACK;
     private static final Color COLOR_ORANGE = Color.decode("#ff781f"); // hex orange better than Color.ORANGE
 
+    private static final int DATA_SOURCE_PROFILE_MAX_CHARS = 20;
+
     private final JLabel status;
-    private final JLabel dataSource;
+    private final JComboBox<DataSourceProfile> dataSourceProfile;
 
     private final JLabel building;
+
     private final JLabel bLevels;
     private final JLabel uncommonTags;
 
@@ -43,11 +49,36 @@ public class BuildingsToggleDialog extends ToggleDialog {
         );
 
         this.status = new JLabel("");
-        this.dataSource = new JLabel("BDOT"); // TODO temp hardcoded
+        this.dataSourceProfile = new JComboBox<>();
 
         this.building = new JLabel("");
         this.bLevels = new JLabel("");
         this.uncommonTags = new JLabel("");
+
+        updateDataSourceProfileComboBox();
+        this.dataSourceProfile.setRenderer(new DefaultListCellRenderer(){
+            @Override
+            public Component getListCellRendererComponent(
+                    JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null){
+                    setText("");
+                }
+                else{
+                    DataSourceProfile profile = (DataSourceProfile) value;
+                    setText(profile.getName().substring(
+                        0,
+                        Math.min(DATA_SOURCE_PROFILE_MAX_CHARS, profile.getName().length()))
+                    );
+                }
+                return this;
+            }
+        });
+        this.dataSourceProfile.addActionListener(
+            actionEvent -> DataSourceConfig.getInstance().setCurrentProfile(
+                (DataSourceProfile) dataSourceProfile.getSelectedItem()
+            )
+        );
 
         JPanel rootPanel = new JPanel(new GridLayout(0, 1));
 
@@ -62,7 +93,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
         dataSourceLabel.setBorder(new EmptyBorder(0,5,0,0));
 
         configPanel.add(dataSourceLabel);
-        configPanel.add(dataSource);
+        configPanel.add(dataSourceProfile);
 
         JPanel lastImportTagsPanel = new JPanel(new GridLayout(0, 2));
 
@@ -85,6 +116,15 @@ public class BuildingsToggleDialog extends ToggleDialog {
 
         setDefaultStatus();
         updateTags("", "", false);
+    }
+
+    private void updateDataSourceProfileComboBox() {
+        DataSourceConfig config = DataSourceConfig.getInstance();
+        ArrayList<DataSourceProfile> profiles = (ArrayList<DataSourceProfile>) config.getProfiles();
+        profiles.add(0, null); // add empty element to handle no profile
+
+        this.dataSourceProfile.setModel(new DefaultComboBoxModel<>(profiles.toArray(DataSourceProfile[]::new)));
+        this.dataSourceProfile.setSelectedItem(config.getCurrentProfile());
     }
 
     /**
@@ -148,10 +188,6 @@ public class BuildingsToggleDialog extends ToggleDialog {
             this.building.setForeground(hasUncommonTags ? COLOR_ORANGE:COLOR_DEFAULT);
             this.uncommonTags.setForeground(hasUncommonTags ? COLOR_ORANGE:COLOR_DEFAULT);
         });
-    }
-
-    public void setDataSource(String newDataSource){
-        this.dataSource.setText(newDataSource);
     }
 
 }
