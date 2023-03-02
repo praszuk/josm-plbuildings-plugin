@@ -2,6 +2,7 @@ package org.openstreetmap.josm.plugins.plbuildings.io;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.io.GeoJSONReader;
+import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmJsonReader;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
@@ -31,14 +32,11 @@ public class BuildingsDownloader {
     public static BuildingsImportData downloadBuildings(BuildingsImportManager manager){
         DataSourceProfile currentProfile = manager.getDataSourceProfile();
 
-        String[] dataSourceQueryParam;
+        String dataSourceQueryParam = currentProfile.getGeometry();
         if (!currentProfile.getGeometry().equals(currentProfile.getTags())){
-            dataSourceQueryParam = new String[]{
-                currentProfile.getGeometry().toLowerCase(), currentProfile.getTags().toLowerCase()
-            };
-        } else {
-            dataSourceQueryParam = new String[]{currentProfile.getGeometry().toLowerCase()};
+            dataSourceQueryParam += "," + currentProfile.getTags();
         }
+        dataSourceQueryParam = dataSourceQueryParam.toLowerCase();
 
         String serverUrl = DataSourceConfig
                 .getInstance()
@@ -65,7 +63,7 @@ public class BuildingsDownloader {
     public static BuildingsImportData downloadBuildings(
         String serverUrl,
         LatLon latLon,
-        String[] dataSources,
+        String dataSources,
         Double searchDistance
     ){
 
@@ -80,11 +78,9 @@ public class BuildingsDownloader {
         urlBuilder.append("lon=");
         urlBuilder.append(latLon.lon());
 
-        for (String ds : dataSources){
-            urlBuilder.append("&");
-            urlBuilder.append("data_sources=");
-            urlBuilder.append(ds);
-        }
+        urlBuilder.append("&");
+        urlBuilder.append("data_sources=");
+        urlBuilder.append(dataSources);
 
         urlBuilder.append("&");
         urlBuilder.append("search_distance=");
