@@ -21,6 +21,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.isSameButClonedBuilding;
 
 public class ImportDataCombineNearestTest {
@@ -49,29 +50,29 @@ public class ImportDataCombineNearestTest {
         this.profileTwoDS = new DataSourceProfile(server.getName(), "ds1", "ds2", "profile2");
 
         this.emptyDS = new DataSet();
-        this.oneBuildingDS = ImportUtils.importOsmFile(
+        this.oneBuildingDS = importOsmFile(
             new File("test/data/import_data_combine_nearest_one_ds/one_building.osm"),
             ""
         );
-        this.multipleBuildingDS = ImportUtils.importOsmFile(
+        this.multipleBuildingDS = importOsmFile(
             new File("test/data/import_data_combine_nearest_one_ds/multiple_buildings.osm"),
             ""
         );
 
-        this.bothOverlapOver60oneBuildingGeometryDS = ImportUtils.importOsmFile(
+        this.bothOverlapOver60oneBuildingGeometryDS = importOsmFile(
             new File("test/data/import_data_combine_nearest_both_ds_overlap_gt_60/one_building_geometry.osm"),
             ""
         );
-        this.bothOverlapOver60oneBuildingTagsDS = ImportUtils.importOsmFile(
+        this.bothOverlapOver60oneBuildingTagsDS = importOsmFile(
             new File("test/data/import_data_combine_nearest_both_ds_overlap_gt_60/one_building_tags.osm"),
             ""
         );
 
-        this.bothOverlapLt60oneBuildingGeometryDS = ImportUtils.importOsmFile(
+        this.bothOverlapLt60oneBuildingGeometryDS = importOsmFile(
             new File("test/data/import_data_combine_nearest_both_ds_overlap_lt_60/one_building_geometry.osm"),
             ""
         );
-        this.bothOverlapLt60oneBuildingTagsDS = ImportUtils.importOsmFile(
+        this.bothOverlapLt60oneBuildingTagsDS = importOsmFile(
             new File("test/data/import_data_combine_nearest_both_ds_overlap_lt_60/one_building_tags.osm"),
             ""
         );
