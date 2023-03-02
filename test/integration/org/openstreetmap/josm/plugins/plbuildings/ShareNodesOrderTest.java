@@ -4,7 +4,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -36,12 +35,12 @@ public class ShareNodesOrderTest {
         manager.processDownloadedData();
 
         assertNotNull(ds);
-        assertEquals(ds.getWays().stream().filter(BuildingsWayValidator::isBuildingWayValid).count(), 3);
+        assertEquals(3, ds.getWays().stream().filter(BuildingsWayValidator::isBuildingWayValid).count());
 
         Way building = (Way) ds.getWays().stream().filter(way -> way.hasTag("building", "house")).toArray()[0];
 
         // Four shared nodes between 3 buildings (4 nodes – 2 referred ways).
         // Skipping first node because closed ways always duplicates 1 node
-        assertEquals(building.getNodes().stream().skip(1).filter((node -> node.isReferredByWays(2))).count(), 4);
+        assertEquals(4, building.getNodes().stream().skip(1).filter((node -> node.isReferredByWays(2))).count());
     }
 }

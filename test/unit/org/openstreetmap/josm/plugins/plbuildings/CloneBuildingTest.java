@@ -42,10 +42,10 @@ public class CloneBuildingTest {
     @Test
     public void testClonedTags(){
         Way clonedBuilding = (Way) cloneBuilding(this.buildingToClone);
-        assertEquals(clonedBuilding.getKeys(), this.buildingToClone.getKeys());
+        assertEquals(this.buildingToClone.getKeys(), clonedBuilding.getKeys());
 
         this.buildingToClone.remove("building");
-        assertNotEquals(clonedBuilding.getKeys(), this.buildingToClone.getKeys());
+        assertNotEquals(this.buildingToClone.getKeys(), clonedBuilding.getKeys());
     }
 
     @Test
@@ -54,13 +54,13 @@ public class CloneBuildingTest {
         assertTrue(isSameButClonedBuilding(clonedBuilding, this.buildingToClone));
 
         this.buildingToClone.removeNode(this.buildingToClone.getNode(0));
-        assertNotEquals(clonedBuilding.getNodes().size(), this.buildingToClone.getNodes().size());
+        assertNotEquals(this.buildingToClone.getNodes().size(), clonedBuilding.getNodes().size());
     }
 
     @Test
     public void testClonedId(){
         Way clonedBuilding = (Way)cloneBuilding(this.buildingToClone);
-        assertNotEquals(clonedBuilding.getId(), this.buildingToClone.getId());
+        assertNotEquals(this.buildingToClone.getId(), clonedBuilding.getId());
     }
 
 }

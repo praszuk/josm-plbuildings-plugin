@@ -30,9 +30,9 @@ public class SimpleBuildingImportTest {
         manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
-        assertEquals(ds.getWays().size(), 1);
+        assertEquals(1, ds.getWays().size());
         Way building = (Way) ds.getWays().toArray()[0];
-        assertEquals(building.getNodesCount() - 1, 4);
+        assertEquals(4, building.getNodesCount() - 1);
         assertTrue(building.hasTag("building"));
 
     }
@@ -65,7 +65,7 @@ public class SimpleBuildingImportTest {
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
         manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
-        assertEquals(ds.getWays().size(), 1);
+        assertEquals(1, ds.getWays().size());
     }
 
     @Test
@@ -82,6 +82,6 @@ public class SimpleBuildingImportTest {
         manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
-        assertEquals(ds.getWays().size(), 1);
+        assertEquals(1, ds.getWays().size());
     }
 }

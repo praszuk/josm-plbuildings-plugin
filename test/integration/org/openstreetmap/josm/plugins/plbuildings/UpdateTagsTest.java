@@ -46,7 +46,7 @@ public class UpdateTagsTest {
         manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
-        assertEquals(buildingToReplace.getVersion(), version);
+        assertEquals(version, buildingToReplace.getVersion());
     }
 
     @Test
@@ -79,10 +79,10 @@ public class UpdateTagsTest {
         manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
-        assertEquals(ds.getWays().size(), 1);
-        assertEquals(ds.getWays().stream()
+        assertEquals(1, ds.getWays().size());
+        assertEquals(1, ds.getWays().stream()
             .filter(way -> way.hasTag("roof:shape", "flat"))
-            .count(), 1);
+            .count());
     }
 
     @Test
@@ -117,8 +117,8 @@ public class UpdateTagsTest {
         manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
-        assertEquals(ds.getWays().size(), 1);
-        assertEquals(ds.getWays().stream().filter(way -> way.hasTag("building", "detached")).count(), 1);
+        assertEquals(1, ds.getWays().size());
+        assertEquals(1, ds.getWays().stream().filter(way -> way.hasTag("building", "detached")).count());
     }
 
     @Test
@@ -152,8 +152,8 @@ public class UpdateTagsTest {
         manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
-        assertEquals(ds.getWays().size(), 1);
-        assertEquals(ds.getWays().stream().filter(way -> way.hasTag("building", "detached")).count(), 0);
-        assertEquals(buildingToReplace.getVersion(), version);
+        assertEquals(1, ds.getWays().size());
+        assertEquals(0, ds.getWays().stream().filter(way -> way.hasTag("building", "detached")).count());
+        assertEquals(version, buildingToReplace.getVersion());
     }
 }
