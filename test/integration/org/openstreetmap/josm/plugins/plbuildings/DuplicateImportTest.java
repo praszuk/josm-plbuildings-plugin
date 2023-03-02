@@ -13,8 +13,6 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
-import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
-import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -66,7 +64,7 @@ public class DuplicateImportTest {
         manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
-        assertEquals(ds.getWays().stream().filter(BuildingsWayValidator::isBuildingWayValid).count(), 1);
+        assertEquals(1, ds.getWays().stream().filter(BuildingsWayValidator::isBuildingWayValid).count());
     }
 
     @Test
@@ -84,8 +82,8 @@ public class DuplicateImportTest {
         manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
-        assertEquals(ds.getWays().size(), 1);
-        assertEquals(ds.getWays().stream().filter(way -> way.hasTag("building", "house")).count(), 1);
+        assertEquals(1, ds.getWays().size());
+        assertEquals(1, ds.getWays().stream().filter(way -> way.hasTag("building", "house")).count());
     }
 
     @Test
@@ -107,8 +105,8 @@ public class DuplicateImportTest {
         manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
-        assertEquals(ds.getWays().size(), 1);
-        assertEquals(ds.getWays().stream().filter(way -> way.hasTag("building", "house")).count(), 1);
+        assertEquals(1, ds.getWays().size());
+        assertEquals(1, ds.getWays().stream().filter(way -> way.hasTag("building", "house")).count());
     }
 
     @Test
@@ -126,6 +124,6 @@ public class DuplicateImportTest {
         manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
-        assertEquals(ds.getWays().stream().filter(way -> way.hasTag("building", "house")).count(), 1);
+        assertEquals(1, ds.getWays().stream().filter(way -> way.hasTag("building", "house")).count());
     }
 }

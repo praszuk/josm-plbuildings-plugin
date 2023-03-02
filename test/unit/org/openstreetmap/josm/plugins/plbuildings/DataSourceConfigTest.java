@@ -61,7 +61,7 @@ public class DataSourceConfigTest {
         clearDataSourceConfig();
         dataSourceConfig.addServer(server1);
         assertThrows(IllegalArgumentException.class, () -> dataSourceConfig.addServer(server1));
-        assertEquals(dataSourceConfig.getServers().size(), 1);
+        assertEquals(1, dataSourceConfig.getServers().size());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class DataSourceConfigTest {
 
         dataSourceConfig.addProfile(profile1server1);
         assertThrows(IllegalArgumentException.class, () -> dataSourceConfig.addProfile(profile1server1));
-        assertEquals(dataSourceConfig.getProfiles().size(), 1);
+        assertEquals(1, dataSourceConfig.getProfiles().size());
     }
 
     @Test
@@ -88,7 +88,7 @@ public class DataSourceConfigTest {
                 profile1server1.getName()
         );
         dataSourceConfig.addProfile(duplicatedProfile);
-        assertEquals(dataSourceConfig.getProfiles().size(), 2);
+        assertEquals(2, dataSourceConfig.getProfiles().size());
     }
     @Test
     public void getServerProfilesTest(){
@@ -100,8 +100,8 @@ public class DataSourceConfigTest {
         dataSourceConfig.addProfile(profile2server1);
         dataSourceConfig.addProfile(profile3server2);
 
-        assertEquals(dataSourceConfig.getServerProfiles(server1).size(), 2);
-        assertEquals(dataSourceConfig.getServerProfiles(server2).size(), 1);
+        assertEquals(2, dataSourceConfig.getServerProfiles(server1).size());
+        assertEquals(1, dataSourceConfig.getServerProfiles(server2).size());
     }
 
     @Test
@@ -109,11 +109,11 @@ public class DataSourceConfigTest {
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
-        assertEquals(dataSourceConfig.getServers().size(), 1);
+        assertEquals(1, dataSourceConfig.getServers().size());
         dataSourceConfig.removeServer(server1);
-        assertEquals(dataSourceConfig.getProfiles().size(), 0);
+        assertEquals(0, dataSourceConfig.getProfiles().size());
         dataSourceConfig.removeServer(server1);
-        assertEquals(dataSourceConfig.getProfiles().size(), 0);
+        assertEquals(0, dataSourceConfig.getProfiles().size());
     }
 
     @Test
@@ -122,11 +122,11 @@ public class DataSourceConfigTest {
 
         dataSourceConfig.addServer(server1);
         dataSourceConfig.addProfile(profile1server1);
-        assertEquals(dataSourceConfig.getProfiles().size(), 1);
+        assertEquals(1, dataSourceConfig.getProfiles().size());
         dataSourceConfig.removeProfile(profile1server1);
-        assertEquals(dataSourceConfig.getProfiles().size(), 0);
+        assertEquals(0, dataSourceConfig.getProfiles().size());
         dataSourceConfig.removeProfile(profile1server1);
-        assertEquals(dataSourceConfig.getProfiles().size(), 0);
+        assertEquals(0, dataSourceConfig.getProfiles().size());
     }
 
     @Test
@@ -140,11 +140,11 @@ public class DataSourceConfigTest {
         dataSourceConfig.addProfile(profile2server1);
         dataSourceConfig.addProfile(profile3server2);
 
-        assertEquals(dataSourceConfig.getServers().size(), 2);
-        assertEquals(dataSourceConfig.getProfiles().size(), 3);
+        assertEquals(2, dataSourceConfig.getServers().size());
+        assertEquals(3, dataSourceConfig.getProfiles().size());
         dataSourceConfig.removeServer(server1);
-        assertEquals(dataSourceConfig.getServers().size(), 1);
-        assertEquals(dataSourceConfig.getProfiles().size(), 1);
+        assertEquals(1, dataSourceConfig.getServers().size());
+        assertEquals(1, dataSourceConfig.getProfiles().size());
     }
 
     @Test
@@ -164,7 +164,7 @@ public class DataSourceConfigTest {
         };
 
         dataSourceConfig.refresh(false);
-        assertEquals(dataSourceConfig.getProfiles().size(), 1);
+        assertEquals(1, dataSourceConfig.getProfiles().size());
     }
 
     @Test
@@ -191,7 +191,7 @@ public class DataSourceConfigTest {
         };
 
         dataSourceConfig.refresh(false);
-        assertEquals(dataSourceConfig.getProfiles().size(), 2);
+        assertEquals(2, dataSourceConfig.getProfiles().size());
 
         DataSourceProfile expectedUpdatedProfile = dataSourceConfig.getProfileByName(
                 profile2server1.getDataSourceServerName(),
@@ -223,7 +223,7 @@ public class DataSourceConfigTest {
         };
 
         dataSourceConfig.refresh(false);
-        assertEquals(dataSourceConfig.getProfiles().size(), 3);
+        assertEquals(3, dataSourceConfig.getProfiles().size());
     }
 
     @Test
@@ -256,7 +256,7 @@ public class DataSourceConfigTest {
         };
 
         dataSourceConfig.refresh(false);
-        assertEquals(dataSourceConfig.getProfiles().size(), 4);
+        assertEquals(4, dataSourceConfig.getProfiles().size());
     }
 
     @Test
@@ -290,8 +290,8 @@ public class DataSourceConfigTest {
         };
 
         dataSourceConfig.refresh(false);
-        assertEquals(dataSourceConfig.getProfiles(), correctOrder);
-        assertNotEquals(dataSourceConfig.getProfiles(), remoteOrder);
+        assertEquals(correctOrder, dataSourceConfig.getProfiles());
+        assertNotEquals(remoteOrder, dataSourceConfig.getProfiles());
     }
 
     @Test
@@ -306,12 +306,12 @@ public class DataSourceConfigTest {
         ArrayList<DataSourceProfile> expectedOrder = new ArrayList<>(Arrays.asList(
                 profile3server2, profile2server1, profile1server1
         ));
-        assertNotEquals(currentOrder, expectedOrder);
+        assertNotEquals(expectedOrder, currentOrder);
         currentOrder.forEach(dataSourceConfig::addProfile);
 
 
         dataSourceConfig.swapProfileOrder(profile1server1, profile3server2);
 
-        assertEquals(dataSourceConfig.getProfiles(), expectedOrder);
+        assertEquals(expectedOrder, dataSourceConfig.getProfiles());
     }
 }

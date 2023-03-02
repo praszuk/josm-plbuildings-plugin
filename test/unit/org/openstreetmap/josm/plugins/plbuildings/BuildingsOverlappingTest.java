@@ -75,7 +75,7 @@ public class BuildingsOverlappingTest {
         assertNotNull(b1);
         assertNotNull(b2);
 
-        assertEquals(detect(b1, b2), 0., 0.1);
+        assertEquals(0., detect(b1, b2), 0.1);
     }
 
     @Test
@@ -113,6 +113,6 @@ public class BuildingsOverlappingTest {
         assertNotNull(b1);
         assertNotNull(b2);
 
-        assertEquals(detect(b1, b2), 100.0, 1);
+        assertEquals(100.0, detect(b1, b2), 1);
     }
 }

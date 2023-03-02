@@ -27,7 +27,7 @@ public class ReplaceOldBuildingImportTest {
         assertNotNull(importData);
 
         Way buildingToImport = (Way) importData.getWays().toArray()[0];
-        assertEquals(buildingToImport.getNodesCount() - 1, 4);
+        assertEquals(4, buildingToImport.getNodesCount() - 1);
 
         DataSet ds = importOsmFile(new File("test/data/replace_multiple_buildings.osm"), "");
         assertNotNull(ds);
@@ -41,7 +41,7 @@ public class ReplaceOldBuildingImportTest {
         manager.setDataSourceProfile(testProfile);
         manager.processDownloadedData();
 
-        assertEquals(buildingToReplace.getNodesCount() - 1, 4);
+        assertEquals(4, buildingToReplace.getNodesCount() - 1);
         assertTrue(isBuildingWayValid(buildingToReplace));
     }
 
@@ -71,7 +71,7 @@ public class ReplaceOldBuildingImportTest {
         assertNotNull(importData);
 
         Way buildingToImport = (Way) importData.getWays().toArray()[0];
-        assertEquals(buildingToImport.getNodesCount() - 1, 4);
+        assertEquals(4, buildingToImport.getNodesCount() - 1);
 
         DataSet ds = importOsmFile(new File("test/data/replace_multiple_buildings.osm"), "");
         assertNotNull(ds);
@@ -85,14 +85,14 @@ public class ReplaceOldBuildingImportTest {
         manager.processDownloadedData();
 
         assertTrue(isBuildingWayValid(buildingToReplace));
-        assertEquals(buildingToReplace.getNodesCount() - 1, 4);
+        assertEquals(4, buildingToReplace.getNodesCount() - 1);
 
         UndoRedoHandler.getInstance().undo(2);
         assertTrue(isBuildingWayValid(buildingToReplace));
-        assertEquals(buildingToReplace.getNodesCount(), 5);
+        assertEquals(5, buildingToReplace.getNodesCount());
 
         UndoRedoHandler.getInstance().redo(2);
         assertTrue(isBuildingWayValid(buildingToReplace));
-        assertEquals(buildingToReplace.getNodesCount() - 1, 4);
+        assertEquals(4, buildingToReplace.getNodesCount() - 1);
     }
 }

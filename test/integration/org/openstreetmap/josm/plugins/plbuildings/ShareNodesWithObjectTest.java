@@ -31,11 +31,12 @@ public class ShareNodesWithObjectTest {
 
         Way building = (Way) ds.getWays().toArray()[0]; // doesn't matter which one
         assertEquals(
+            2,
             building.getNodes().stream()
                 .skip(1)
                 .filter(node -> node.isReferredByWays(2))
-                .count(),
-        2);
+                .count()
+        );
     }
 
     @Test
@@ -53,11 +54,12 @@ public class ShareNodesWithObjectTest {
 
         Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];
         assertEquals(
+            0,
             building.getNodes().stream()
                 .skip(1)
                 .filter(node -> node.isReferredByWays(2))
-                .count(),
-            0);
+                .count()
+           );
     }
 
     @Test
@@ -75,11 +77,12 @@ public class ShareNodesWithObjectTest {
 
         Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];
         assertEquals(
-                building.getNodes().stream()
-                        .skip(1)
-                        .filter(node -> node.isReferredByWays(2))
-                        .count(),
-                0);
+            0,
+            building.getNodes().stream()
+                .skip(1)
+                .filter(node -> node.isReferredByWays(2))
+                .count()
+        );
     }
 
     @Test
@@ -98,6 +101,6 @@ public class ShareNodesWithObjectTest {
         Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];
 
         // -1 is for avoid duplicate of nodes from closed way and +1 is for looking for node object
-        assertEquals(ds.getNodes().size(), (building.getNodesCount() - 1) + 1);
+        assertEquals((building.getNodesCount() - 1) + 1, ds.getNodes().size());
     }
 }
