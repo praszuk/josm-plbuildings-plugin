@@ -182,6 +182,11 @@ public class DataSourceConfig {
         profiles.set(dstIndex, src);
     }
 
+    public void setProfileVisible(DataSourceProfile profile, boolean value){
+        profile.setVisible(value);
+        save();
+    }
+
     private void validateServer(DataSourceServer newServer) throws IllegalArgumentException {
         if (servers.stream().anyMatch(s -> s.getName().equals(newServer.getName()))){
             throw new IllegalArgumentException("DataSourceServer name must be unique!");

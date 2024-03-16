@@ -9,6 +9,7 @@ import org.openstreetmap.josm.tools.Logging;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -278,15 +279,16 @@ public class SettingsDataSourcesPanel extends JPanel {
     }
 
     private void updateProfileTable(){
+        final int VISIBLE_COL_IDX = 4;
         DefaultTableModel tableModel = new DefaultTableModel(){
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return column == VISIBLE_COL_IDX;
             }
 
             @Override
             public Class<?> getColumnClass(int columnIndex) {
-                return columnIndex != 4 ? super.getColumnClass(columnIndex):Boolean.class;
+                return columnIndex != VISIBLE_COL_IDX ? super.getColumnClass(columnIndex):Boolean.class;
             }
         };
         tableModel.addColumn(COL_PROFILE);
@@ -294,6 +296,21 @@ public class SettingsDataSourcesPanel extends JPanel {
         tableModel.addColumn(COL_TAGS);
         tableModel.addColumn(COL_GEOMETRY);
         tableModel.addColumn(COL_VISIBLE);
+
+        tableModel.addTableModelListener((tableModelEvent -> {
+            int row = tableModelEvent.getFirstRow();
+            int column = tableModelEvent.getColumn();
+
+            if (column == VISIBLE_COL_IDX) {
+                TableModel model = (TableModel) tableModelEvent.getSource();
+                Boolean checked = (Boolean) model.getValueAt(row, column);
+
+                String serverName = (String) model.getValueAt(row, 1);
+                String profileName = (String) model.getValueAt(row, 0);
+                DataSourceProfile dataSourceProfile = dataSourceConfig.getProfileByName(serverName, profileName);
+                dataSourceConfig.setProfileVisible(dataSourceProfile, checked);
+            }
+        }));
 
         this.dataSourceConfig.getProfiles().forEach(profile -> tableModel.addRow(new Object[]{
             profile.getName(),
