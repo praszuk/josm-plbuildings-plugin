@@ -10,18 +10,25 @@ public class DataSourceProfile {
     private String geometry;
     private String tags;
     private String name;
+    private boolean visible;
 
     // FIELD_* strings are used to name fields to (de)serialization to JOSM Settings
     private static final String FIELD_NAME = "name";
     private static final String FIELD_GEOMETRY = "geometry";
     private static final String FIELD_TAGS = "tags";
     private static final String FIELD_SERVER_NAME = "server_name";
+    private static final String FIELD_VISIBLE = "visible";
 
-    public DataSourceProfile(String dataSourceServerName, String geometry, String tags, String name) {
+    public DataSourceProfile(String dataSourceServerName, String geometry, String tags, String name, Boolean visible) {
         this.dataSourceServerName = dataSourceServerName;
         this.geometry = geometry;
         this.tags = tags;
         this.name = name;
+        this.visible = visible;
+    }
+
+    public DataSourceProfile(String dataSourceServerName, String geometry, String tags, String name) {
+        this(dataSourceServerName, geometry, tags, name, true);
     }
 
     public String getDataSourceServerName() {
@@ -39,6 +46,9 @@ public class DataSourceProfile {
     public String getName() {
         return name;
     }
+    public Boolean isVisible(){
+        return visible;
+    }
 
     private void setGeometry(String geometry) {
         this.geometry = geometry;
@@ -51,11 +61,15 @@ public class DataSourceProfile {
     private void setName(String name) {
         this.name = name;
     }
+    private void setVisible(Boolean visible){
+        this.visible = visible;
+    }
 
     public void updateProfile(DataSourceProfile newProfile){
         setName(newProfile.getName());
         setTags(newProfile.getTags());
         setGeometry(newProfile.getGeometry());
+        setVisible(newProfile.isVisible());
     }
 
     public static JsonArray toJson(Collection<DataSourceProfile> collection){
@@ -66,6 +80,7 @@ public class DataSourceProfile {
                     .add(FIELD_GEOMETRY, obj.geometry)
                     .add(FIELD_TAGS, obj.tags)
                     .add(FIELD_SERVER_NAME, obj.dataSourceServerName)
+                    .add(FIELD_VISIBLE, obj.visible)
                     .build()
         ));
         return builder.build();
@@ -83,7 +98,8 @@ public class DataSourceProfile {
                     jsonObject.getString(FIELD_SERVER_NAME),
                     jsonObject.getString(FIELD_GEOMETRY),
                     jsonObject.getString(FIELD_TAGS),
-                    jsonObject.getString(FIELD_NAME)
+                    jsonObject.getString(FIELD_NAME),
+                    jsonObject.getBoolean(FIELD_VISIBLE)
                 )
             );
         }
