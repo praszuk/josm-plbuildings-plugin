@@ -11,6 +11,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -22,12 +24,14 @@ public class SettingsDataSourcesPanel extends JPanel {
     public final String PROFILES = tr("Profiles");
     public final String ADD_SERVER_TITLE = tr("Add new server");
     public final String REMOVE_SERVER_TITLE = tr("Remove server");
-
     private final String COL_PROFILE = tr("Profile");
     private final String COL_SERVER = tr("Server");
     private final String COL_TAGS = tr("Tags");
     private final String COL_GEOMETRY = tr("Geometry");
     private final String COL_VISIBLE = tr("Visible");
+    private final ArrayList<String> PROFILE_COLUMNS = new ArrayList<>(
+            Arrays.asList(COL_PROFILE, COL_SERVER, COL_TAGS, COL_GEOMETRY, COL_VISIBLE)
+    );
 
 
     public SettingsDataSourcesPanel(){
@@ -279,34 +283,32 @@ public class SettingsDataSourcesPanel extends JPanel {
     }
 
     private void updateProfileTable(){
-        final int VISIBLE_COL_IDX = 4;
         DefaultTableModel tableModel = new DefaultTableModel(){
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == VISIBLE_COL_IDX;
+                return column == PROFILE_COLUMNS.indexOf(COL_VISIBLE);
             }
 
             @Override
             public Class<?> getColumnClass(int columnIndex) {
-                return columnIndex != VISIBLE_COL_IDX ? super.getColumnClass(columnIndex):Boolean.class;
+                if (columnIndex == PROFILE_COLUMNS.indexOf(COL_VISIBLE)){
+                    return Boolean.class;
+                }
+                return super.getColumnClass(columnIndex);
             }
         };
-        tableModel.addColumn(COL_PROFILE);
-        tableModel.addColumn(COL_SERVER);
-        tableModel.addColumn(COL_TAGS);
-        tableModel.addColumn(COL_GEOMETRY);
-        tableModel.addColumn(COL_VISIBLE);
+        PROFILE_COLUMNS.forEach(tableModel::addColumn);
 
         tableModel.addTableModelListener((tableModelEvent -> {
             int row = tableModelEvent.getFirstRow();
             int column = tableModelEvent.getColumn();
 
-            if (column == VISIBLE_COL_IDX) {
+            if (column == PROFILE_COLUMNS.indexOf(COL_VISIBLE)) {
                 TableModel model = (TableModel) tableModelEvent.getSource();
                 Boolean checked = (Boolean) model.getValueAt(row, column);
 
-                String serverName = (String) model.getValueAt(row, 1);
-                String profileName = (String) model.getValueAt(row, 0);
+                String serverName = (String) model.getValueAt(row, PROFILE_COLUMNS.indexOf(COL_SERVER));
+                String profileName = (String) model.getValueAt(row, PROFILE_COLUMNS.indexOf(COL_PROFILE));
                 DataSourceProfile dataSourceProfile = dataSourceConfig.getProfileByName(serverName, profileName);
                 dataSourceConfig.setProfileVisible(dataSourceProfile, checked);
             }
