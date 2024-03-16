@@ -61,7 +61,7 @@ public class DataSourceProfile {
     private void setName(String name) {
         this.name = name;
     }
-    private void setVisible(Boolean visible){
+    protected void setVisible(Boolean visible){
         this.visible = visible;
     }
 
