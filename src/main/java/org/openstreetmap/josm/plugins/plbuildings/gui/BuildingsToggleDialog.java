@@ -15,6 +15,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -120,7 +121,10 @@ public class BuildingsToggleDialog extends ToggleDialog {
 
     private void updateDataSourceProfileComboBox() {
         DataSourceConfig config = DataSourceConfig.getInstance();
-        ArrayList<DataSourceProfile> profiles = (ArrayList<DataSourceProfile>) config.getProfiles();
+        ArrayList<DataSourceProfile> profiles = (ArrayList<DataSourceProfile>) config.getProfiles()
+            .stream()
+            .filter(DataSourceProfile::isVisible)
+            .collect(Collectors.toList());
         profiles.add(0, null); // add empty element to handle no profile
 
         this.dataSourceProfile.setModel(new DefaultComboBoxModel<>(profiles.toArray(DataSourceProfile[]::new)));
