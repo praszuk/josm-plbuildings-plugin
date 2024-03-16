@@ -148,7 +148,13 @@ public class DataSourceConfig {
             // Update existing profiles
             currentServerProfiles.keySet().stream()
                 .filter(newServerProfiles::containsKey)
-                .forEach(key -> getProfileByName(server.getName(), key).updateProfile(newServerProfiles.get(key)));
+                .forEach(key -> {
+                    DataSourceProfile currentProfile = getProfileByName(server.getName(), key);
+                    DataSourceProfile newProfile = newServerProfiles.get(key);
+                    newProfile.setVisible(currentProfile.isVisible());
+
+                    currentProfile.updateProfile(newProfile);
+                });
 
             // Add missing profiles
             newServerProfiles.entrySet().stream()
@@ -174,6 +180,11 @@ public class DataSourceConfig {
 
         profiles.set(srcIndex, dst);
         profiles.set(dstIndex, src);
+    }
+
+    public void setProfileVisible(DataSourceProfile profile, boolean value){
+        profile.setVisible(value);
+        save();
     }
 
     private void validateServer(DataSourceServer newServer) throws IllegalArgumentException {

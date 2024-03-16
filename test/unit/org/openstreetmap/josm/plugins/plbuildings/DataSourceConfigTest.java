@@ -37,7 +37,8 @@ public class DataSourceConfigTest {
                 "Test",
                 "test1",
                 "test2",
-                "test profile1"
+                "test profile1",
+                true
         );
         this.profile2server1 = new DataSourceProfile(
                 "Test",
@@ -49,7 +50,8 @@ public class DataSourceConfigTest {
                 "NotTest",
                 "test1",
                 "test2",
-                "test profile3"
+                "test profile3",
+                false
         );
     }
     void clearDataSourceConfig(){
@@ -198,7 +200,83 @@ public class DataSourceConfigTest {
                 profile2server1.getName()
         );
         assertEquals(expectedUpdatedProfile.getGeometry(), modifiedDataSourceProfile.getGeometry());
+    }
+    @Test
+    public void refreshProfileWontChangeVisibilityWhenProfileIsLocallyVisibleAndRemotelyInvisibleTest(){
+        clearDataSourceConfig();
 
+        dataSourceConfig.addServer(server1);
+        DataSourceProfile visibleProfile = new DataSourceProfile(
+            server1.getName(),
+            profile1server1.getGeometry(),
+            profile1server1.getTags(),
+            profile1server1.getName(),
+            true
+        );
+
+        dataSourceConfig.addProfile(visibleProfile);
+        DataSourceProfile modifiedVisibleProfile = new DataSourceProfile(
+                visibleProfile.getDataSourceServerName(),
+                visibleProfile.getGeometry() + "modified",
+                visibleProfile.getTags() + "modified",
+                visibleProfile.getName(),
+                false
+        );
+
+        new MockUp<DataSourceProfileDownloader>(){
+            @Mock
+            public Collection<DataSourceProfile> downloadProfiles(DataSourceServer server){
+                return List.of(modifiedVisibleProfile);
+            }
+        };
+
+        dataSourceConfig.refresh(false);
+        assertEquals(1, dataSourceConfig.getProfiles().size());
+
+        DataSourceProfile expectedUpdatedVisibleProfile = dataSourceConfig.getProfileByName(
+                visibleProfile.getDataSourceServerName(),
+                visibleProfile.getName()
+        );
+        assertTrue(expectedUpdatedVisibleProfile.isVisible());
+    }
+
+    @Test
+    public void refreshProfileWontChangeVisibilityWhenProfileIsLocallyInvisibleAndRemotelyVisibleTest(){
+        clearDataSourceConfig();
+
+        dataSourceConfig.addServer(server1);
+        DataSourceProfile invisibleProfile = new DataSourceProfile(
+                server1.getName(),
+                profile1server1.getGeometry(),
+                profile1server1.getTags(),
+                profile1server1.getName(),
+                false
+        );
+
+        dataSourceConfig.addProfile(invisibleProfile);
+        DataSourceProfile modifiedInvisibleProfile = new DataSourceProfile(
+                invisibleProfile.getDataSourceServerName(),
+                invisibleProfile.getGeometry() + "modified",
+                invisibleProfile.getTags() + "modified",
+                invisibleProfile.getName(),
+                true
+        );
+
+        new MockUp<DataSourceProfileDownloader>(){
+            @Mock
+            public Collection<DataSourceProfile> downloadProfiles(DataSourceServer server){
+                return List.of(modifiedInvisibleProfile);
+            }
+        };
+
+        dataSourceConfig.refresh(false);
+        assertEquals(1, dataSourceConfig.getProfiles().size());
+
+        DataSourceProfile expectedUpdatedInvisibleProfile = dataSourceConfig.getProfileByName(
+                invisibleProfile.getDataSourceServerName(),
+                invisibleProfile.getName()
+        );
+        assertFalse(expectedUpdatedInvisibleProfile.isVisible());
     }
 
     @Test
