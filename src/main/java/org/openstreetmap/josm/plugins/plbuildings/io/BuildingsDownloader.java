@@ -4,7 +4,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.io.GeoJSONReader;
 import org.openstreetmap.josm.io.OsmJsonReader;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
-import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
@@ -23,7 +22,6 @@ import java.net.URL;
 public class BuildingsDownloader {
     /**
      * Download buildings from PLBuildings Server API and parse it as DataSet
-     * Use default search_distance parameter.
      *
      * @param manager  ImportManager which contains DataSourceConfig for current download.
      * @return BuildingsImportData with downloaded data or empty datasets or empty obj if IO/parse error
@@ -42,12 +40,7 @@ public class BuildingsDownloader {
                 .getServerByName(currentProfile.getDataSourceServerName())
                 .getUrl();
 
-        return downloadBuildings(
-                serverUrl,
-                manager.getCursorLatLon(),
-                dataSourceQueryParam,
-                BuildingsSettings.SEARCH_DISTANCE.get()
-        );
+        return downloadBuildings(serverUrl, manager.getCursorLatLon(), dataSourceQueryParam);
     }
 
     /**
@@ -56,16 +49,9 @@ public class BuildingsDownloader {
      * @param serverUrl      root url to server api e.g. "http://127.0.0.1/api/v1"
      * @param latLon         location of searching building (EPSG 4326)
      * @param dataSources    dataSources of buildings separated with comma
-     * @param searchDistance distance in meters to find the nearest building from latLon
      * @return BuildingsImportData with downloaded data or empty datasets or empty obj if IO/parse error
      */
-    public static BuildingsImportData downloadBuildings(
-        String serverUrl,
-        LatLon latLon,
-        String dataSources,
-        Double searchDistance
-    ){
-
+    public static BuildingsImportData downloadBuildings(String serverUrl, LatLon latLon, String dataSources){
         StringBuilder urlBuilder = new StringBuilder(serverUrl);
         urlBuilder.append(DownloaderConstants.API_BUILDING_AT);
 
@@ -80,10 +66,6 @@ public class BuildingsDownloader {
         urlBuilder.append("&");
         urlBuilder.append("data_sources=");
         urlBuilder.append(dataSources);
-
-        urlBuilder.append("&");
-        urlBuilder.append("search_distance=");
-        urlBuilder.append(searchDistance);
 
         Logging.info("Getting building data from: {0}", urlBuilder);
 

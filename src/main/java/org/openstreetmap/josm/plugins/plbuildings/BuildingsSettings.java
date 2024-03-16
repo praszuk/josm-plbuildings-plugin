@@ -25,10 +25,6 @@ public class BuildingsSettings {
         "plbuildings.overlap_detect_freq_degree_step",
         0.000001
     );
-    public static final DoubleProperty SEARCH_DISTANCE = new DoubleProperty(
-        "plbuildings.search_distance",
-        3.0 // meters
-    );
 
     public static final StringProperty COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY = new StringProperty(
         "plbuildings.combine_nearest_building_one_ds_strategy",
