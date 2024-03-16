@@ -2,7 +2,6 @@ package org.openstreetmap.josm.plugins.plbuildings.io;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.io.GeoJSONReader;
-import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmJsonReader;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
@@ -68,7 +67,7 @@ public class BuildingsDownloader {
     ){
 
         StringBuilder urlBuilder = new StringBuilder(serverUrl);
-        urlBuilder.append(DownloaderConstants.API_NEAREST_BUILDING);
+        urlBuilder.append(DownloaderConstants.API_BUILDING_AT);
 
         urlBuilder.append("?");
         urlBuilder.append("lat=");

@@ -11,7 +11,7 @@ public final class DownloaderConstants {
         Version.getInstance().getFullAgentString()
     );
 
-    public static final String API_NEAREST_BUILDING = "/buildings/nearest";
+    public static final String API_BUILDING_AT = "/buildings";
     public static final String API_DATA_SOURCES_PROFILES = "/profiles";
 
     private DownloaderConstants(){}
