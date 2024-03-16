@@ -26,6 +26,7 @@ public class SettingsDataSourcesPanel extends JPanel {
     private final String COL_SERVER = tr("Server");
     private final String COL_TAGS = tr("Tags");
     private final String COL_GEOMETRY = tr("Geometry");
+    private final String COL_VISIBLE = tr("Visible");
 
 
     public SettingsDataSourcesPanel(){
@@ -282,17 +283,24 @@ public class SettingsDataSourcesPanel extends JPanel {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return columnIndex != 4 ? super.getColumnClass(columnIndex):Boolean.class;
+            }
         };
         tableModel.addColumn(COL_PROFILE);
         tableModel.addColumn(COL_SERVER);
         tableModel.addColumn(COL_TAGS);
         tableModel.addColumn(COL_GEOMETRY);
+        tableModel.addColumn(COL_VISIBLE);
 
-        this.dataSourceConfig.getProfiles().forEach(profile -> tableModel.addRow(new String[]{
+        this.dataSourceConfig.getProfiles().forEach(profile -> tableModel.addRow(new Object[]{
             profile.getName(),
             profile.getDataSourceServerName(),
             profile.getTags(),
-            profile.getGeometry()
+            profile.getGeometry(),
+            profile.isVisible()
         }));
         this.profileJTable.setModel(tableModel);
     }
