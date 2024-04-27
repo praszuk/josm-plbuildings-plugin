@@ -4,7 +4,6 @@ import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
-import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -14,22 +13,21 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Create sidebar window which contains the latest status of import action and allows to change some cfg.
  */
-public class BuildingsToggleDialog extends ToggleDialog {
+public class BuildingsToggleDialog extends ToggleDialog { // TODO to rewrite with controller
     private static final Color COLOR_DEFAULT = Color.BLACK;
     private static final Color COLOR_ORANGE = Color.decode("#ff781f"); // hex orange better than Color.ORANGE
 
     private static final int DATA_SOURCE_PROFILE_MAX_CHARS = 20;
 
     private final JLabel status;
-    private final JComboBox<DataSourceProfile> dataSourceProfile;
+
+    private final JComboBox<DataSourceProfile> dataSourceProfilesComboBox;
 
     private final JLabel building;
 
@@ -50,14 +48,13 @@ public class BuildingsToggleDialog extends ToggleDialog {
         );
 
         this.status = new JLabel("");
-        this.dataSourceProfile = new JComboBox<>();
+        this.dataSourceProfilesComboBox = new JComboBox<>();
 
         this.building = new JLabel("");
         this.bLevels = new JLabel("");
         this.uncommonTags = new JLabel("");
 
-        updateDataSourceProfileComboBox();
-        this.dataSourceProfile.setRenderer(new DefaultListCellRenderer(){
+        this.dataSourceProfilesComboBox.setRenderer(new DefaultListCellRenderer(){
             @Override
             public Component getListCellRendererComponent(
                     JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -75,11 +72,6 @@ public class BuildingsToggleDialog extends ToggleDialog {
                 return this;
             }
         });
-        this.dataSourceProfile.addActionListener(
-            actionEvent -> DataSourceConfig.getInstance().setCurrentProfile(
-                (DataSourceProfile) dataSourceProfile.getSelectedItem()
-            )
-        );
 
         JPanel rootPanel = new JPanel(new GridLayout(0, 1));
 
@@ -94,7 +86,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
         dataSourceLabel.setBorder(new EmptyBorder(0,5,0,0));
 
         configPanel.add(dataSourceLabel);
-        configPanel.add(dataSourceProfile);
+        configPanel.add(dataSourceProfilesComboBox);
 
         JPanel lastImportTagsPanel = new JPanel(new GridLayout(0, 2));
 
@@ -117,18 +109,6 @@ public class BuildingsToggleDialog extends ToggleDialog {
 
         setDefaultStatus();
         updateTags("", "", false);
-    }
-
-    private void updateDataSourceProfileComboBox() {
-        DataSourceConfig config = DataSourceConfig.getInstance();
-        ArrayList<DataSourceProfile> profiles = (ArrayList<DataSourceProfile>) config.getProfiles()
-            .stream()
-            .filter(DataSourceProfile::isVisible)
-            .collect(Collectors.toList());
-        profiles.add(0, null); // add empty element to handle no profile
-
-        this.dataSourceProfile.setModel(new DefaultComboBoxModel<>(profiles.toArray(DataSourceProfile[]::new)));
-        this.dataSourceProfile.setSelectedItem(config.getCurrentProfile());
     }
 
     /**
@@ -194,4 +174,11 @@ public class BuildingsToggleDialog extends ToggleDialog {
         });
     }
 
+    public JComboBox<DataSourceProfile> getDataSourceProfilesComboBox() {
+        return dataSourceProfilesComboBox;
+    }
+
+    public DataSourceProfile getSelectedDataSourceProfile() {
+        return (DataSourceProfile) dataSourceProfilesComboBox.getSelectedItem();
+    }
 }

@@ -150,7 +150,7 @@ public class DataSourceConfigTest {
     }
 
     @Test
-    public void refreshProfileWhichNotExistInNewProfilesWillBeRemovedFromConfigTest(){
+    public void refreshFromServerProfileWhichNotExistInNewProfilesWillBeRemovedFromConfigTest(){
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
@@ -165,12 +165,12 @@ public class DataSourceConfigTest {
             }
         };
 
-        dataSourceConfig.refresh(false);
+        dataSourceConfig.refreshFromServer(false);
         assertEquals(1, dataSourceConfig.getProfiles().size());
     }
 
     @Test
-    public void refreshProfileWhichUpdatedFieldsWillBeUpdatedTest(){
+    public void refreshFromServerProfileWhichUpdatedFieldsWillBeUpdatedTest(){
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
@@ -192,7 +192,7 @@ public class DataSourceConfigTest {
             }
         };
 
-        dataSourceConfig.refresh(false);
+        dataSourceConfig.refreshFromServer(false);
         assertEquals(2, dataSourceConfig.getProfiles().size());
 
         DataSourceProfile expectedUpdatedProfile = dataSourceConfig.getProfileByName(
@@ -202,7 +202,7 @@ public class DataSourceConfigTest {
         assertEquals(expectedUpdatedProfile.getGeometry(), modifiedDataSourceProfile.getGeometry());
     }
     @Test
-    public void refreshProfileWontChangeVisibilityWhenProfileIsLocallyVisibleAndRemotelyInvisibleTest(){
+    public void refreshFromServerProfileWontChangeVisibilityWhenProfileIsLocallyVisibleAndRemotelyInvisibleTest(){
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
@@ -230,7 +230,7 @@ public class DataSourceConfigTest {
             }
         };
 
-        dataSourceConfig.refresh(false);
+        dataSourceConfig.refreshFromServer(false);
         assertEquals(1, dataSourceConfig.getProfiles().size());
 
         DataSourceProfile expectedUpdatedVisibleProfile = dataSourceConfig.getProfileByName(
@@ -241,7 +241,7 @@ public class DataSourceConfigTest {
     }
 
     @Test
-    public void refreshProfileWontChangeVisibilityWhenProfileIsLocallyInvisibleAndRemotelyVisibleTest(){
+    public void refreshFromServerProfileWontChangeVisibilityWhenProfileIsLocallyInvisibleAndRemotelyVisibleTest(){
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
@@ -269,7 +269,7 @@ public class DataSourceConfigTest {
             }
         };
 
-        dataSourceConfig.refresh(false);
+        dataSourceConfig.refreshFromServer(false);
         assertEquals(1, dataSourceConfig.getProfiles().size());
 
         DataSourceProfile expectedUpdatedInvisibleProfile = dataSourceConfig.getProfileByName(
@@ -280,7 +280,7 @@ public class DataSourceConfigTest {
     }
 
     @Test
-    public void refreshProfileWhichNotExistConfigWillBeAddedTest(){
+    public void refreshFromServerProfileWhichNotExistConfigWillBeAddedTest(){
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
@@ -300,12 +300,12 @@ public class DataSourceConfigTest {
             }
         };
 
-        dataSourceConfig.refresh(false);
+        dataSourceConfig.refreshFromServer(false);
         assertEquals(3, dataSourceConfig.getProfiles().size());
     }
 
     @Test
-    public void refreshProfilesNullResponseForOneServerShouldNotChangeAnythingInThisServerConfigTest(){
+    public void refreshFromServerProfilesNullResponseForOneServerShouldNotChangeAnythingInThisServerConfigTest(){
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
@@ -333,12 +333,12 @@ public class DataSourceConfigTest {
             }
         };
 
-        dataSourceConfig.refresh(false);
+        dataSourceConfig.refreshFromServer(false);
         assertEquals(4, dataSourceConfig.getProfiles().size());
     }
 
     @Test
-    public void refreshProfileUpdateDoesNotChangeTheOrderOfProfilesTest(){
+    public void refreshFromServerProfileUpdateDoesNotChangeTheOrderOfProfilesTest(){
         clearDataSourceConfig();
 
         DataSourceProfile profile3server1 = new DataSourceProfile(
@@ -367,7 +367,7 @@ public class DataSourceConfigTest {
             }
         };
 
-        dataSourceConfig.refresh(false);
+        dataSourceConfig.refreshFromServer(false);
         assertEquals(correctOrder, dataSourceConfig.getProfiles());
         assertNotEquals(remoteOrder, dataSourceConfig.getProfiles());
     }

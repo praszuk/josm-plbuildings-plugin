@@ -10,13 +10,13 @@ public class SettingsDialog extends JFrame {
     final static int WIDTH = 600;
     final static String TITLE = tr("PlBuildings Settings");
 
-    public SettingsDialog(){
+    public SettingsDialog(SettingsDataSourcesPanel settingsDataSourcesPanel){
         super();
         setSize(WIDTH, HEIGHT);
         setLocationRelativeTo(MainApplication.getMainFrame());
         setTitle(TITLE);
 
-        add(new SettingsDataSourcesPanel());
+        add(settingsDataSourcesPanel);
         setVisible(true);
     }
 }

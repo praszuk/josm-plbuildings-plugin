@@ -1,42 +1,39 @@
 package org.openstreetmap.josm.plugins.plbuildings.gui;
 
-import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
-import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Logging;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class SettingsDataSourcesPanel extends JPanel {
+
+    public final static String SERVERS = tr("Servers");
+    public final static String PROFILES = tr("Profiles");
+    public final static String ADD_SERVER_TITLE = tr("Add new server");
+    public final static String REMOVE_SERVER_TITLE = tr("Remove server");
+
+    private JButton upBtn;
+    private JButton downBtn;
+    private JButton refreshBtn;
+    private JButton addServerBtn;
+    private JButton removeServerBtn;
+    private JTextField addServerNameField;
+    private JTextField addServerUrlField;
+
     private JList<DataSourceServer> serverJList;
     private JTable profileJTable;
-    private final DataSourceConfig dataSourceConfig;
-    public final String SERVERS = tr("Servers");
-    public final String PROFILES = tr("Profiles");
-    public final String ADD_SERVER_TITLE = tr("Add new server");
-    public final String REMOVE_SERVER_TITLE = tr("Remove server");
-    private final String COL_PROFILE = tr("Profile");
-    private final String COL_SERVER = tr("Server");
-    private final String COL_TAGS = tr("Tags");
-    private final String COL_GEOMETRY = tr("Geometry");
-    private final String COL_VISIBLE = tr("Visible");
-    private final ArrayList<String> PROFILE_COLUMNS = new ArrayList<>(
-            Arrays.asList(COL_PROFILE, COL_SERVER, COL_TAGS, COL_GEOMETRY, COL_VISIBLE)
-    );
 
 
     public SettingsDataSourcesPanel(){
         super();
-        this.dataSourceConfig = DataSourceConfig.getInstance();
 
         JPanel rootPanel = new JPanel(new GridLayout(2, 1));
         rootPanel.add(createServerListPanel());
@@ -53,7 +50,9 @@ public class SettingsDataSourcesPanel extends JPanel {
                 BorderFactory.createTitledBorder(SERVERS)
         ));
 
-        this.serverJList = new JList<>(this.dataSourceConfig.getServers().toArray(new DataSourceServer[0]));
+        // this.serverJList = new JList<>(this.dataSourceConfig.getServers().toArray(new DataSourceServer[0]));
+        this.serverJList = new JList<>();
+        this.serverJList.setModel(new DefaultListModel<>());
         this.serverJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.serverJList.setCellRenderer(new DefaultListCellRenderer(){
             @Override
@@ -71,17 +70,15 @@ public class SettingsDataSourcesPanel extends JPanel {
         JScrollPane jScrollPane = new JScrollPane(serverJList);
 
         JPanel buttonsPanel = new JPanel();
-        JButton addButton = new JButton(tr("Add"));
-        JButton removeButton = new JButton(tr("Remove"));
-        removeButton.setEnabled(false);
-        buttonsPanel.add(addButton);
-        buttonsPanel.add(removeButton);
+        addServerBtn = new JButton(tr("Add"));
+        removeServerBtn = new JButton(tr("Remove"));
+        removeServerBtn.setEnabled(false);
+        buttonsPanel.add(addServerBtn);
+        buttonsPanel.add(removeServerBtn);
 
         this.serverJList.addListSelectionListener(
-            (listSelectionEvent -> removeButton.setEnabled(this.serverJList.getSelectedValue() != null))
+            (listSelectionEvent -> removeServerBtn.setEnabled(this.serverJList.getSelectedValue() != null))
         );
-        addButton.addActionListener((event) -> addServerAction());
-        removeButton.addActionListener((event) -> removeServerAction());
 
         serverPanel.add(jScrollPane, BorderLayout.CENTER);
         serverPanel.add(buttonsPanel, BorderLayout.SOUTH);
@@ -89,90 +86,85 @@ public class SettingsDataSourcesPanel extends JPanel {
         return serverPanel;
     }
 
-    private void updateServerList(){
+    public void setServerList(List<DataSourceServer> serverList){
         DefaultListModel<DataSourceServer> listModel = new DefaultListModel<>();
-        listModel.addAll(this.dataSourceConfig.getServers());
+        listModel.addAll(serverList);
         this.serverJList.setModel(listModel);
     }
-    private void addServerAction(){
+
+    public JPanel createServerConfirmDialog(){
         JPanel dialogPanel = new JPanel();
         GroupLayout groupLayout = new GroupLayout(dialogPanel);
         dialogPanel.setLayout(groupLayout);
 
-        JTextField serverNameField = new JTextField(50);
-        JTextField serverUrlField = new JTextField(50);
+        addServerNameField = new JTextField(50);
+        addServerUrlField = new JTextField(50);
 
         JLabel serverNameLabel = new JLabel(tr("Server name") + ": ");
         JLabel serverUrlLabel = new JLabel(tr("Server URL") + ": ");
 
-        serverNameLabel.setLabelFor(serverNameField);
-        serverUrlLabel.setLabelFor(serverUrlField);
+        serverNameLabel.setLabelFor(addServerNameField);
+        serverUrlLabel.setLabelFor(addServerUrlField);
 
         GroupLayout.SequentialGroup hGroup = groupLayout.createSequentialGroup();
         hGroup.addGroup(
-            groupLayout
-                .createParallelGroup()
-                .addComponent(serverNameLabel)
-                .addComponent(serverUrlLabel)
+                groupLayout
+                        .createParallelGroup()
+                        .addComponent(serverNameLabel)
+                        .addComponent(serverUrlLabel)
         );
         hGroup.addGroup(
-            groupLayout
-                .createParallelGroup()
-                .addComponent(serverNameField)
-                .addComponent(serverUrlField)
+                groupLayout
+                        .createParallelGroup()
+                        .addComponent(addServerNameField)
+                        .addComponent(addServerUrlField)
         );
         groupLayout.setHorizontalGroup(hGroup);
 
         GroupLayout.SequentialGroup vGroup = groupLayout.createSequentialGroup();
         vGroup.addGroup(
-            groupLayout
-                .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(serverNameLabel)
-                .addComponent(serverNameField)
+                groupLayout
+                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(serverNameLabel)
+                        .addComponent(addServerNameField)
         );
         vGroup.addGroup(
-            groupLayout
-                .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(serverUrlLabel)
-                .addComponent(serverUrlField)
+                groupLayout
+                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(serverUrlLabel)
+                        .addComponent(addServerUrlField)
         );
         groupLayout.setVerticalGroup(vGroup);
+        return dialogPanel;
+    }
 
+    public boolean promptNewServerNameUrl(){
         int result = JOptionPane.showConfirmDialog(
                 null,
-                dialogPanel,
+                createServerConfirmDialog(),
                 ADD_SERVER_TITLE,
                 JOptionPane.OK_CANCEL_OPTION
         );
-        if (result == JOptionPane.OK_OPTION){
-            try{
-                DataSourceServer newServer = new DataSourceServer(serverNameField.getText(), serverUrlField.getText());
-                dataSourceConfig.addServer(newServer);
-                refreshData();
-            } catch (IllegalArgumentException exception){
-                JOptionPane.showMessageDialog(
-                    null,
-                        tr("Error with adding a new server. Name must be unique and URL must be valid!"),
-                        ADD_SERVER_TITLE,
-                        JOptionPane.ERROR_MESSAGE
-                );
-            }
-        }
+        return result == JOptionPane.OK_OPTION;
     }
 
-    private void removeServerAction(){
-        DataSourceServer selectedServer = this.serverJList.getSelectedValue();
-
-        int result = JOptionPane.showConfirmDialog(
-            null,
-            tr("Are you sure to remove server") + ": " + selectedServer.getName(),
-            REMOVE_SERVER_TITLE,
-            JOptionPane.OK_CANCEL_OPTION
+    public void showAddNewServerErrorDialog() {
+        JOptionPane.showMessageDialog(
+                null,
+                tr("Error with adding a new server. Name must be unique and URL must be valid!"),
+                ADD_SERVER_TITLE,
+                JOptionPane.ERROR_MESSAGE
         );
-        if (result == JOptionPane.OK_OPTION){
-            this.dataSourceConfig.removeServer(selectedServer);
-            refreshData();
-        }
+    }
+
+    public boolean showRemoveServerConfirmDialog(String serverName) {
+        int result = JOptionPane.showConfirmDialog(
+                null,
+                tr("Are you sure to remove server") + ": " + serverName,
+                REMOVE_SERVER_TITLE,
+                JOptionPane.OK_CANCEL_OPTION
+        );
+        return result == JOptionPane.OK_OPTION;
     }
 
     private Component createProfileTablePanel(){
@@ -184,14 +176,13 @@ public class SettingsDataSourcesPanel extends JPanel {
 
         this.profileJTable = new JTable();
         this.profileJTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        updateProfileTable();
 
         JToolBar jToolBar = new JToolBar(SwingConstants.VERTICAL);
         jToolBar.setFloatable(false);
 
-        JButton upBtn = new JButton();
-        JButton downBtn = new JButton();
-        JButton refreshBtn = new JButton();
+        upBtn = new JButton();
+        downBtn = new JButton();
+        refreshBtn = new JButton();
 
         // All icons have same size (35x35). To set different icon size it must be rescaled manually.
         upBtn.setIcon(ImageProvider.get("dialogs/up.svg"));
@@ -200,44 +191,6 @@ public class SettingsDataSourcesPanel extends JPanel {
 
         upBtn.setEnabled(false);
         downBtn.setEnabled(false);
-
-        upBtn.addActionListener(actionEvent -> {
-            upBtn.setEnabled(false);
-            moveProfileUp();
-            updateProfileTable();
-        });
-        downBtn.addActionListener(actionEvent -> {
-            downBtn.setEnabled(false);
-            moveProfileDown();
-            updateProfileTable();
-        });
-        refreshBtn.addActionListener(actionEvent -> {
-            this.setEnabled(false);
-            try {
-                refreshData();
-            }catch (Exception exception){
-                Logging.warn("Error at refreshing GUI data");
-            }
-            this.setEnabled(true);
-        });
-
-        this.profileJTable.getSelectionModel().addListSelectionListener((listSelectionEvent) -> {
-            int index = this.profileJTable.getSelectedRow();
-
-            if (index == 0){
-                upBtn.setEnabled(false);
-                downBtn.setEnabled(true);
-            } else if (index == this.profileJTable.getRowCount() - 1){
-                upBtn.setEnabled(true);
-                downBtn.setEnabled(false);
-            } else if (index == -1) { // no selection
-                upBtn.setEnabled(false);
-                downBtn.setEnabled(false);
-            } else {
-                upBtn.setEnabled(true);
-                downBtn.setEnabled(true);
-            }
-        });
 
         jToolBar.add(upBtn);
         jToolBar.add(downBtn);
@@ -250,83 +203,54 @@ public class SettingsDataSourcesPanel extends JPanel {
         return profilePanel;
     }
 
-    private void moveProfile(int srcRowIndex, int dstRowIndex){
-        int indexColServer = this.profileJTable.getColumnModel().getColumnIndex(COL_SERVER);
-        int indexColProfile = this.profileJTable.getColumnModel().getColumnIndex(COL_PROFILE);
-
-        DataSourceProfile srcProfile = this.dataSourceConfig.getProfileByName(
-                (String) this.profileJTable.getValueAt(srcRowIndex, indexColServer),
-                (String) this.profileJTable.getValueAt(srcRowIndex, indexColProfile)
-        );
-        DataSourceProfile dstProfile = this.dataSourceConfig.getProfileByName(
-                (String) this.profileJTable.getValueAt(dstRowIndex, indexColServer),
-                (String) this.profileJTable.getValueAt(dstRowIndex, indexColProfile)
-        );
-        this.dataSourceConfig.swapProfileOrder(srcProfile, dstProfile);
+    public void upBtnAddActionListener(ActionListener listener){
+        upBtn.addActionListener(listener);
     }
-    private void moveProfileUp() {
-        int rowIndex = this.profileJTable.getSelectedRow();
-        if (rowIndex == 0){
-            Logging.error("Trying to move up first profile in the table!");
-            return;
-        }
-        moveProfile(rowIndex, rowIndex - 1);
+    public void downBtnAddActionListener(ActionListener listener){
+        downBtn.addActionListener(listener);
+    }
+    public void refreshBtnAddActionListener(ActionListener listener){
+        refreshBtn.addActionListener(listener);
     }
 
-    private void moveProfileDown() {
-        int rowIndex = this.profileJTable.getSelectedRow();
-        if (rowIndex == this.dataSourceConfig.getProfiles().size() - 1){
-            Logging.error("Trying to move down last profile in the table!");
-            return;
-        }
-        moveProfile(rowIndex, rowIndex + 1);
+    public void upBtnSetEnabled(Boolean enabled){
+        upBtn.setEnabled(enabled);
+    }
+    public void downBtnSetEnabled(Boolean enabled){
+        downBtn.setEnabled(enabled);
+    }
+    public void refreshBtnSetEnabled(Boolean enabled){
+        refreshBtn.setEnabled(enabled);
     }
 
-    private void updateProfileTable(){
-        DefaultTableModel tableModel = new DefaultTableModel(){
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == PROFILE_COLUMNS.indexOf(COL_VISIBLE);
-            }
-
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == PROFILE_COLUMNS.indexOf(COL_VISIBLE)){
-                    return Boolean.class;
-                }
-                return super.getColumnClass(columnIndex);
-            }
-        };
-        PROFILE_COLUMNS.forEach(tableModel::addColumn);
-
-        tableModel.addTableModelListener((tableModelEvent -> {
-            int row = tableModelEvent.getFirstRow();
-            int column = tableModelEvent.getColumn();
-
-            if (column == PROFILE_COLUMNS.indexOf(COL_VISIBLE)) {
-                TableModel model = (TableModel) tableModelEvent.getSource();
-                Boolean checked = (Boolean) model.getValueAt(row, column);
-
-                String serverName = (String) model.getValueAt(row, PROFILE_COLUMNS.indexOf(COL_SERVER));
-                String profileName = (String) model.getValueAt(row, PROFILE_COLUMNS.indexOf(COL_PROFILE));
-                DataSourceProfile dataSourceProfile = dataSourceConfig.getProfileByName(serverName, profileName);
-                dataSourceConfig.setProfileVisible(dataSourceProfile, checked);
-            }
-        }));
-
-        this.dataSourceConfig.getProfiles().forEach(profile -> tableModel.addRow(new Object[]{
-            profile.getName(),
-            profile.getDataSourceServerName(),
-            profile.getTags(),
-            profile.getGeometry(),
-            profile.isVisible()
-        }));
-        this.profileJTable.setModel(tableModel);
+    public void profilesTableAddListSelectionListener(ListSelectionListener listener){
+        profileJTable.getSelectionModel().addListSelectionListener(listener);
     }
 
-    private void refreshData(){
-        this.dataSourceConfig.refresh(true);
-        updateServerList();
-        updateProfileTable();
+    public void setProfilesTableModel(TableModel model){
+        this.profileJTable.setModel(model);
+    }
+    public int getProfilesTableSelectedRowIndex(){
+        return profileJTable.getSelectedRow();
+    }
+    public int getProfilesTableRowCount(){
+        return profileJTable.getRowCount();
+    }
+
+    public void addServerBtnAddActionListener(ActionListener listener) {
+        addServerBtn.addActionListener(listener);
+    }
+    public void removeServerBtnAddActionListener(ActionListener listener) {
+        removeServerBtn.addActionListener(listener);
+    }
+    public String getAddServerNameFieldText(){
+        return addServerNameField.getText();
+    }
+    public String getAddServerUrlFieldText(){
+        return addServerUrlField.getText();
+    }
+
+    public DataSourceServer getServerListSelected(){
+        return serverJList.getSelectedValue();
     }
 }

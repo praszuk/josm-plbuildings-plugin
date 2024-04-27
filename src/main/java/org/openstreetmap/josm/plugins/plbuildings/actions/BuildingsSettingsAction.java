@@ -2,7 +2,7 @@ package org.openstreetmap.josm.plugins.plbuildings.actions;
 
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
-import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsDialog;
+import org.openstreetmap.josm.plugins.plbuildings.controllers.SettingsController;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -15,7 +15,9 @@ public class BuildingsSettingsAction extends JosmAction {
     public static final String DESCRIPTION = tr("Show plbuildings settings");
     public static final String TITLE = tr("PlBuildings settings");
 
-    public BuildingsSettingsAction(){
+    private final SettingsController settingsController;
+
+    public BuildingsSettingsAction(SettingsController settingsController){
         super(
                 TITLE,
                 (ImageProvider) null,
@@ -30,10 +32,11 @@ public class BuildingsSettingsAction extends JosmAction {
                 String.format("%s:buildings_settings", BuildingsPlugin.info.name),
                 false
         );
+        this.settingsController = settingsController;
     }
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        new SettingsDialog();
+        settingsController.initGUI();
     }
 }

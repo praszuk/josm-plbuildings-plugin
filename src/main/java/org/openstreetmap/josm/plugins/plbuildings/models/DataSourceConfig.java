@@ -4,17 +4,24 @@ import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.io.DataSourceProfileDownloader;
 import org.openstreetmap.josm.tools.Logging;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class DataSourceConfig {
+public class DataSourceConfig {  // TODO Try to remove singleton if easily possible
+    public static final String PROFILES = "profiles";
+    public static final String SERVERS = "servers";
+
     private final ArrayList<DataSourceServer> servers;
-    private final ArrayList<DataSourceProfile> profiles;
+    private final ArrayList<DataSourceProfile> profiles = new ArrayList<>();
 
     private DataSourceProfile currentProfile;
 
     private static DataSourceConfig instance;
+
+    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     public static DataSourceConfig getInstance() {
         if (instance == null){
@@ -25,7 +32,6 @@ public class DataSourceConfig {
 
     private DataSourceConfig(){
         this.servers = new ArrayList<>();
-        this.profiles = new ArrayList<>();
 
         load();
         this.currentProfile = profiles.isEmpty() ? null:profiles.get(0);
@@ -46,11 +52,11 @@ public class DataSourceConfig {
             .orElse(null);
     }
 
-    public Collection<DataSourceServer> getServers(){
+    public List<DataSourceServer> getServers(){
         return new ArrayList<>(servers);
     }
 
-    public Collection<DataSourceProfile> getProfiles(){
+    public List<DataSourceProfile> getProfiles(){
         return new ArrayList<>(profiles);
     }
 
@@ -70,8 +76,13 @@ public class DataSourceConfig {
     }
 
     public void addServer(DataSourceServer newServer){
+        Collection<DataSourceServer> oldServers = getServers();
+
         validateServer(newServer);
         servers.add(newServer);
+        save();
+
+        propertyChangeSupport.firePropertyChange(SERVERS, oldServers, servers);
     }
 
 
@@ -79,21 +90,38 @@ public class DataSourceConfig {
      * It removes server and all related profiles.
      */
     public void removeServer(DataSourceServer server) {
+        Collection<DataSourceProfile> oldProfiles = getProfiles();
+        Collection<DataSourceServer> oldServers = getServers();
+
         new ArrayList<>(profiles)
             .stream()
             .filter(p -> p.getDataSourceServerName().equals(server.getName()))
             .forEach(this::removeProfile);
 
         servers.remove(server);
+        save();
+
+        propertyChangeSupport.firePropertyChange(PROFILES, oldProfiles, servers);
+        propertyChangeSupport.firePropertyChange(SERVERS, oldServers, servers);
     }
 
     public void addProfile(DataSourceProfile newProfile){
+        Collection<DataSourceProfile> oldProfiles = getProfiles();
+
         validateProfile(newProfile);
         profiles.add(newProfile);
+        save();
+
+        propertyChangeSupport.firePropertyChange(PROFILES, oldProfiles, profiles);
     }
 
     public void removeProfile(DataSourceProfile profile){
+        Collection<DataSourceProfile> oldProfiles = getProfiles();
+
         profiles.remove(profile);
+        save();
+
+        propertyChangeSupport.firePropertyChange(PROFILES, oldProfiles, profiles);
     }
 
     private void load(){
@@ -119,12 +147,7 @@ public class DataSourceConfig {
      * It fetches data to update DataSourceProfiles from each server.
      * @param save – save all config to JOSM settings
      */
-    public void refresh(boolean save){
-        // Download data
-        Map<String, DataSourceProfile> currentProfiles = getProfiles()
-                .stream()
-                .collect(Collectors.toMap(DataSourceProfile::getName, (d) -> d));
-
+    public void refreshFromServer(boolean save){
         // Update profiles
         for (DataSourceServer server : getServers()){
             Collection<DataSourceProfile> downloadedCollection = DataSourceProfileDownloader.downloadProfiles(server);
@@ -175,16 +198,24 @@ public class DataSourceConfig {
         assert profiles.contains(src);
         assert profiles.contains(dst);
 
+        Collection<DataSourceProfile> oldProfiles = getProfiles();
+
         int srcIndex = profiles.indexOf(src);
         int dstIndex = profiles.indexOf(dst);
 
         profiles.set(srcIndex, dst);
         profiles.set(dstIndex, src);
+
+        propertyChangeSupport.firePropertyChange(PROFILES, oldProfiles, profiles);
     }
 
     public void setProfileVisible(DataSourceProfile profile, boolean value){
+        Collection<DataSourceProfile> oldProfiles = getProfiles();
+
         profile.setVisible(value);
         save();
+
+        propertyChangeSupport.firePropertyChange(PROFILES, oldProfiles, profiles);
     }
 
     private void validateServer(DataSourceServer newServer) throws IllegalArgumentException {
@@ -197,5 +228,9 @@ public class DataSourceConfig {
                 && p.getDataSourceServerName().equals(newProfile.getDataSourceServerName()))){
             throw new IllegalArgumentException("DataSourceProfile name must be unique per server!");
         }
+    }
+
+    public void addPropertyChangeListener(String name, PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(name, listener);
     }
 }
