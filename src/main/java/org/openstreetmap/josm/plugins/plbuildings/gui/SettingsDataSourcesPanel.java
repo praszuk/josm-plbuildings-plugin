@@ -227,6 +227,11 @@ public class SettingsDataSourcesPanel extends JPanel {
         profileJTable.getSelectionModel().addListSelectionListener(listener);
     }
 
+    public void profilesTableClearSelection() {
+        profileJTable.getSelectionModel().clearSelection();
+        profileJTable.getColumnModel().getSelectionModel().clearSelection();
+    }
+
     public void setProfilesTableModel(TableModel model){
         this.profileJTable.setModel(model);
     }

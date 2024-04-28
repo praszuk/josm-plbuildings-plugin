@@ -97,6 +97,7 @@ public class SettingsDataSourcesController {
     }
 
     private void updateProfilesTable(){
+        settingsDataSourcesPanelView.profilesTableClearSelection();
         profilesTableModel.getDataVector().removeAllElements();
         dataSourceConfigModel.getProfiles().forEach(profile -> profilesTableModel.addRow(new Object[]{
                 profile.getName(),
