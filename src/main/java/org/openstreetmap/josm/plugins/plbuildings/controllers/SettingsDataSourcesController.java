@@ -4,34 +4,23 @@ import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsDataSourcesPanel;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
+import org.openstreetmap.josm.plugins.plbuildings.models.SettingsDataSourcesProfilesTableModel;
 import org.openstreetmap.josm.tools.Logging;
 
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.plugins.plbuildings.models.SettingsDataSourcesProfilesTableModel.*;
 
 public class SettingsDataSourcesController {
 
     private final DataSourceConfig dataSourceConfigModel;
-
     private final SettingsDataSourcesPanel settingsDataSourcesPanelView;
-
-    private final String COL_PROFILE = tr("Profile");
-    private final String COL_SERVER = tr("Server");
-    private final String COL_TAGS = tr("Tags");
-    private final String COL_GEOMETRY = tr("Geometry");
-    private final String COL_VISIBLE = tr("Visible");
-    private final ArrayList<String> PROFILE_COLUMNS = new ArrayList<>(
-            Arrays.asList(COL_PROFILE, COL_SERVER, COL_TAGS, COL_GEOMETRY, COL_VISIBLE)
-    );
-    private DefaultTableModel tableModel;
+    private final SettingsDataSourcesProfilesTableModel profilesTableModel;
 
     public SettingsDataSourcesController(DataSourceConfig dataSourceConfig, SettingsDataSourcesPanel settingsDataSourcesPanelView) {
         this.dataSourceConfigModel = dataSourceConfig;
         this.settingsDataSourcesPanelView = settingsDataSourcesPanelView;
+        this.profilesTableModel = new SettingsDataSourcesProfilesTableModel();
+
+        settingsDataSourcesPanelView.setProfilesTableModel(profilesTableModel);
 
         initViewListeners();
         initModelListeners();
@@ -61,6 +50,21 @@ public class SettingsDataSourcesController {
             dataSourceConfigModel.refreshFromServer(true);
             settingsDataSourcesPanelView.refreshBtnSetEnabled(true);
         });
+
+        profilesTableModel.addTableModelListener((tableModelEvent -> {
+            int row = tableModelEvent.getFirstRow();
+            int column = tableModelEvent.getColumn();
+
+            if (column == PROFILE_COLUMNS.indexOf(COL_VISIBLE)) {
+                SettingsDataSourcesProfilesTableModel model = (SettingsDataSourcesProfilesTableModel) tableModelEvent.getSource();
+                Boolean checked = (Boolean) model.getValueAt(row, column);
+
+                String serverName = (String) model.getValueAt(row, PROFILE_COLUMNS.indexOf(COL_SERVER));
+                String profileName = (String) model.getValueAt(row, PROFILE_COLUMNS.indexOf(COL_PROFILE));
+                DataSourceProfile dataSourceProfile = dataSourceConfigModel.getProfileByName(serverName, profileName);
+                dataSourceConfigModel.setProfileVisible(dataSourceProfile, checked);
+            }
+        }));
 
         settingsDataSourcesPanelView.profilesTableAddListSelectionListener((listSelectionEvent) -> {
             int index = settingsDataSourcesPanelView.getProfilesTableSelectedRowIndex();
@@ -93,58 +97,27 @@ public class SettingsDataSourcesController {
     }
 
     private void updateProfilesTable(){
-        tableModel = new DefaultTableModel(){
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == PROFILE_COLUMNS.indexOf(COL_VISIBLE);
-            }
-
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == PROFILE_COLUMNS.indexOf(COL_VISIBLE)){
-                    return Boolean.class;
-                }
-                return super.getColumnClass(columnIndex);
-            }
-        };
-        PROFILE_COLUMNS.forEach(tableModel::addColumn);
-
-        tableModel.addTableModelListener((tableModelEvent -> {
-            int row = tableModelEvent.getFirstRow();
-            int column = tableModelEvent.getColumn();
-
-            if (column == PROFILE_COLUMNS.indexOf(COL_VISIBLE)) {
-                TableModel model = (TableModel) tableModelEvent.getSource();
-                Boolean checked = (Boolean) model.getValueAt(row, column);
-
-                String serverName = (String) model.getValueAt(row, PROFILE_COLUMNS.indexOf(COL_SERVER));
-                String profileName = (String) model.getValueAt(row, PROFILE_COLUMNS.indexOf(COL_PROFILE));
-                DataSourceProfile dataSourceProfile = dataSourceConfigModel.getProfileByName(serverName, profileName);
-                dataSourceConfigModel.setProfileVisible(dataSourceProfile, checked);
-            }
-        }));
-
-        dataSourceConfigModel.getProfiles().forEach(profile -> tableModel.addRow(new Object[]{
+        profilesTableModel.getDataVector().removeAllElements();
+        dataSourceConfigModel.getProfiles().forEach(profile -> profilesTableModel.addRow(new Object[]{
                 profile.getName(),
                 profile.getDataSourceServerName(),
                 profile.getTags(),
                 profile.getGeometry(),
                 profile.isVisible()
         }));
-        settingsDataSourcesPanelView.setProfilesTableModel(tableModel);
     }
 
     private void moveProfile(int srcRowIndex, int dstRowIndex){
-        int indexColServer = tableModel.findColumn(COL_SERVER);
-        int indexColProfile = tableModel.findColumn(COL_PROFILE);
+        int indexColServer = profilesTableModel.findColumn(COL_SERVER);
+        int indexColProfile = profilesTableModel.findColumn(COL_PROFILE);
 
         DataSourceProfile srcProfile = dataSourceConfigModel.getProfileByName(
-                (String) tableModel.getValueAt(srcRowIndex, indexColServer),
-                (String) tableModel.getValueAt(srcRowIndex, indexColProfile)
+                (String) profilesTableModel.getValueAt(srcRowIndex, indexColServer),
+                (String) profilesTableModel.getValueAt(srcRowIndex, indexColProfile)
         );
         DataSourceProfile dstProfile = dataSourceConfigModel.getProfileByName(
-                (String) tableModel.getValueAt(dstRowIndex, indexColServer),
-                (String) tableModel.getValueAt(dstRowIndex, indexColProfile)
+                (String) profilesTableModel.getValueAt(dstRowIndex, indexColServer),
+                (String) profilesTableModel.getValueAt(dstRowIndex, indexColProfile)
         );
         dataSourceConfigModel.swapProfileOrder(srcProfile, dstProfile);
     }
