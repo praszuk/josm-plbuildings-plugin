@@ -1,4 +1,4 @@
-package org.openstreetmap.josm.plugins.plbuildings.models;
+package org.openstreetmap.josm.plugins.plbuildings.models.ui;
 
 import javax.swing.*;
 

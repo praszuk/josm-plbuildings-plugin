@@ -2,9 +2,11 @@ package org.openstreetmap.josm.plugins.plbuildings.controllers;
 
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsDataSourcesPanel;
 import org.openstreetmap.josm.plugins.plbuildings.models.*;
+import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesProfilesTableModel;
+import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesServersListModel;
 import org.openstreetmap.josm.tools.Logging;
 
-import static org.openstreetmap.josm.plugins.plbuildings.models.SettingsDataSourcesProfilesTableModel.*;
+import static org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesProfilesTableModel.*;
 
 public class SettingsDataSourcesController {
 
