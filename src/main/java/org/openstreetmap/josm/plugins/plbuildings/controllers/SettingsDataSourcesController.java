@@ -1,10 +1,7 @@
 package org.openstreetmap.josm.plugins.plbuildings.controllers;
 
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsDataSourcesPanel;
-import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
-import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
-import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
-import org.openstreetmap.josm.plugins.plbuildings.models.SettingsDataSourcesProfilesTableModel;
+import org.openstreetmap.josm.plugins.plbuildings.models.*;
 import org.openstreetmap.josm.tools.Logging;
 
 import static org.openstreetmap.josm.plugins.plbuildings.models.SettingsDataSourcesProfilesTableModel.*;
@@ -13,14 +10,18 @@ public class SettingsDataSourcesController {
 
     private final DataSourceConfig dataSourceConfigModel;
     private final SettingsDataSourcesPanel settingsDataSourcesPanelView;
+
     private final SettingsDataSourcesProfilesTableModel profilesTableModel;
+    private final SettingsDataSourcesServersListModel serversListModel;
 
     public SettingsDataSourcesController(DataSourceConfig dataSourceConfig, SettingsDataSourcesPanel settingsDataSourcesPanelView) {
         this.dataSourceConfigModel = dataSourceConfig;
         this.settingsDataSourcesPanelView = settingsDataSourcesPanelView;
         this.profilesTableModel = new SettingsDataSourcesProfilesTableModel();
+        this.serversListModel = new SettingsDataSourcesServersListModel();
 
         settingsDataSourcesPanelView.setProfilesTableModel(profilesTableModel);
+        settingsDataSourcesPanelView.setServersListModel(serversListModel);
 
         initViewListeners();
         initModelListeners();
@@ -84,6 +85,12 @@ public class SettingsDataSourcesController {
             }
         });
 
+        settingsDataSourcesPanelView.serversListAddListSelectionListener(
+            listSelectionEvent -> settingsDataSourcesPanelView.removeServerBtnSetEnabled(
+                settingsDataSourcesPanelView.getServerListSelectedIndex() != -1
+            )
+        );
+
         settingsDataSourcesPanelView.addServerBtnAddActionListener(actionEvent -> addServerAction());
         settingsDataSourcesPanelView.removeServerBtnAddActionListener(actionEvent -> removeServerAction());
     }
@@ -93,7 +100,10 @@ public class SettingsDataSourcesController {
     }
 
     private void updateServerList(){
-        settingsDataSourcesPanelView.setServerList(dataSourceConfigModel.getServers());
+        serversListModel.clear();
+        dataSourceConfigModel.getServers().forEach(server -> serversListModel.addElement(
+            String.format("%s: %s", server.getName(), server.getUrl())
+        ));
     }
 
     private void updateProfilesTable(){
@@ -147,8 +157,8 @@ public class SettingsDataSourcesController {
         }
         try{
             DataSourceServer newServer = new DataSourceServer(
-                    settingsDataSourcesPanelView.getAddServerNameFieldText(),
-                    settingsDataSourcesPanelView.getAddServerUrlFieldText()
+                settingsDataSourcesPanelView.getAddServerNameFieldText(),
+                settingsDataSourcesPanelView.getAddServerUrlFieldText()
             );
             dataSourceConfigModel.addServer(newServer);
         } catch (IllegalArgumentException exception){
@@ -157,7 +167,9 @@ public class SettingsDataSourcesController {
 
     }
     private void removeServerAction(){
-        DataSourceServer selectedServer = settingsDataSourcesPanelView.getServerListSelected();
+        int serverIndex = settingsDataSourcesPanelView.getServerListSelectedIndex();
+        DataSourceServer selectedServer = dataSourceConfigModel.getServers().get(serverIndex);
+
         boolean success = settingsDataSourcesPanelView.showRemoveServerConfirmDialog(selectedServer.getName());
 
         if (success){

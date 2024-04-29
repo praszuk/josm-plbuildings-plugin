@@ -1,6 +1,4 @@
 package org.openstreetmap.josm.plugins.plbuildings.gui;
-
-import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 import javax.swing.*;
@@ -9,16 +7,15 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class SettingsDataSourcesPanel extends JPanel {
 
-    public final static String SERVERS = tr("Servers");
-    public final static String PROFILES = tr("Profiles");
-    public final static String ADD_SERVER_TITLE = tr("Add new server");
-    public final static String REMOVE_SERVER_TITLE = tr("Remove server");
+    private final static String SERVERS = tr("Servers");
+    private final static String PROFILES = tr("Profiles");
+    private final static String ADD_SERVER_TITLE = tr("Add new server");
+    private final static String REMOVE_SERVER_TITLE = tr("Remove server");
 
     private JButton upBtn;
     private JButton downBtn;
@@ -28,7 +25,7 @@ public class SettingsDataSourcesPanel extends JPanel {
     private JTextField addServerNameField;
     private JTextField addServerUrlField;
 
-    private JList<DataSourceServer> serverJList;
+    private JList<Object> serverJList;
     private JTable profileJTable;
 
 
@@ -50,21 +47,8 @@ public class SettingsDataSourcesPanel extends JPanel {
                 BorderFactory.createTitledBorder(SERVERS)
         ));
 
-        // this.serverJList = new JList<>(this.dataSourceConfig.getServers().toArray(new DataSourceServer[0]));
         this.serverJList = new JList<>();
-        this.serverJList.setModel(new DefaultListModel<>());
         this.serverJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        this.serverJList.setCellRenderer(new DefaultListCellRenderer(){
-            @Override
-            public Component getListCellRendererComponent(
-                    JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus
-            ) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                DataSourceServer server = (DataSourceServer) value;
-                setText(String.format("%s: %s", server.getName(), server.getUrl()));
-                return this;
-            }
-        });
         this.serverJList.setVisibleRowCount(3);
 
         JScrollPane jScrollPane = new JScrollPane(serverJList);
@@ -76,20 +60,10 @@ public class SettingsDataSourcesPanel extends JPanel {
         buttonsPanel.add(addServerBtn);
         buttonsPanel.add(removeServerBtn);
 
-        this.serverJList.addListSelectionListener(
-            (listSelectionEvent -> removeServerBtn.setEnabled(this.serverJList.getSelectedValue() != null))
-        );
-
         serverPanel.add(jScrollPane, BorderLayout.CENTER);
         serverPanel.add(buttonsPanel, BorderLayout.SOUTH);
 
         return serverPanel;
-    }
-
-    public void setServerList(List<DataSourceServer> serverList){
-        DefaultListModel<DataSourceServer> listModel = new DefaultListModel<>();
-        listModel.addAll(serverList);
-        this.serverJList.setModel(listModel);
     }
 
     public JPanel createServerConfirmDialog(){
@@ -222,6 +196,7 @@ public class SettingsDataSourcesPanel extends JPanel {
     public void refreshBtnSetEnabled(Boolean enabled){
         refreshBtn.setEnabled(enabled);
     }
+    public void removeServerBtnSetEnabled(Boolean enabled) {removeServerBtn.setEnabled(enabled);}
 
     public void profilesTableAddListSelectionListener(ListSelectionListener listener){
         profileJTable.getSelectionModel().addListSelectionListener(listener);
@@ -255,7 +230,15 @@ public class SettingsDataSourcesPanel extends JPanel {
         return addServerUrlField.getText();
     }
 
-    public DataSourceServer getServerListSelected(){
-        return serverJList.getSelectedValue();
+    public int getServerListSelectedIndex(){
+        return serverJList.getSelectedIndex();
+    }
+
+    public void setServersListModel(ListModel<Object> serversListModel) {
+        serverJList.setModel(serversListModel);
+    }
+
+    public void serversListAddListSelectionListener(ListSelectionListener listener){
+        serverJList.addListSelectionListener(listener);
     }
 }
