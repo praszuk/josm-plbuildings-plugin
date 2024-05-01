@@ -112,7 +112,7 @@ public class BuildingsImportManager {
     }
 
     private void updateGuiStatus(){
-        if (BuildingsPlugin.buildingsToggleDialog == null)  // for tests and no-gui execution of method
+        if (BuildingsPlugin.toggleDialogController == null)  // for tests and no-gui execution of method
             return;
 
         boolean autoChangeToDefault;
@@ -131,17 +131,17 @@ public class BuildingsImportManager {
             default: // DONE, NO_DATA, NO_UPDATE
                 autoChangeToDefault = true;
         }
-        BuildingsPlugin.buildingsToggleDialog.setStatus(status, autoChangeToDefault);
+        BuildingsPlugin.toggleDialogController.setStatus(status, autoChangeToDefault);
     }
 
     /**
      * Helper function to updating GUI latest tags from action
      */
     public void updateGuiTags(boolean hasUncommonTags){
-        if (BuildingsPlugin.buildingsToggleDialog == null)  // for tests and no-gui execution of method
+        if (BuildingsPlugin.toggleDialogController == null)  // for tests and no-gui execution of method
             return;
 
-        BuildingsPlugin.buildingsToggleDialog.updateTags(
+        BuildingsPlugin.toggleDialogController.updateTags(
             resultBuilding.getKeys().getOrDefault("building", ""),
             resultBuilding.getKeys().getOrDefault("building:levels", ""),
             hasUncommonTags
