@@ -210,12 +210,12 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
     }
 
     public void setProfileVisible(DataSourceProfile profile, boolean value){
-        Collection<DataSourceProfile> oldProfiles = getProfiles();
-
         profile.setVisible(value);
         save();
 
-        propertyChangeSupport.firePropertyChange(PROFILES, oldProfiles, profiles);
+        // It doesn't matter which profile changed, because it will need to reload all profiles.
+        // Old profiles here won't work, because they are the same object (list of profiles)
+        propertyChangeSupport.firePropertyChange(PROFILES, null, profiles);
     }
 
     private void validateServer(DataSourceServer newServer) throws IllegalArgumentException {
