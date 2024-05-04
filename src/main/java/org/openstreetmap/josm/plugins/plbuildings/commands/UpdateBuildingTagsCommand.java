@@ -13,13 +13,15 @@ import static org.openstreetmap.josm.plugins.plbuildings.utils.TagConflictUtils.
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 
-public class UpdateBuildingTagsCommand extends Command implements CommandResultBuilding{
+public class UpdateBuildingTagsCommand extends Command implements CommandResultBuilding, CommandWithErrorReason {
 
     static final String DESCRIPTION_TEXT = tr("Updated building tags");
     private final CommandResultBuilding resultSelectedBuilding;
     private final Way newBuilding;
     private Way selectedBuilding;
     private SequenceCommand updateTagsCommand;
+
+    private String executeErrorReason;
 
     public UpdateBuildingTagsCommand(DataSet dataSet, CommandResultBuilding resultSelectedBuilding, Way newBuilding) {
         super(dataSet);
@@ -71,6 +73,7 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
                     "No building tags (id: {0}) update, caused: Cancel conflict dialog by user",
                     selectedBuilding.getId()
                 );
+                executeErrorReason = tr("Conflict tag dialog canceled by user");
                 return false;
             }
             if (commands.isEmpty()) {
@@ -111,5 +114,10 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
     @Override
     public Way getResultBuilding() {
         return this.selectedBuilding;
+    }
+
+    @Override
+    public String getErrorReason() {
+        return executeErrorReason;
     }
 }

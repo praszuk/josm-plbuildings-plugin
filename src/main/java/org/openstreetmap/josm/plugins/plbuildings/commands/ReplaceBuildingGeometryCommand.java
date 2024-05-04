@@ -5,13 +5,11 @@ import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryCommand;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryException;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryUtils;
 import org.openstreetmap.josm.tools.Logging;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -19,7 +17,7 @@ import static org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWay
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 
-public class ReplaceBuildingGeometryCommand extends Command implements CommandResultBuilding {
+public class ReplaceBuildingGeometryCommand extends Command implements CommandResultBuilding, CommandWithErrorReason {
     /**
      * Replace the old building geometry with the new one
      */
@@ -28,6 +26,8 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
     private Way newBuilding;
 
     private ReplaceGeometryCommand replaceGeometryCommand;
+
+    private String executeErrorReason;
 
     public ReplaceBuildingGeometryCommand(DataSet data, Way selectedBuilding, CommandResultBuilding resultNewBuilding) {
         super(data);
@@ -82,52 +82,42 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
     }
 
     private void handleException(Exception exception) {
-        Notification note;
-
         if (exception instanceof IllegalArgumentException) {
             // If user cancel conflict window do nothing
-            note = new Notification(tr("Canceled merging buildings!"));
-            note.setIcon(JOptionPane.WARNING_MESSAGE);
-
+            executeErrorReason = tr("Canceled merging buildings!");
             Logging.debug(
                 "No building (id: {0}) update, caused: Cancel conflict dialog by user",
                 selectedBuilding.getId()
             );
         } else if(exception instanceof ReplaceGeometryException) {
             // If selected building cannot be merged (e.g. connected ways/relation)
-            note = new Notification(tr(
+            executeErrorReason = tr(
                 "Cannot merge buildings!" +
                     " Old building may be connected with some ways/relations" +
                     " or not whole area is downloaded!"
-            ));
-            note.setIcon(JOptionPane.ERROR_MESSAGE);
-
+            );
             Logging.debug(
                 "No building update (id: {0}), caused: Replacing Geometry from UtilPlugins2 error",
                 selectedBuilding.getId()
             );
         } else if (exception instanceof DataIntegrityProblemException) {
             // If data integrity like nodes duplicated or first!=last has been somehow broken
-            note = new Notification(tr(
+            executeErrorReason = tr(
                 "Cannot merge buildings! Building has been wrongly replaced and data has been broken!"
-            ));
-            note.setIcon(JOptionPane.ERROR_MESSAGE);
-
+            );
             Logging.error(
                 "No building update (id: {0}), caused: DataIntegrity with replacing error! Building: {1}",
                 selectedBuilding.getId(),
                 selectedBuilding
             );
         } else {
-            note = new Notification(tr("Cannot merge buildings! Unknown error!"));
+            executeErrorReason = tr("Cannot merge buildings! Unknown error!");
             Logging.error(
                 "No building update (id: {0}), caused: Unknown error: {1}",
                 selectedBuilding.getId(),
                 exception.getMessage()
             );
         }
-        note.setDuration(Notification.TIME_SHORT);
-        note.show();
     }
 
 
@@ -159,5 +149,10 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
     @Override
     public Way getResultBuilding() {
         return this.newBuilding;
+    }
+
+    @Override
+    public String getErrorReason() {
+        return executeErrorReason;
     }
 }
