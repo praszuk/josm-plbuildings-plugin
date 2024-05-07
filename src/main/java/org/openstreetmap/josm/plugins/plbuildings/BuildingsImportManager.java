@@ -2,6 +2,7 @@ package org.openstreetmap.josm.plugins.plbuildings;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.*;
+import org.openstreetmap.josm.plugins.plbuildings.controllers.NotificationsController;
 import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDSOptionDialog;
@@ -34,6 +35,8 @@ public class BuildingsImportManager {
     private BuildingsImportData importedData;
     private ImportStatus status;
     private Way resultBuilding;
+
+    private final NotificationsController notificationsController = new NotificationsController();
 
     public BuildingsImportManager(DataSet editLayer, LatLon cursorLatLon, Way selectedBuilding) {
         this.editLayer = editLayer;
@@ -76,14 +79,15 @@ public class BuildingsImportManager {
     public void setResultBuilding(Way resultBuilding) {
         this.resultBuilding = resultBuilding;
     }
-    public void setStatus(ImportStatus status) {
+    public void setStatus(ImportStatus status, String reason) {
         this.status = status;
         updateGuiStatus();
+        notificationsController.handleStatus(status, reason);
     }
 
     public void run(){
         BuildingsDownloadTask task = new BuildingsDownloadTask(this);
-        setStatus(DOWNLOADING);
+        setStatus(DOWNLOADING, null);
         task.execute();
     }
     public void processDownloadedData() {
@@ -97,7 +101,7 @@ public class BuildingsImportManager {
         TagMap uncommon = findUncommonTags(resultBuilding);
         if (!uncommon.isEmpty()){
             Logging.debug("Found uncommon tags {0}", uncommon);
-            setStatus(ImportStatus.ACTION_REQUIRED);
+            setStatus(ImportStatus.ACTION_REQUIRED, null);
             hasUncommonTags = true;
             UncommonTagDialog.show(
                     uncommon.getTags()
@@ -107,7 +111,7 @@ public class BuildingsImportManager {
             );
         }
 
-        setStatus(ImportStatus.DONE);
+        setStatus(ImportStatus.DONE, null);
         updateGuiTags(hasUncommonTags);
     }
 

@@ -85,7 +85,7 @@ public class ToggleDialogController {
         List<DataSourceProfile> profiles = dataSourceConfigModel.getProfiles();
 
         dataSourceProfilesComboBoxModel.addAll(
-            profiles.stream()
+            profiles.stream() // TODO fix it, move it above!!!!
                 .filter(DataSourceProfile::isVisible)
                 .map(DataSourceProfile::getName)
                 .collect(Collectors.toList())

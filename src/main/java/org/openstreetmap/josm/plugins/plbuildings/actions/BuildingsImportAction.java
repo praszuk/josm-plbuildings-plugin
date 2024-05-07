@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.plugins.plbuildings.actions;
 
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -24,10 +25,10 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.openstreetmap.josm.plugins.plbuildings.commands.CommandWithErrorReason.getLatestErrorReason;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.*;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -98,7 +99,7 @@ public class BuildingsImportAction extends JosmAction {
         );
         if (importedBuilding == null) {
             Logging.info("Cannot get imported building.");
-            manager.setStatus(ImportStatus.NO_DATA);
+            manager.setStatus(ImportStatus.NO_DATA, tr("Cannot get imported building."));
             return;
         }
         // Add importedBuilding to DataSet – it's needed to avoid DataIntegrityError (primitives without osm metadata)
@@ -117,11 +118,11 @@ public class BuildingsImportAction extends JosmAction {
         Way selectedBuilding = manager.getSelectedBuilding();
         if (selectedBuilding != null){
             if (hasSurveyValue(selectedBuilding)){
-                manager.setStatus(ImportStatus.ACTION_REQUIRED);
+                manager.setStatus(ImportStatus.ACTION_REQUIRED, null);
                 boolean isContinue = SurveyConfirmationDialog.show();
                 if (!isContinue){
                     Logging.info("Canceled import with rejecting survey dialog confirmation.");
-                    manager.setStatus(ImportStatus.CANCELED);
+                    manager.setStatus(ImportStatus.CANCELED, tr("Canceled import by rejected survey dialog confirmation."));
                     return;
                 }
             }
@@ -154,7 +155,7 @@ public class BuildingsImportAction extends JosmAction {
         if (BuildingsDuplicateValidator.isDuplicate(currentDataSet, importedBuilding)){
             if (selectedBuilding == null){
                 Logging.info("Duplicated building geometry. Not selected any building. Canceling!");
-                manager.setStatus(ImportStatus.NO_UPDATE);
+                manager.setStatus(ImportStatus.NO_UPDATE, tr("Duplicated building geometry, but not selected any building. Canceling!"));
                 return;
             }
 
@@ -168,7 +169,7 @@ public class BuildingsImportAction extends JosmAction {
                 boolean isUpdated = updateBuildingTagsCommand.executeCommand();
                 if (!isUpdated){
                     Logging.info("Error with updating tags!");
-                    manager.setStatus(ImportStatus.IMPORT_ERROR);
+                    manager.setStatus(ImportStatus.IMPORT_ERROR, updateBuildingTagsCommand.getErrorReason());
                     return;
                 }
                 UndoRedoHandler.getInstance().add(updateBuildingTagsCommand, false);
@@ -191,14 +192,14 @@ public class BuildingsImportAction extends JosmAction {
                     importedBuilding
                 );
 
+                List<Command> commands = Arrays.asList(addBuildingGeometryCommand, updateBuildingTagsCommand);
                 SequenceCommand importedANewBuildingSequence = new SequenceCommand(
-                    tr("Imported a new building"),
-                    Arrays.asList(addBuildingGeometryCommand, updateBuildingTagsCommand)
+                    tr("Imported a new building"), commands
                 );
                 boolean isSuccess = importedANewBuildingSequence.executeCommand();
                 if(!isSuccess){
                     Logging.debug("Import of a new building failed!");
-                    manager.setStatus(ImportStatus.IMPORT_ERROR);
+                    manager.setStatus(ImportStatus.IMPORT_ERROR, getLatestErrorReason(commands));
                     return;
                 }
                 UndoRedoHandler.getInstance().add(importedANewBuildingSequence, false);
@@ -225,18 +226,19 @@ public class BuildingsImportAction extends JosmAction {
                     importedBuilding
                 );
 
-                SequenceCommand mergedGeometryAndUpdatedTagsBuildingSequence = new SequenceCommand(
-                    tr("Updated building tags and geometry"),
-                    Arrays.asList(
+                List<Command> commands = Arrays.asList(
                         addBuildingGeometryCommand,
                         replaceBuildingGeometryCommand,
                         updateBuildingTagsCommand
-                    )
+                );
+                SequenceCommand mergedGeometryAndUpdatedTagsBuildingSequence = new SequenceCommand(
+                    tr("Updated building tags and geometry"),
+                    commands
                 );
                 boolean isSuccess = mergedGeometryAndUpdatedTagsBuildingSequence.executeCommand();
                 if(!isSuccess){
                     Logging.debug("Update (geometry and tags) building failed!");
-                    manager.setStatus(ImportStatus.IMPORT_ERROR);
+                    manager.setStatus(ImportStatus.IMPORT_ERROR, getLatestErrorReason(commands));
                     return;
                 }
                 UndoRedoHandler.getInstance().add(mergedGeometryAndUpdatedTagsBuildingSequence, false);
@@ -248,7 +250,6 @@ public class BuildingsImportAction extends JosmAction {
         manager.setResultBuilding(resultBuilding);
         currentDataSet.clearSelection();
     }
-
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {

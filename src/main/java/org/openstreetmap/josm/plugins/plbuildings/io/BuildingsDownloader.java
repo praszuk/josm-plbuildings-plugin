@@ -80,6 +80,7 @@ public class BuildingsDownloader {
             HttpClient.Response response = httpClient.getResponse();
 
             reader = Json.createReader(response.getContent());
+            // TODO something not work with empty data
             JsonArray objects = reader.readArray();
             for (int i = 0; i < objects.size(); i++){
                 JsonObject ds = objects.getJsonObject(i);
