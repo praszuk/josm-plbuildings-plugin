@@ -69,4 +69,9 @@ public class BuildingsSettings {
         true
     );
 
+    public static final StringProperty NOTIFIABLE_IMPORT_STATUSES = new StringProperty(
+        "plbuildings.notifiable_import_statuses",
+        "{}"
+    );
+
 }
