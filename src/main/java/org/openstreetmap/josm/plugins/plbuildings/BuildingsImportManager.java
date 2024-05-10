@@ -17,7 +17,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.controllers.NotificationsController;
 import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
-import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDSOptionDialog;
+import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDsOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOverlapOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.gui.UncommonTagDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
@@ -165,26 +165,26 @@ public class BuildingsImportManager {
         );
     }
 
-    static CombineNearestStrategy getImportBuildingDataOneDSStrategy(String availableDataSource) {
+    static CombineNearestStrategy getImportBuildingDataOneDsStrategy(String availableDataSource) {
         CombineNearestStrategy strategy = CombineNearestStrategy.fromString(
             BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.get()
         );
         if (strategy == ASK_USER) {
-            strategy = ImportedBuildingOneDSOptionDialog.show(availableDataSource) ? ACCEPT : CANCEL;
+            strategy = ImportedBuildingOneDsOptionDialog.show(availableDataSource) ? ACCEPT : CANCEL;
         }
         return strategy;
     }
 
     static CombineNearestStrategy getImportBuildingOverlapStrategy(
-        String geomDS,
-        String tagsDS,
+        String geomDs,
+        String tagsDs,
         double overlapPercentage
     ) {
         CombineNearestStrategy strategy = CombineNearestStrategy.fromString(
             BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_STRATEGY.get()
         );
         if (strategy == CombineNearestStrategy.ASK_USER) {
-            strategy = ImportedBuildingOverlapOptionDialog.show(geomDS, tagsDS, overlapPercentage);
+            strategy = ImportedBuildingOverlapOptionDialog.show(geomDs, tagsDs, overlapPercentage);
         }
         return strategy;
     }
@@ -244,28 +244,28 @@ public class BuildingsImportManager {
         }
         // Multiple data source
         else {
-            DataSet geometryDS = importedData.get(profile.getGeometry());
-            DataSet tagsDS = importedData.get(profile.getTags());
+            DataSet geometryDs = importedData.get(profile.getGeometry());
+            DataSet tagsDs = importedData.get(profile.getTags());
 
             // Both empty
-            if (geometryDS.isEmpty() && tagsDS.isEmpty()) {
+            if (geometryDs.isEmpty() && tagsDs.isEmpty()) {
                 importedBuilding = null;
             }
             // One empty
-            else if (geometryDS.isEmpty() != tagsDS.isEmpty()) {
-                String availableDSName = geometryDS.isEmpty() ? profile.getTags() : profile.getGeometry();
+            else if (geometryDs.isEmpty() != tagsDs.isEmpty()) {
+                String availableDsName = geometryDs.isEmpty() ? profile.getTags() : profile.getGeometry();
 
-                if (getImportBuildingDataOneDSStrategy(availableDSName) == ACCEPT) {
+                if (getImportBuildingDataOneDsStrategy(availableDsName) == ACCEPT) {
                     importedBuilding =
-                        NearestBuilding.getNearestBuilding(importedData.get(availableDSName), latLon);
+                        NearestBuilding.getNearestBuilding(importedData.get(availableDsName), latLon);
                 } else {
                     importedBuilding = null;
                 }
             }
             // Both available
             else {
-                Way geometryBuilding = geometryDS.getWays().iterator().next();
-                Way tagsBuilding = tagsDS.getWays().iterator().next();
+                Way geometryBuilding = geometryDs.getWays().iterator().next();
+                Way tagsBuilding = tagsDs.getWays().iterator().next();
                 double overlapPercentage = BuildingsOverlapDetector.detect(geometryBuilding, tagsBuilding);
 
                 if (overlapPercentage

@@ -94,7 +94,7 @@ public class BuildingsImportAction extends JosmAction {
      * ------ not selected -> just import new building
      */
     public static void performBuildingImport(BuildingsImportManager manager) {
-        DataSet currentDataSet = manager.getEditLayer();
+        final DataSet currentDataSet = manager.getEditLayer();
         BuildingsImportStats.getInstance().addTotalImportActionCounter(1);
 
         Way importedBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
@@ -199,16 +199,16 @@ public class BuildingsImportAction extends JosmAction {
 
                 List<Command> commands =
                     Arrays.asList(addBuildingGeometryCommand, updateBuildingTagsCommand);
-                SequenceCommand importedANewBuildingSequence = new SequenceCommand(
+                SequenceCommand importedNewBuildingSequence = new SequenceCommand(
                     tr("Imported a new building"), commands
                 );
-                boolean isSuccess = importedANewBuildingSequence.executeCommand();
+                boolean isSuccess = importedNewBuildingSequence.executeCommand();
                 if (!isSuccess) {
                     Logging.debug("Import of a new building failed!");
                     manager.setStatus(ImportStatus.IMPORT_ERROR, getLatestErrorReason(commands));
                     return;
                 }
-                UndoRedoHandler.getInstance().add(importedANewBuildingSequence, false);
+                UndoRedoHandler.getInstance().add(importedNewBuildingSequence, false);
                 BuildingsImportStats.getInstance().addImportNewBuildingCounter(1);
                 resultBuilding = addBuildingGeometryCommand.getResultBuilding();
                 Logging.debug("Imported building: {0}",

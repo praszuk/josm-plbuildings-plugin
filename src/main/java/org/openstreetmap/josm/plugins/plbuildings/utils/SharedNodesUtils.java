@@ -15,7 +15,7 @@ public class SharedNodesUtils {
      * It will produce bbox expanded by offset to e.g. match all very close nodes when importing
      * semidetached_house/terrace buildings
      */
-    public static BBox getBBox(List<Node> nodes, double bboxOffset) {
+    public static BBox getBbox(List<Node> nodes, double bboxOffset) {
         BBox bbox = new BBox();
         nodes.forEach(bbox::add);
 

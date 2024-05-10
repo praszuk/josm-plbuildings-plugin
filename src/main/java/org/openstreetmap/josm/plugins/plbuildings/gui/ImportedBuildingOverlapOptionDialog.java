@@ -12,13 +12,11 @@ import org.openstreetmap.josm.tools.Pair;
  * It shows when user need to decide what strategy to use if buildings overlap less than setting threshold.
  */
 public class ImportedBuildingOverlapOptionDialog {
-    public static CombineNearestStrategy show(String geomDS, String tagsDS,
-                                              double overlapPercentage) {
+    public static CombineNearestStrategy show(String geomDs, String tagsDs, double overlapPercentage) {
         ArrayList<Pair<CombineNearestStrategy, Object>> choicesPairs = new ArrayList<>(Arrays.asList(
             Pair.create(CombineNearestStrategy.ACCEPT, tr("Merge both")),
-            Pair.create(CombineNearestStrategy.ACCEPT_GEOMETRY,
-                String.format(tr("Use %s (geometry)"), geomDS)),
-            Pair.create(CombineNearestStrategy.ACCEPT_TAGS, String.format(tr("Use %s (tags)"), tagsDS)),
+            Pair.create(CombineNearestStrategy.ACCEPT_GEOMETRY, String.format(tr("Use %s (geometry)"), geomDs)),
+            Pair.create(CombineNearestStrategy.ACCEPT_TAGS, String.format(tr("Use %s (tags)"), tagsDs)),
             Pair.create(CombineNearestStrategy.CANCEL, tr("Cancel"))
         ));
         Object[] choices = choicesPairs.stream().map(pair -> pair.b).toArray();

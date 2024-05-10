@@ -68,6 +68,8 @@ public class TagConflictUtils {
             case "source":
                 return !currentValue.contains("survey");
 
+            default:
+                return false;
         }
         return false;
     }

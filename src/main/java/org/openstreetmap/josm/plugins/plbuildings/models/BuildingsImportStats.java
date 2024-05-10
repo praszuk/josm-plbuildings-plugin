@@ -24,10 +24,10 @@ public class BuildingsImportStats {
     private int totalImportActionCounter;
 
     // FIELD_* strings are used to name fields to (de)serialization to JOSM Settings
-    private final String FIELD_IMPORT_NEW_BUILDING_COUNTER = "importNewBuilding";
-    private final String FIELD_IMPORT_WITH_REPLACE_COUNTER = "importWithReplace";
-    private final String FIELD_IMPORT_WITH_TAGS_UPDATE_COUNTER = "importWithTagsUpdate";
-    private final String FIELD_TOTAL_IMPORT_ACTION = "totalImportAction";
+    private static final String FIELD_IMPORT_NEW_BUILDING_COUNTER = "importNewBuilding";
+    private static final String FIELD_IMPORT_WITH_REPLACE_COUNTER = "importWithReplace";
+    private static final String FIELD_IMPORT_WITH_TAGS_UPDATE_COUNTER = "importWithTagsUpdate";
+    private static final String FIELD_TOTAL_IMPORT_ACTION = "totalImportAction";
 
     private static BuildingsImportStats instance;
 

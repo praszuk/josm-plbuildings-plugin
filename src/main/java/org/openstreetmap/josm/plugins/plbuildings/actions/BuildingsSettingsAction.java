@@ -36,6 +36,6 @@ public class BuildingsSettingsAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        settingsController.initGUI();
+        settingsController.initGui();
     }
 }

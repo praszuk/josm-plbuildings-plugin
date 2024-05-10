@@ -69,22 +69,22 @@ public class BuildingsToggleDialog extends ToggleDialog {
         this.buildingLevels = new JLabel("");
         this.hasUncommonTag = new JLabel("");
 
-        JPanel rootPanel = new JPanel(new GridLayout(0, 1));
+        final JPanel rootPanel = new JPanel(new GridLayout(0, 1));
 
-        JPanel configPanel = new JPanel(new GridLayout(2, 2));
-        JLabel statusLabel = new JLabel(tr("Status") + ": ");
+        final JPanel configPanel = new JPanel(new GridLayout(2, 2));
+        final JLabel statusLabel = new JLabel(tr("Status") + ": ");
         statusLabel.setBorder(new EmptyBorder(0, 5, 0, 0));
 
         configPanel.add(statusLabel);
         configPanel.add(status);
 
-        JLabel dataSourceLabel = new JLabel(tr("Data source") + ": ");
+        final JLabel dataSourceLabel = new JLabel(tr("Data source") + ": ");
         dataSourceLabel.setBorder(new EmptyBorder(0, 5, 0, 0));
 
         configPanel.add(dataSourceLabel);
         configPanel.add(dataSourceProfilesComboBox);
 
-        JPanel lastImportTagsPanel = new JPanel(new GridLayout(0, 2));
+        final JPanel lastImportTagsPanel = new JPanel(new GridLayout(0, 2));
 
         lastImportTagsPanel.add(new JLabel("building: "));
         lastImportTagsPanel.add(buildingType);

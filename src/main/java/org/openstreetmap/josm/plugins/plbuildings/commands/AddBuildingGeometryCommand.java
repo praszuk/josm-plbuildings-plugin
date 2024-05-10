@@ -1,6 +1,6 @@
 package org.openstreetmap.josm.plugins.plbuildings.commands;
 
-import static org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils.getBBox;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils.getBbox;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils.isCloseNode;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -98,7 +98,7 @@ public class AddBuildingGeometryCommand extends Command implements CommandResult
         Way newBuilding = new Way();
 
         // Check if any building's node is very close to existing node – almost/same lat lon and replace it
-        BBox bbox = getBBox(newNodes, BuildingsSettings.BBOX_OFFSET.get());
+        BBox bbox = getBbox(newNodes, BuildingsSettings.BBOX_OFFSET.get());
 
         List<Node> closeNodes = dataSet.searchNodes(bbox).stream()
             .filter(n -> !n.isDeleted())

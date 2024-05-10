@@ -79,7 +79,7 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
     }
 
     public void addServer(DataSourceServer newServer) {
-        Collection<DataSourceServer> oldServers = getServers();
+        final Collection<DataSourceServer> oldServers = getServers();
 
         validateServer(newServer);
         servers.add(newServer);
@@ -93,8 +93,8 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
      * It removes server and all related profiles.
      */
     public void removeServer(DataSourceServer server) {
-        Collection<DataSourceProfile> oldProfiles = getProfiles();
-        Collection<DataSourceServer> oldServers = getServers();
+        final Collection<DataSourceProfile> oldProfiles = getProfiles();
+        final Collection<DataSourceServer> oldServers = getServers();
 
         new ArrayList<>(profiles)
             .stream()
@@ -109,7 +109,7 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
     }
 
     public void addProfile(DataSourceProfile newProfile) {
-        Collection<DataSourceProfile> oldProfiles = getProfiles();
+        final Collection<DataSourceProfile> oldProfiles = getProfiles();
 
         validateProfile(newProfile);
         profiles.add(newProfile);
@@ -119,7 +119,7 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
     }
 
     public void removeProfile(DataSourceProfile profile) {
-        Collection<DataSourceProfile> oldProfiles = getProfiles();
+        final Collection<DataSourceProfile> oldProfiles = getProfiles();
 
         profiles.remove(profile);
         save();

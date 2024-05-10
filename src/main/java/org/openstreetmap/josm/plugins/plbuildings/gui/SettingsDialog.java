@@ -6,9 +6,9 @@ import javax.swing.JFrame;
 import org.openstreetmap.josm.gui.MainApplication;
 
 public class SettingsDialog extends JFrame {
-    final static int HEIGHT = 600;
-    final static int WIDTH = 600;
-    final static String TITLE = tr("PlBuildings Settings");
+    static final int HEIGHT = 600;
+    static final int WIDTH = 600;
+    static final String TITLE = tr("PlBuildings Settings");
 
     public SettingsDialog(SettingsDataSourcesPanel settingsDataSourcesPanel) {
         super();

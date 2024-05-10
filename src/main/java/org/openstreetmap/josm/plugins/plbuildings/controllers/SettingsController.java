@@ -10,7 +10,7 @@ public class SettingsController {
         this.settingsDataSourcesController = settingsDataSourcesController;
     }
 
-    public void initGUI() {
+    public void initGui() {
         new SettingsDialog(settingsDataSourcesController.getSettingsDataSourcesPanelView());
     }
 }

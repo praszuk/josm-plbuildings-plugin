@@ -1,6 +1,6 @@
 package org.openstreetmap.josm.plugins.plbuildings.validators;
 
-import static org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils.getBBox;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils.getBbox;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils.isCloseNode;
 
 import java.util.HashMap;
@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.Logging;
 public class BuildingsDuplicateValidator {
 
     private static List<Node> getCloseNodes(DataSet dataSet, Way importedBuilding) {
-        BBox bbox = getBBox(importedBuilding.getNodes(), BuildingsSettings.BBOX_OFFSET.get());
+        BBox bbox = getBbox(importedBuilding.getNodes(), BuildingsSettings.BBOX_OFFSET.get());
 
         return dataSet.searchNodes(bbox).stream()
             .filter(n -> !n.isDeleted())

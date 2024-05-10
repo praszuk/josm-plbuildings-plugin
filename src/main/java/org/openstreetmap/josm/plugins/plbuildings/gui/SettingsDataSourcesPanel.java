@@ -27,10 +27,10 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 public class SettingsDataSourcesPanel extends JPanel {
 
-    private final static String SERVERS = tr("Servers");
-    private final static String PROFILES = tr("Profiles");
-    private final static String ADD_SERVER_TITLE = tr("Add new server");
-    private final static String REMOVE_SERVER_TITLE = tr("Remove server");
+    private static final String SERVERS = tr("Servers");
+    private static final String PROFILES = tr("Profiles");
+    private static final String ADD_SERVER_TITLE = tr("Add new server");
+    private static final String REMOVE_SERVER_TITLE = tr("Remove server");
 
     private JButton upBtn;
     private JButton downBtn;
@@ -40,8 +40,8 @@ public class SettingsDataSourcesPanel extends JPanel {
     private JTextField addServerNameField;
     private JTextField addServerUrlField;
 
-    private JList<Object> serverJList;
-    private JTable profileJTable;
+    private JList<Object> serverList;
+    private JTable profileTable;
 
 
     public SettingsDataSourcesPanel() {
@@ -62,13 +62,13 @@ public class SettingsDataSourcesPanel extends JPanel {
             BorderFactory.createTitledBorder(SERVERS)
         ));
 
-        this.serverJList = new JList<>();
-        this.serverJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        this.serverJList.setVisibleRowCount(3);
+        this.serverList = new JList<>();
+        this.serverList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.serverList.setVisibleRowCount(3);
 
-        JScrollPane jScrollPane = new JScrollPane(serverJList);
+        final JScrollPane jScrollPane = new JScrollPane(serverList);
 
-        JPanel buttonsPanel = new JPanel();
+        final JPanel buttonsPanel = new JPanel();
         addServerBtn = new JButton(tr("Add"));
         removeServerBtn = new JButton(tr("Remove"));
         removeServerBtn.setEnabled(false);
@@ -82,7 +82,7 @@ public class SettingsDataSourcesPanel extends JPanel {
     }
 
     public JPanel createServerConfirmDialog() {
-        JPanel dialogPanel = new JPanel();
+        final JPanel dialogPanel = new JPanel();
         GroupLayout groupLayout = new GroupLayout(dialogPanel);
         dialogPanel.setLayout(groupLayout);
 
@@ -95,35 +95,35 @@ public class SettingsDataSourcesPanel extends JPanel {
         serverNameLabel.setLabelFor(addServerNameField);
         serverUrlLabel.setLabelFor(addServerUrlField);
 
-        GroupLayout.SequentialGroup hGroup = groupLayout.createSequentialGroup();
-        hGroup.addGroup(
+        GroupLayout.SequentialGroup horizontalGroup = groupLayout.createSequentialGroup();
+        horizontalGroup.addGroup(
             groupLayout
                 .createParallelGroup()
                 .addComponent(serverNameLabel)
                 .addComponent(serverUrlLabel)
         );
-        hGroup.addGroup(
+        horizontalGroup.addGroup(
             groupLayout
                 .createParallelGroup()
                 .addComponent(addServerNameField)
                 .addComponent(addServerUrlField)
         );
-        groupLayout.setHorizontalGroup(hGroup);
+        groupLayout.setHorizontalGroup(horizontalGroup);
 
-        GroupLayout.SequentialGroup vGroup = groupLayout.createSequentialGroup();
-        vGroup.addGroup(
+        GroupLayout.SequentialGroup verticalGroup = groupLayout.createSequentialGroup();
+        verticalGroup.addGroup(
             groupLayout
                 .createParallelGroup(GroupLayout.Alignment.BASELINE)
                 .addComponent(serverNameLabel)
                 .addComponent(addServerNameField)
         );
-        vGroup.addGroup(
+        verticalGroup.addGroup(
             groupLayout
                 .createParallelGroup(GroupLayout.Alignment.BASELINE)
                 .addComponent(serverUrlLabel)
                 .addComponent(addServerUrlField)
         );
-        groupLayout.setVerticalGroup(vGroup);
+        groupLayout.setVerticalGroup(verticalGroup);
         return dialogPanel;
     }
 
@@ -163,11 +163,11 @@ public class SettingsDataSourcesPanel extends JPanel {
             BorderFactory.createTitledBorder(PROFILES)
         ));
 
-        this.profileJTable = new JTable();
-        this.profileJTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.profileTable = new JTable();
+        this.profileTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        JToolBar jToolBar = new JToolBar(SwingConstants.VERTICAL);
-        jToolBar.setFloatable(false);
+        JToolBar toolBar = new JToolBar(SwingConstants.VERTICAL);
+        toolBar.setFloatable(false);
 
         upBtn = new JButton();
         downBtn = new JButton();
@@ -181,13 +181,13 @@ public class SettingsDataSourcesPanel extends JPanel {
         upBtn.setEnabled(false);
         downBtn.setEnabled(false);
 
-        jToolBar.add(upBtn);
-        jToolBar.add(downBtn);
-        jToolBar.add(refreshBtn);
+        toolBar.add(upBtn);
+        toolBar.add(downBtn);
+        toolBar.add(refreshBtn);
 
-        JScrollPane jScrollPane = new JScrollPane(profileJTable);
-        profilePanel.add(jScrollPane, BorderLayout.CENTER);
-        profilePanel.add(jToolBar, BorderLayout.EAST);
+        JScrollPane scrollPane = new JScrollPane(profileTable);
+        profilePanel.add(scrollPane, BorderLayout.CENTER);
+        profilePanel.add(toolBar, BorderLayout.EAST);
 
         return profilePanel;
     }
@@ -221,24 +221,24 @@ public class SettingsDataSourcesPanel extends JPanel {
     }
 
     public void profilesTableAddListSelectionListener(ListSelectionListener listener) {
-        profileJTable.getSelectionModel().addListSelectionListener(listener);
+        profileTable.getSelectionModel().addListSelectionListener(listener);
     }
 
     public void profilesTableClearSelection() {
-        profileJTable.getSelectionModel().clearSelection();
-        profileJTable.getColumnModel().getSelectionModel().clearSelection();
+        profileTable.getSelectionModel().clearSelection();
+        profileTable.getColumnModel().getSelectionModel().clearSelection();
     }
 
     public void setProfilesTableModel(TableModel model) {
-        this.profileJTable.setModel(model);
+        this.profileTable.setModel(model);
     }
 
     public int getProfilesTableSelectedRowIndex() {
-        return profileJTable.getSelectedRow();
+        return profileTable.getSelectedRow();
     }
 
     public int getProfilesTableRowCount() {
-        return profileJTable.getRowCount();
+        return profileTable.getRowCount();
     }
 
     public void addServerBtnAddActionListener(ActionListener listener) {
@@ -258,14 +258,14 @@ public class SettingsDataSourcesPanel extends JPanel {
     }
 
     public int getServerListSelectedIndex() {
-        return serverJList.getSelectedIndex();
+        return serverList.getSelectedIndex();
     }
 
     public void setServersListModel(ListModel<Object> serversListModel) {
-        serverJList.setModel(serversListModel);
+        serverList.setModel(serversListModel);
     }
 
     public void serversListAddListSelectionListener(ListSelectionListener listener) {
-        serverJList.addListSelectionListener(listener);
+        serverList.addListSelectionListener(listener);
     }
 }
