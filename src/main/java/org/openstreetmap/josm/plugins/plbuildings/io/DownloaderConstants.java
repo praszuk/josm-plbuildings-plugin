@@ -14,5 +14,6 @@ public final class DownloaderConstants {
     public static final String API_BUILDING_AT = "/buildings";
     public static final String API_DATA_SOURCES_PROFILES = "/profiles";
 
-    private DownloaderConstants(){}
+    private DownloaderConstants() {
+    }
 }

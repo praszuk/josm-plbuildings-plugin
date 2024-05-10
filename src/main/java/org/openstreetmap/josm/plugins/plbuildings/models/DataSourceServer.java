@@ -1,12 +1,17 @@
 package org.openstreetmap.josm.plugins.plbuildings.models;
 
-import javax.json.*;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
 
 /**
- * responsible for handling servers where plugin will connect to download buildings data
+ * responsible for handling servers where plugin will connect to download buildings data.
  */
 public class DataSourceServer {
     private final String name;
@@ -17,7 +22,7 @@ public class DataSourceServer {
     private static final String FIELD_URL = "url";
 
 
-    public DataSourceServer(String name, String url){
+    public DataSourceServer(String name, String url) {
         this.name = name;
         this.url = url;
     }
@@ -30,7 +35,7 @@ public class DataSourceServer {
         return url;
     }
 
-    public static JsonArray toJson(Collection<DataSourceServer> collection){
+    public static JsonArray toJson(Collection<DataSourceServer> collection) {
         JsonArrayBuilder builder = Json.createArrayBuilder();
         collection.forEach(obj -> builder.add(
             Json.createObjectBuilder()
@@ -41,17 +46,17 @@ public class DataSourceServer {
         return builder.build();
     }
 
-    public static Collection<DataSourceServer> fromStringJson(String jsonString){
+    public static Collection<DataSourceServer> fromStringJson(String jsonString) {
         JsonReader jsonReader = Json.createReader(new StringReader(jsonString));
         JsonArray jsonArray = jsonReader.readArray();
 
-        Collection <DataSourceServer> collection = new ArrayList<>();
-        for (JsonValue jsonValue : jsonArray){
+        Collection<DataSourceServer> collection = new ArrayList<>();
+        for (JsonValue jsonValue : jsonArray) {
             JsonObject jsonObject = jsonValue.asJsonObject();
             collection.add(
                 new DataSourceServer(
-                        jsonObject.getString(FIELD_NAME),
-                        jsonObject.getString(FIELD_URL)
+                    jsonObject.getString(FIELD_NAME),
+                    jsonObject.getString(FIELD_URL)
                 )
             );
         }

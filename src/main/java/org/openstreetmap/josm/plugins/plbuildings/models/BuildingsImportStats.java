@@ -1,19 +1,18 @@
 package org.openstreetmap.josm.plugins.plbuildings.models;
 
-import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
-import org.openstreetmap.josm.tools.Logging;
-
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
+import org.openstreetmap.josm.tools.Logging;
 
 
 /**
- * BuildingsImportStats keeps simple importing statics
+ * BuildingsImportStats keeps simple importing statics.
  * and manages serialization/deserialization between BuildingSettings
  */
 public class BuildingsImportStats {
@@ -32,8 +31,8 @@ public class BuildingsImportStats {
 
     private static BuildingsImportStats instance;
 
-    public static BuildingsImportStats getInstance(){
-        if (instance == null){
+    public static BuildingsImportStats getInstance() {
+        if (instance == null) {
             instance = new BuildingsImportStats();
         }
         return instance;
@@ -55,39 +54,39 @@ public class BuildingsImportStats {
         return totalImportActionCounter;
     }
 
-    public void addImportNewBuildingCounter(int value){
-        if (value < 1){
+    public void addImportNewBuildingCounter(int value) {
+        if (value < 1) {
             throw new IllegalArgumentException("Number must be greater than 0");
         }
         this.importNewBuildingCounter += value;
         save();
     }
 
-    public void addImportWithReplaceCounter(int value){
-        if (value < 1){
+    public void addImportWithReplaceCounter(int value) {
+        if (value < 1) {
             throw new IllegalArgumentException("Number must be greater than 0");
         }
         this.importWithReplaceCounter += value;
         save();
     }
 
-    public void addImportWithTagsUpdateCounter(int value){
-        if (value < 1){
+    public void addImportWithTagsUpdateCounter(int value) {
+        if (value < 1) {
             throw new IllegalArgumentException("Number must be greater than 0");
         }
         this.importWithTagsUpdateCounter += value;
         save();
     }
 
-    public void addTotalImportActionCounter(int value){
-        if (value < 1){
+    public void addTotalImportActionCounter(int value) {
+        if (value < 1) {
             throw new IllegalArgumentException("Number must be greater than 0");
         }
         this.totalImportActionCounter += value;
         save();
     }
 
-    public HashMap<String, Object> getStats(){
+    public HashMap<String, Object> getStats() {
         HashMap<String, Object> stats = new HashMap<>();
         stats.put(FIELD_IMPORT_NEW_BUILDING_COUNTER, this.importNewBuildingCounter);
         stats.put(FIELD_IMPORT_WITH_REPLACE_COUNTER, this.importWithReplaceCounter);
@@ -102,14 +101,14 @@ public class BuildingsImportStats {
         return getStats().toString();
     }
 
-    private BuildingsImportStats(){
+    private BuildingsImportStats() {
         load();
     }
 
     /**
-     * Saves data to JOSM settings
+     * Saves data to JOSM settings.
      */
-    private void save(){
+    private void save() {
         Logging.debug("Saving import stats: {0}", this.toString());
         JsonObject jsonStats = Json.createObjectBuilder()
             .add(FIELD_IMPORT_NEW_BUILDING_COUNTER, this.importNewBuildingCounter)
@@ -125,10 +124,10 @@ public class BuildingsImportStats {
     }
 
     /**
-     * Loads data from JOSM settings
+     * Loads data from JOSM settings.
      * decode from base64 to json string and then map to fields
      */
-    private void load(){
+    private void load() {
 
         String encodedB64Stats = BuildingsSettings.IMPORT_STATS.get();
         String decodedJsonStats = new String(Base64.getDecoder().decode(encodedB64Stats));

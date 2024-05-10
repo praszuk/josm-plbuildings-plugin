@@ -1,12 +1,17 @@
 package org.openstreetmap.josm.plugins.plbuildings.controllers;
 
+import static org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesProfilesTableModel.COL_PROFILE;
+import static org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesProfilesTableModel.COL_SERVER;
+import static org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesProfilesTableModel.COL_VISIBLE;
+import static org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesProfilesTableModel.PROFILE_COLUMNS;
+
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsDataSourcesPanel;
-import org.openstreetmap.josm.plugins.plbuildings.models.*;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesProfilesTableModel;
 import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesServersListModel;
 import org.openstreetmap.josm.tools.Logging;
-
-import static org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesProfilesTableModel.*;
 
 public class SettingsDataSourcesController {
 
@@ -16,7 +21,8 @@ public class SettingsDataSourcesController {
     private final SettingsDataSourcesProfilesTableModel profilesTableModel;
     private final SettingsDataSourcesServersListModel serversListModel;
 
-    public SettingsDataSourcesController(DataSourceConfig dataSourceConfig, SettingsDataSourcesPanel settingsDataSourcesPanelView) {
+    public SettingsDataSourcesController(DataSourceConfig dataSourceConfig,
+                                         SettingsDataSourcesPanel settingsDataSourcesPanelView) {
         this.dataSourceConfigModel = dataSourceConfig;
         this.settingsDataSourcesPanelView = settingsDataSourcesPanelView;
         this.profilesTableModel = new SettingsDataSourcesProfilesTableModel();
@@ -37,7 +43,7 @@ public class SettingsDataSourcesController {
         dataSourceConfigModel.addPropertyChangeListener(DataSourceConfig.SERVERS, evt -> updateServerList());
     }
 
-    private void initViewListeners(){
+    private void initViewListeners() {
         settingsDataSourcesPanelView.upBtnAddActionListener(actionEvent -> {
             settingsDataSourcesPanelView.upBtnSetEnabled(false);
             moveProfileUp();
@@ -59,7 +65,8 @@ public class SettingsDataSourcesController {
             int column = tableModelEvent.getColumn();
 
             if (column == PROFILE_COLUMNS.indexOf(COL_VISIBLE)) {
-                SettingsDataSourcesProfilesTableModel model = (SettingsDataSourcesProfilesTableModel) tableModelEvent.getSource();
+                SettingsDataSourcesProfilesTableModel model =
+                    (SettingsDataSourcesProfilesTableModel) tableModelEvent.getSource();
                 Boolean checked = (Boolean) model.getValueAt(row, column);
 
                 String serverName = (String) model.getValueAt(row, PROFILE_COLUMNS.indexOf(COL_SERVER));
@@ -72,10 +79,10 @@ public class SettingsDataSourcesController {
         settingsDataSourcesPanelView.profilesTableAddListSelectionListener((listSelectionEvent) -> {
             int index = settingsDataSourcesPanelView.getProfilesTableSelectedRowIndex();
 
-            if (index == 0){
+            if (index == 0) {
                 settingsDataSourcesPanelView.upBtnSetEnabled(false);
                 settingsDataSourcesPanelView.downBtnSetEnabled(true);
-            } else if (index == settingsDataSourcesPanelView.getProfilesTableRowCount() - 1){
+            } else if (index == settingsDataSourcesPanelView.getProfilesTableRowCount() - 1) {
                 settingsDataSourcesPanelView.upBtnSetEnabled(true);
                 settingsDataSourcesPanelView.downBtnSetEnabled(false);
             } else if (index == -1) { // no selection
@@ -101,42 +108,43 @@ public class SettingsDataSourcesController {
         return settingsDataSourcesPanelView;
     }
 
-    private void updateServerList(){
+    private void updateServerList() {
         serversListModel.clear();
         dataSourceConfigModel.getServers().forEach(server -> serversListModel.addElement(
             String.format("%s: %s", server.getName(), server.getUrl())
         ));
     }
 
-    private void updateProfilesTable(){
+    private void updateProfilesTable() {
         settingsDataSourcesPanelView.profilesTableClearSelection();
         profilesTableModel.getDataVector().removeAllElements();
-        dataSourceConfigModel.getProfiles().forEach(profile -> profilesTableModel.addRow(new Object[]{
-                profile.getName(),
-                profile.getDataSourceServerName(),
-                profile.getTags(),
-                profile.getGeometry(),
-                profile.isVisible()
+        dataSourceConfigModel.getProfiles().forEach(profile -> profilesTableModel.addRow(new Object[] {
+            profile.getName(),
+            profile.getDataSourceServerName(),
+            profile.getTags(),
+            profile.getGeometry(),
+            profile.isVisible()
         }));
     }
 
-    private void moveProfile(int srcRowIndex, int dstRowIndex){
+    private void moveProfile(int srcRowIndex, int dstRowIndex) {
         int indexColServer = profilesTableModel.findColumn(COL_SERVER);
         int indexColProfile = profilesTableModel.findColumn(COL_PROFILE);
 
         DataSourceProfile srcProfile = dataSourceConfigModel.getProfileByName(
-                (String) profilesTableModel.getValueAt(srcRowIndex, indexColServer),
-                (String) profilesTableModel.getValueAt(srcRowIndex, indexColProfile)
+            (String) profilesTableModel.getValueAt(srcRowIndex, indexColServer),
+            (String) profilesTableModel.getValueAt(srcRowIndex, indexColProfile)
         );
         DataSourceProfile dstProfile = dataSourceConfigModel.getProfileByName(
-                (String) profilesTableModel.getValueAt(dstRowIndex, indexColServer),
-                (String) profilesTableModel.getValueAt(dstRowIndex, indexColProfile)
+            (String) profilesTableModel.getValueAt(dstRowIndex, indexColServer),
+            (String) profilesTableModel.getValueAt(dstRowIndex, indexColProfile)
         );
         dataSourceConfigModel.swapProfileOrder(srcProfile, dstProfile);
     }
+
     private void moveProfileUp() {
         int rowIndex = settingsDataSourcesPanelView.getProfilesTableSelectedRowIndex();
-        if (rowIndex == 0){
+        if (rowIndex == 0) {
             Logging.error("Trying to move up first profile in the table!");
             return;
         }
@@ -145,36 +153,36 @@ public class SettingsDataSourcesController {
 
     private void moveProfileDown() {
         int rowIndex = settingsDataSourcesPanelView.getProfilesTableSelectedRowIndex();
-        if (rowIndex == settingsDataSourcesPanelView.getProfilesTableRowCount() - 1){
+        if (rowIndex == settingsDataSourcesPanelView.getProfilesTableRowCount() - 1) {
             Logging.error("Trying to move down last profile in the table!");
             return;
         }
         moveProfile(rowIndex, rowIndex + 1);
     }
 
-    private void addServerAction(){
+    private void addServerAction() {
         boolean success = settingsDataSourcesPanelView.promptNewServerNameUrl();
-        if (!success){
+        if (!success) {
             return;
         }
-        try{
+        try {
             DataSourceServer newServer = new DataSourceServer(
                 settingsDataSourcesPanelView.getAddServerNameFieldText(),
                 settingsDataSourcesPanelView.getAddServerUrlFieldText()
             );
             dataSourceConfigModel.addServer(newServer);
-        } catch (IllegalArgumentException exception){
+        } catch (IllegalArgumentException exception) {
             settingsDataSourcesPanelView.showAddNewServerErrorDialog();
         }
 
     }
-    private void removeServerAction(){
+
+    private void removeServerAction() {
         int serverIndex = settingsDataSourcesPanelView.getServerListSelectedIndex();
         DataSourceServer selectedServer = dataSourceConfigModel.getServers().get(serverIndex);
 
         boolean success = settingsDataSourcesPanelView.showRemoveServerConfirmDialog(selectedServer.getName());
-
-        if (success){
+        if (success) {
             dataSourceConfigModel.removeServer(selectedServer);
         }
     }

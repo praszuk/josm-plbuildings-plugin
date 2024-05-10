@@ -1,5 +1,10 @@
 package org.openstreetmap.josm.plugins.plbuildings.controllers;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.Color;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.gui.BuildingsToggleDialog;
@@ -8,21 +13,17 @@ import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.models.ui.ToggleDialogProfilesComboBoxModel;
 import org.openstreetmap.josm.tools.Logging;
 
-import java.awt.Color;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 public class ToggleDialogController {
     private final DataSourceConfig dataSourceConfigModel;
     private final BuildingsToggleDialog toggleDialogView;
 
     private static final Color COLOR_DEFAULT = Color.BLACK;
-    private static final Color COLOR_ORANGE = Color.decode("#ff781f"); // hex orange better than Color.ORANGE
+    /** Hex orange better than Color.ORANGE */
+    private static final Color COLOR_ORANGE = Color.decode("#ff781f");
     private final ToggleDialogProfilesComboBoxModel dataSourceProfilesComboBoxModel;
 
-    public ToggleDialogController(DataSourceConfig dataSourceConfig, BuildingsToggleDialog toggleDialog) {
+    public ToggleDialogController(DataSourceConfig dataSourceConfig,
+                                  BuildingsToggleDialog toggleDialog) {
         this.dataSourceConfigModel = dataSourceConfig;
         this.toggleDialogView = toggleDialog;
         this.dataSourceProfilesComboBoxModel = new ToggleDialogProfilesComboBoxModel();
@@ -38,7 +39,8 @@ public class ToggleDialogController {
     }
 
     private void initModelListeners() {
-        dataSourceConfigModel.addPropertyChangeListener(DataSourceConfig.PROFILES, evt -> updateDataSourceProfilesComboBox());
+        dataSourceConfigModel.addPropertyChangeListener(DataSourceConfig.PROFILES,
+            evt -> updateDataSourceProfilesComboBox());
     }
 
     private void initViewListeners() {
@@ -56,10 +58,10 @@ public class ToggleDialogController {
 
     public void updateTags(String buildingType, String buildingLevels, boolean hasUncommonTag) {
         Logging.info(
-                "Updating tags: building: {0}, building:levels: {1}, uncommonTags: {2}",
-                buildingType,
-                buildingLevels,
-                hasUncommonTag
+            "Updating tags: building: {0}, building:levels: {1}, uncommonTags: {2}",
+            buildingType,
+            buildingLevels,
+            hasUncommonTag
         );
         toggleDialogView.setBuildingTypeText(buildingType.isEmpty() ? "--" : buildingType);
         toggleDialogView.setBuildingLevelsText(buildingLevels.isEmpty() ? "--" : buildingLevels);
@@ -74,7 +76,7 @@ public class ToggleDialogController {
         toggleDialogView.setStatusText(status.toString());
         toggleDialogView.setStatusForeground(getStatusTextColor(status));
 
-        if (autoChangeToDefault){
+        if (autoChangeToDefault) {
             setDefaultStatus();
         }
 
@@ -94,7 +96,7 @@ public class ToggleDialogController {
         try {
             currentProfileIndex = profiles.indexOf(dataSourceConfigModel.getCurrentProfile());
 
-        } catch (NullPointerException ignore){
+        } catch (NullPointerException ignore) {
             currentProfileIndex = -1;  // no selection
         }
         this.toggleDialogView.setDataSourceProfilesComboBoxSelectedIndex(currentProfileIndex);
@@ -103,9 +105,9 @@ public class ToggleDialogController {
     /**
      * Select color for the JLabel status text depends on the ImportStatus.
      */
-    private Color getStatusTextColor(ImportStatus status){
+    private Color getStatusTextColor(ImportStatus status) {
         Color statusColor;
-        switch(status) {
+        switch (status) {
             case ACTION_REQUIRED:
                 statusColor = COLOR_ORANGE;
                 break;
@@ -124,7 +126,7 @@ public class ToggleDialogController {
         return statusColor;
     }
 
-    private void setDefaultStatus(){
+    private void setDefaultStatus() {
         Logging.debug("Changing status to default");
         GuiHelper.scheduleTimer(
             1500,

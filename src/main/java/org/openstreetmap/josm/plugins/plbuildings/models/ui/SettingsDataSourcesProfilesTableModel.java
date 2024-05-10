@@ -1,10 +1,10 @@
 package org.openstreetmap.josm.plugins.plbuildings.models.ui;
 
-import javax.swing.table.DefaultTableModel;
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
+import javax.swing.table.DefaultTableModel;
 
 public class SettingsDataSourcesProfilesTableModel extends DefaultTableModel {
     public final static String COL_PROFILE = tr("Profile");
@@ -16,7 +16,7 @@ public class SettingsDataSourcesProfilesTableModel extends DefaultTableModel {
         Arrays.asList(COL_PROFILE, COL_SERVER, COL_TAGS, COL_GEOMETRY, COL_VISIBLE)
     );
 
-    public SettingsDataSourcesProfilesTableModel(){
+    public SettingsDataSourcesProfilesTableModel() {
         PROFILE_COLUMNS.forEach(this::addColumn);
     }
 
@@ -27,7 +27,7 @@ public class SettingsDataSourcesProfilesTableModel extends DefaultTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        if (columnIndex == PROFILE_COLUMNS.indexOf(COL_VISIBLE)){
+        if (columnIndex == PROFILE_COLUMNS.indexOf(COL_VISIBLE)) {
             return Boolean.class;
         }
         return super.getColumnClass(columnIndex);

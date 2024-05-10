@@ -1,8 +1,8 @@
 package org.openstreetmap.josm.plugins.plbuildings.gui;
 
-import javax.swing.*;
-
 import static org.openstreetmap.josm.tools.I18n.tr;
+
+import javax.swing.JOptionPane;
 
 /**
  * Creates info dialog to alert the mapper that imported data contains some uncommon tags.
@@ -10,11 +10,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
  */
 public class UncommonTagDialog {
 
-    public static void show(String uncommonTags){
+    public static void show(String uncommonTags) {
         JOptionPane.showMessageDialog(null,
             tr(
-                "Uncommon tags ({0}) has been detected." +
-                    "\nYou can verify that are correct and add more details.",
+                "Uncommon tags ({0}) has been detected."
+                    + "\nYou can verify that are correct and add more details.",
                 uncommonTags
             ),
             tr("Uncommon tags detected"),
