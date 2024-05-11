@@ -1,5 +1,12 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.testProfile;
+
+import java.io.File;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -7,12 +14,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import java.io.File;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.*;
 
 /**
  * This test class is to prevent messing with low-level building model
@@ -24,7 +25,7 @@ public class ShareNodesOrderTest {
     public JOSMTestRules rules = new JOSMTestRules().main();
 
     @Test
-    public void testImportBuildingShareFourNodesWithTwoOppositeBuildings(){
+    public void testImportBuildingShareFourNodesWithTwoOppositeBuildings() {
         DataSet importDataSet = importOsmFile(new File("test/data/share_nodes_order/import_building.osm"), "");
         assertNotNull(importDataSet);
 

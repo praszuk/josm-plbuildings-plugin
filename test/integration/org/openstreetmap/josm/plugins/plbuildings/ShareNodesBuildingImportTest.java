@@ -1,5 +1,12 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.testProfile;
+
+import java.io.File;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -8,18 +15,12 @@ import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import java.io.File;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.*;
-
 public class ShareNodesBuildingImportTest {
     @Rule
     public JOSMTestRules rules = new JOSMTestRules().main();
 
     @Test
-    public void testImportBuildingShareTwoNodesWithOneBuilding(){
+    public void testImportBuildingShareTwoNodesWithOneBuilding() {
         DataSet importDataSet = importOsmFile(new File("test/data/share_nodes/import_building.osm"), "");
         assertNotNull(importDataSet);
 
@@ -37,8 +38,9 @@ public class ShareNodesBuildingImportTest {
         // Two shared nodes between 2 buildings. Skipping first node because closed ways always duplicates 1 node
         assertEquals(2, building.getNodes().stream().skip(1).filter((node -> node.isReferredByWays(2))).count());
     }
+
     @Test
-    public void testImportBuildingAllSameShareNodesActionShouldBeCanceled(){
+    public void testImportBuildingAllSameShareNodesActionShouldBeCanceled() {
         DataSet importDataSet = importOsmFile(new File("test/data/share_nodes/building_base.osm"), "");
         assertNotNull(importDataSet);
 
@@ -56,7 +58,7 @@ public class ShareNodesBuildingImportTest {
     }
 
     @Test
-    public void testImportBuildingShareThreeNodesWithTwoAdjacentBuildings(){
+    public void testImportBuildingShareThreeNodesWithTwoAdjacentBuildings() {
         DataSet importDataSet = importOsmFile(new File("test/data/share_nodes/import_building.osm"), "");
         assertNotNull(importDataSet);
 
@@ -76,8 +78,9 @@ public class ShareNodesBuildingImportTest {
         assertEquals(3, building.getNodes().stream().skip(1).filter((node -> node.isReferredByWays(2))).count());
         assertEquals(1, building.getNodes().stream().skip(1).filter((node -> node.isReferredByWays(3))).count());
     }
+
     @Test
-    public void testImportBuildingShareFourNodesWithTwoOppositeBuildings(){
+    public void testImportBuildingShareFourNodesWithTwoOppositeBuildings() {
         DataSet importDataSet = importOsmFile(new File("test/data/share_nodes/import_building.osm"), "");
         assertNotNull(importDataSet);
 
@@ -98,7 +101,7 @@ public class ShareNodesBuildingImportTest {
     }
 
     @Test
-    public void testImportBuildingShareFourNodesWithThreeAdjacentNWEBuildings(){
+    public void testImportBuildingShareFourNodesWithThreeAdjacentNorthWestEastBuildings() {
         DataSet importDataSet = importOsmFile(new File("test/data/share_nodes/import_building.osm"), "");
         assertNotNull(importDataSet);
 

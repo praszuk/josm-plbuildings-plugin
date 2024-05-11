@@ -1,5 +1,14 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.testProfile;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.CloneBuilding.cloneBuilding;
+
+import java.io.File;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -9,18 +18,12 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import java.io.File;
-
-import static org.junit.Assert.*;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.*;
-import static org.openstreetmap.josm.plugins.plbuildings.utils.CloneBuilding.cloneBuilding;
-
 public class SimpleBuildingImportTest {
     @Rule
     public JOSMTestRules rules = new JOSMTestRules().main();
 
     @Test
-    public void testImportBuildingNoCloseNodesJustOneBuildingInDataset(){
+    public void testImportBuildingNoCloseNodesJustOneBuildingInDataset() {
         DataSet importDataSet = importOsmFile(new File("test/data/simple_building.osm"), "");
         assertNotNull(importDataSet);
 
@@ -38,7 +41,7 @@ public class SimpleBuildingImportTest {
     }
 
     @Test
-    public void testImportEmptyDataSet(){
+    public void testImportEmptyDataSet() {
         DataSet importDataSet = new DataSet();
 
         DataSet ds = new DataSet();
@@ -50,7 +53,7 @@ public class SimpleBuildingImportTest {
     }
 
     @Test
-    public void testImportDataSetWithMultipleBuildingsButImportOnlyOne(){
+    public void testImportDataSetWithMultipleBuildingsButImportOnlyOne() {
         DataSet importDataSet = importOsmFile(new File("test/data/simple_multiple_buildings.osm"), "");
         assertNotNull(importDataSet);
         assertTrue(importDataSet.getWays().size() > 1);
@@ -69,7 +72,7 @@ public class SimpleBuildingImportTest {
     }
 
     @Test
-    public void testImportBuildingWithoutOsmMetaData(){
+    public void testImportBuildingWithoutOsmMetaData() {
         DataSet rawDataSet = importOsmFile(new File("test/data/simple_building.osm"), "");
         assertNotNull(rawDataSet);
 

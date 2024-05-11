@@ -1,5 +1,14 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.testProfile;
+
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import mockit.Mock;
 import mockit.MockUp;
 import org.junit.Rule;
@@ -13,14 +22,6 @@ import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.UserCancelException;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.*;
-
 
 public class UpdateTagsTest {
     @Rule
@@ -28,7 +29,7 @@ public class UpdateTagsTest {
 
 
     @Test
-    public void testNoTagsChangeCancel(){
+    public void testNoTagsChangeCancel() {
         DataSet importDataSet = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
         assertNotNull(importDataSet);
 
@@ -50,10 +51,10 @@ public class UpdateTagsTest {
     }
 
     @Test
-    public void testNewTagsNoConflict(){
-        new MockUp<UpdateBuildingTagsCommand>(){
+    public void testNewTagsNoConflict() {
+        new MockUp<UpdateBuildingTagsCommand>() {
             @Mock
-            private List<Command> prepareUpdateTagsCommands(Way selectedBuilding, Way newBuilding){
+            private List<Command> prepareUpdateTagsCommands(Way selectedBuilding, Way newBuilding) {
                 return Collections.singletonList(
                     new ChangePropertyCommand(
                         selectedBuilding.getDataSet(),
@@ -86,10 +87,10 @@ public class UpdateTagsTest {
     }
 
     @Test
-    public void testNewTagsConflict(){
-        new MockUp<UpdateBuildingTagsCommand>(){
+    public void testNewTagsConflict() {
+        new MockUp<UpdateBuildingTagsCommand>() {
             @Mock
-            private List<Command> prepareUpdateTagsCommands(Way selectedBuilding, Way newBuilding){
+            private List<Command> prepareUpdateTagsCommands(Way selectedBuilding, Way newBuilding) {
                 return Collections.singletonList(
                     new ChangePropertyCommand(
                         selectedBuilding.getDataSet(),
@@ -122,13 +123,13 @@ public class UpdateTagsTest {
     }
 
     @Test
-    public void testNewTagsCanceledByUser(){
-        new MockUp<UpdateBuildingTagsCommand>(){
+    public void testNewTagsCanceledByUser() {
+        new MockUp<UpdateBuildingTagsCommand>() {
             @Mock
             private List<Command> prepareUpdateTagsCommands(
                 Way selectedBuilding,
                 Way newBuilding
-            ) throws UserCancelException{
+            ) throws UserCancelException {
                 throw new UserCancelException("Canceled by user");
             }
         };

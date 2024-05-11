@@ -1,5 +1,14 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.testProfile;
+
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import mockit.Mock;
 import mockit.MockUp;
 import org.junit.Before;
@@ -16,41 +25,32 @@ import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.*;
-
 public class DuplicateImportTest {
     @Rule
     public JOSMTestRules rules = new JOSMTestRules().main();
 
     @Before
-    public void setUP(){
+    public void setUp() {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:4326"));
-
-
     }
 
     static {
-        new MockUp<UpdateBuildingTagsCommand>(){
+        new MockUp<UpdateBuildingTagsCommand>() {
             @Mock
-            private List<Command> prepareUpdateTagsCommands(Way selectedBuilding, Way newBuilding){
+            private List<Command> prepareUpdateTagsCommands(Way selectedBuilding, Way newBuilding) {
                 return Collections.singletonList(
                     new ChangePropertyCommand(
                         selectedBuilding.getDataSet(),
                         Collections.singletonList(selectedBuilding),
                         newBuilding.getKeys()
-                ));
+                    ));
             }
         };
 
     }
+
     @Test
-    public void testSimpleDuplicateCheckNotDuplicate(){
+    public void testSimpleDuplicateCheckNotDuplicate() {
         DataSet importDataSet = importOsmFile(new File("test/data/duplicate_import/import_building.osm"), "");
         DataSet ds = importOsmFile(new File("test/data/duplicate_import/simple_replace_base.osm"), "");
         assertNotNull(importDataSet);
@@ -68,7 +68,7 @@ public class DuplicateImportTest {
     }
 
     @Test
-    public void testSimpleDuplicateCheckDuplicateAllNodesEqualAndSameTags(){
+    public void testSimpleDuplicateCheckDuplicateAllNodesEqualAndSameTags() {
         DataSet importDataSet = importOsmFile(new File("test/data/duplicate_import/import_building.osm"), "");
         DataSet ds = importOsmFile(new File("test/data/duplicate_import/simple_duplicate_base.osm"), "");
         assertNotNull(importDataSet);
@@ -87,7 +87,7 @@ public class DuplicateImportTest {
     }
 
     @Test
-    public void testSimpleDuplicateCheckNotDuplicateAllNodesEqualAndDifferentTags(){
+    public void testSimpleDuplicateCheckNotDuplicateAllNodesEqualAndDifferentTags() {
         DataSet importDataSet = importOsmFile(new File("test/data/duplicate_import/import_building.osm"), "");
         DataSet ds = importOsmFile(
             new File("test/data/duplicate_import/simple_duplicate_different_tags_base.osm"),
@@ -96,7 +96,7 @@ public class DuplicateImportTest {
         assertNotNull(ds);
 
         Way buildingToReplace = (Way) ds.getWays().stream()
-            .filter(way -> way.hasTag("building","yes"))
+            .filter(way -> way.hasTag("building", "yes"))
             .toArray()[0];
         ds.setSelected(buildingToReplace);
 
@@ -110,7 +110,7 @@ public class DuplicateImportTest {
     }
 
     @Test
-    public void testDuplicateBaseMoreNodesImportBuildingAllNodesEqual(){
+    public void testDuplicateBaseMoreNodesImportBuildingAllNodesEqual() {
         DataSet importDataSet = importOsmFile(new File("test/data/duplicate_import/import_building.osm"), "");
         DataSet ds = importOsmFile(new File("test/data/duplicate_import/duplicate_more_nodes_base.osm"), "");
         assertNotNull(importDataSet);

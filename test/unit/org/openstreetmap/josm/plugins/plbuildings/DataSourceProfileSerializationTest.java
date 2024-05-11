@@ -1,20 +1,20 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-
 public class DataSourceProfileSerializationTest {
     @Rule
     public JOSMTestRules rules = new JOSMTestRules().main();
+
     @Test
-    public void serializationDataSourceProfileTest(){
+    public void serializationDataSourceProfileTest() {
 
         DataSourceProfile srcDataSourceProfile = new DataSourceProfile(
             "Test",
