@@ -1,8 +1,8 @@
 package org.openstreetmap.josm.plugins.plbuildings.gui;
 
-import javax.swing.*;
-
 import static org.openstreetmap.josm.tools.I18n.tr;
+
+import javax.swing.JOptionPane;
 
 /**
  * Creates confirmation dialog to proceed with import data which contains "survey" value in tags.
@@ -11,10 +11,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 public class SurveyConfirmationDialog {
 
     /**
-     * Shows confirmation dialog
+     * Shows confirmation dialog.
+     *
      * @return true if user clicks "yes", else false ("no" button/canceled)
      */
-    public static boolean show(){
+    public static boolean show() {
         int result = JOptionPane.showConfirmDialog(
             null,
             tr("Detected \"survey\" value in tags.\nAre you sure you want to proceed updating this object?"),

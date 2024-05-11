@@ -1,17 +1,17 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils;
 
-import static org.junit.Assert.*;
-
 public class UncommonTagCheckerTest {
 
     @Test
-    public void testPrimitiveHasUncommonTag(){
+    public void testPrimitiveHasUncommonTag() {
         OsmPrimitive building1 = new Way();
         building1.put("building", "yes");
         building1.put("amenity", "vehicle_inspection");

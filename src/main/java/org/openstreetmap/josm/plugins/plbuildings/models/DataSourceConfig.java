@@ -1,13 +1,15 @@
 package org.openstreetmap.josm.plugins.plbuildings.models;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.io.DataSourceProfileDownloader;
 import org.openstreetmap.josm.tools.Logging;
-
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.util.*;
-import java.util.stream.Collectors;
 
 
 public class DataSourceConfig {  // TODO Try to remove singleton if easily possible
@@ -24,39 +26,40 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     public static DataSourceConfig getInstance() {
-        if (instance == null){
+        if (instance == null) {
             instance = new DataSourceConfig();
         }
         return instance;
     }
 
-    private DataSourceConfig(){
+    private DataSourceConfig() {
         this.servers = new ArrayList<>();
 
         load();
-        this.currentProfile = profiles.isEmpty() ? null:profiles.get(0);
+        this.currentProfile = profiles.isEmpty() ? null : profiles.get(0);
     }
 
-    public DataSourceServer getServerByName(String name){
+    public DataSourceServer getServerByName(String name) {
         return servers.stream()
             .filter(dataSourceServer -> dataSourceServer.getName().equals(name))
             .findFirst()
             .orElse(null);
     }
 
-    public DataSourceProfile getProfileByName(String serverName, String profileName){
+    public DataSourceProfile getProfileByName(String serverName, String profileName) {
         return profiles.stream()
-            .filter(dataSourceProfile -> dataSourceProfile.getDataSourceServerName().equals(serverName) &&
-                    dataSourceProfile.getName().equals(profileName))
+            .filter(
+                dataSourceProfile -> dataSourceProfile.getDataSourceServerName().equals(serverName)
+                    && dataSourceProfile.getName().equals(profileName))
             .findFirst()
             .orElse(null);
     }
 
-    public List<DataSourceServer> getServers(){
+    public List<DataSourceServer> getServers() {
         return new ArrayList<>(servers);
     }
 
-    public List<DataSourceProfile> getProfiles(){
+    public List<DataSourceProfile> getProfiles() {
         return new ArrayList<>(profiles);
     }
 
@@ -64,19 +67,19 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
         return this.currentProfile;
     }
 
-    public void setCurrentProfile(DataSourceProfile profile){
+    public void setCurrentProfile(DataSourceProfile profile) {
         this.currentProfile = profile;
     }
 
-    public Collection<DataSourceProfile> getServerProfiles(DataSourceServer server){
+    public Collection<DataSourceProfile> getServerProfiles(DataSourceServer server) {
         return profiles
             .stream()
             .filter(p -> p.getDataSourceServerName().equals(server.getName()))
             .collect(Collectors.toList());
     }
 
-    public void addServer(DataSourceServer newServer){
-        Collection<DataSourceServer> oldServers = getServers();
+    public void addServer(DataSourceServer newServer) {
+        final Collection<DataSourceServer> oldServers = getServers();
 
         validateServer(newServer);
         servers.add(newServer);
@@ -90,8 +93,8 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
      * It removes server and all related profiles.
      */
     public void removeServer(DataSourceServer server) {
-        Collection<DataSourceProfile> oldProfiles = getProfiles();
-        Collection<DataSourceServer> oldServers = getServers();
+        final Collection<DataSourceProfile> oldProfiles = getProfiles();
+        final Collection<DataSourceServer> oldServers = getServers();
 
         new ArrayList<>(profiles)
             .stream()
@@ -105,8 +108,8 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
         propertyChangeSupport.firePropertyChange(SERVERS, oldServers, servers);
     }
 
-    public void addProfile(DataSourceProfile newProfile){
-        Collection<DataSourceProfile> oldProfiles = getProfiles();
+    public void addProfile(DataSourceProfile newProfile) {
+        final Collection<DataSourceProfile> oldProfiles = getProfiles();
 
         validateProfile(newProfile);
         profiles.add(newProfile);
@@ -115,8 +118,8 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
         propertyChangeSupport.firePropertyChange(PROFILES, oldProfiles, profiles);
     }
 
-    public void removeProfile(DataSourceProfile profile){
-        Collection<DataSourceProfile> oldProfiles = getProfiles();
+    public void removeProfile(DataSourceProfile profile) {
+        final Collection<DataSourceProfile> oldProfiles = getProfiles();
 
         profiles.remove(profile);
         save();
@@ -124,7 +127,7 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
         propertyChangeSupport.firePropertyChange(PROFILES, oldProfiles, profiles);
     }
 
-    private void load(){
+    private void load() {
         servers.clear();
         profiles.clear();
 
@@ -135,7 +138,7 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
         profiles.addAll(DataSourceProfile.fromStringJson(serializedProfiles));
     }
 
-    private void save(){
+    private void save() {
         String serializedServers = DataSourceServer.toJson(servers).toString();
         BuildingsSettings.DATA_SOURCE_SERVERS.put(serializedServers);
 
@@ -145,13 +148,15 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
 
     /**
      * It fetches data to update DataSourceProfiles from each server.
+     *
      * @param save – save all config to JOSM settings
      */
-    public void refreshFromServer(boolean save){
+    public void refreshFromServer(boolean save) {
         // Update profiles
-        for (DataSourceServer server : getServers()){
-            Collection<DataSourceProfile> downloadedCollection = DataSourceProfileDownloader.downloadProfiles(server);
-            if (downloadedCollection == null){
+        for (DataSourceServer server : getServers()) {
+            Collection<DataSourceProfile> downloadedCollection =
+                DataSourceProfileDownloader.downloadProfiles(server);
+            if (downloadedCollection == null) {
                 Logging.warn("Error at refreshing profiles from server: " + server.getName());
                 continue;
             }
@@ -184,17 +189,18 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
                 .filter(e -> !currentServerProfiles.containsKey(e.getKey()))
                 .forEach(e -> addProfile(e.getValue()));
         }
-        if (save){
+        if (save) {
             save();
         }
     }
 
     /**
      * Swap data source profile order in collection
+     *
      * @param src object to move to dst position
      * @param dst object which will be swapped with src object
      */
-    public void swapProfileOrder(DataSourceProfile src, DataSourceProfile dst){
+    public void swapProfileOrder(DataSourceProfile src, DataSourceProfile dst) {
         assert profiles.contains(src);
         assert profiles.contains(dst);
 
@@ -209,7 +215,7 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
         propertyChangeSupport.firePropertyChange(PROFILES, oldProfiles, profiles);
     }
 
-    public void setProfileVisible(DataSourceProfile profile, boolean value){
+    public void setProfileVisible(DataSourceProfile profile, boolean value) {
         profile.setVisible(value);
         save();
 
@@ -219,13 +225,14 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
     }
 
     private void validateServer(DataSourceServer newServer) throws IllegalArgumentException {
-        if (servers.stream().anyMatch(s -> s.getName().equals(newServer.getName()))){
+        if (servers.stream().anyMatch(s -> s.getName().equals(newServer.getName()))) {
             throw new IllegalArgumentException("DataSourceServer name must be unique!");
         }
     }
+
     private void validateProfile(DataSourceProfile newProfile) throws IllegalArgumentException {
         if (profiles.stream().anyMatch(p -> p.getName().equals(newProfile.getName())
-                && p.getDataSourceServerName().equals(newProfile.getDataSourceServerName()))){
+            && p.getDataSourceServerName().equals(newProfile.getDataSourceServerName()))) {
             throw new IllegalArgumentException("DataSourceProfile name must be unique per server!");
         }
     }

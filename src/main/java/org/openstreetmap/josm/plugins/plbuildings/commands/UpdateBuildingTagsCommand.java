@@ -1,16 +1,22 @@
 package org.openstreetmap.josm.plugins.plbuildings.commands;
 
+import static org.openstreetmap.josm.plugins.plbuildings.utils.TagConflictUtils.resolveTagConflictsDefault;
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.osm.*;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.TagCollection;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UserCancelException;
-
-import java.util.*;
-
-import static org.openstreetmap.josm.plugins.plbuildings.utils.TagConflictUtils.resolveTagConflictsDefault;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 
 public class UpdateBuildingTagsCommand extends Command implements CommandResultBuilding, CommandWithErrorReason {
@@ -43,7 +49,7 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
     public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
         // I am not sure if I implemented it correctly.
         Collection<OsmPrimitive> primitives = new ArrayList<>();
-        if (selectedBuilding != null){
+        if (selectedBuilding != null) {
             primitives.add(selectedBuilding); // Tags change
         }
         return primitives;
@@ -51,7 +57,7 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
 
     @Override
     public void undoCommand() {
-        if (updateTagsCommand != null){
+        if (updateTagsCommand != null) {
             updateTagsCommand.undoCommand();
         }
     }
@@ -88,9 +94,8 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
     }
 
     /**
-     * Prepare update tags command using CombinePrimitiveResolverDialog
-     * before launching dialog, it checks if any conflict can be skipped
-     * using resolveTagConflictsDefault from TagConflictsUtil
+     * Prepare update tags command using CombinePrimitiveResolverDialog before launching dialog.
+     * It checks if any conflict can be skipped using resolveTagConflictsDefault from TagConflictsUtil
      *
      * @return list of commands as updating tags
      * @throws UserCancelException if user close the window or reject possible tags conflict

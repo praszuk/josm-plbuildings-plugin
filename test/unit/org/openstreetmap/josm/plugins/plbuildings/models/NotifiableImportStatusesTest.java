@@ -1,10 +1,15 @@
 package org.openstreetmap.josm.plugins.plbuildings.models;
 
 
+import java.io.StringReader;
+import java.util.Arrays;
+import java.util.List;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -12,20 +17,13 @@ import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import java.io.StringReader;
-import java.util.Arrays;
-import java.util.List;
-
 
 public class NotifiableImportStatusesTest {
     @RegisterExtension
     static JOSMTestRules rule = new JOSMTestRules();
 
     static final List<ImportStatus> notifiable = List.of(
-            ImportStatus.NO_DATA, ImportStatus.NO_UPDATE, ImportStatus.CONNECTION_ERROR, ImportStatus.IMPORT_ERROR
+        ImportStatus.NO_DATA, ImportStatus.NO_UPDATE, ImportStatus.CONNECTION_ERROR, ImportStatus.IMPORT_ERROR
     );
 
     @BeforeEach
@@ -34,7 +32,7 @@ public class NotifiableImportStatusesTest {
     }
 
     @Test
-    void testGetInstanceSingleton(){
+    void testGetInstanceSingleton() {
         // Act
         NotifiableImportStatuses instance1 = NotifiableImportStatuses.getInstance();
         NotifiableImportStatuses instance2 = NotifiableImportStatuses.getInstance();
@@ -46,10 +44,10 @@ public class NotifiableImportStatusesTest {
     }
 
     @Test
-    void testLoadStatuses(){
+    void testLoadStatuses() {
         // Arrange
         BuildingsSettings.NOTIFIABLE_IMPORT_STATUSES.put(
-        "{\"CONNECTION_ERROR\":true,\"NO_UPDATE\":true,\"NO_DATA\":false,\"IMPORT_ERROR\":false}"
+            "{\"CONNECTION_ERROR\":true,\"NO_UPDATE\":true,\"NO_DATA\":false,\"IMPORT_ERROR\":false}"
         );
 
         // Act
@@ -63,30 +61,30 @@ public class NotifiableImportStatusesTest {
     }
 
     @Test
-    void testSetNotifiableIgnoresNotNotifiable(){
+    void testSetNotifiableIgnoresNotNotifiable() {
         // Arrange
         NotifiableImportStatuses instance = NotifiableImportStatuses.getInstance();
         BuildingsSettings.NOTIFIABLE_IMPORT_STATUSES.put("{}");
 
         // Act
         Arrays.stream(ImportStatus.values())
-                .filter(importStatus -> !notifiable.contains(importStatus))
-                .forEach(importStatus -> instance.setNotifiable(importStatus, true));
+            .filter(importStatus -> !notifiable.contains(importStatus))
+            .forEach(importStatus -> instance.setNotifiable(importStatus, true));
 
         // Assert
         Assertions.assertEquals(BuildingsSettings.NOTIFIABLE_IMPORT_STATUSES.get(), "{}");
     }
 
     @Test
-    void testSetNotifiableSavesNotifiable(){
+    void testSetNotifiableSavesNotifiable() {
         // Arrange
         NotifiableImportStatuses instance = NotifiableImportStatuses.getInstance();
         BuildingsSettings.NOTIFIABLE_IMPORT_STATUSES.put("{}");
 
         // Act
         Arrays.stream(ImportStatus.values())
-                .filter(notifiable::contains)
-                .forEach(importStatus -> instance.setNotifiable(importStatus, false));
+            .filter(notifiable::contains)
+            .forEach(importStatus -> instance.setNotifiable(importStatus, false));
 
         // Assert
         String rawJson = BuildingsSettings.NOTIFIABLE_IMPORT_STATUSES.get();
@@ -97,7 +95,7 @@ public class NotifiableImportStatusesTest {
 
     @ParameterizedTest
     @EnumSource(ImportStatus.class)
-    void testIsNotifiableButNotSaved(ImportStatus importStatus){
+    void testIsNotifiableButNotSaved(ImportStatus importStatus) {
         // Arrange
         BuildingsSettings.NOTIFIABLE_IMPORT_STATUSES.put("{}");
 

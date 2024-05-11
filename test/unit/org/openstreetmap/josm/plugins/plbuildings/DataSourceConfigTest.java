@@ -1,5 +1,16 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import mockit.Mock;
 import mockit.MockUp;
 import org.junit.Before;
@@ -10,10 +21,6 @@ import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DataSourceConfigTest {
     @Rule
@@ -27,39 +34,41 @@ public class DataSourceConfigTest {
     DataSourceProfile profile3server2;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         this.dataSourceConfig = DataSourceConfig.getInstance();
 
         this.server1 = new DataSourceServer("Test", "http://127.0.0.1");
         this.server2 = new DataSourceServer("NotTest", "http://127.0.0.2");
 
         this.profile1server1 = new DataSourceProfile(
-                "Test",
-                "test1",
-                "test2",
-                "test profile1",
-                true
+            "Test",
+            "test1",
+            "test2",
+            "test profile1",
+            true
         );
         this.profile2server1 = new DataSourceProfile(
-                "Test",
-                "test1",
-                "test2",
-                "test profile2"
+            "Test",
+            "test1",
+            "test2",
+            "test profile2"
         );
         this.profile3server2 = new DataSourceProfile(
-                "NotTest",
-                "test1",
-                "test2",
-                "test profile3",
-                false
+            "NotTest",
+            "test1",
+            "test2",
+            "test profile3",
+            false
         );
     }
-    void clearDataSourceConfig(){
+
+    void clearDataSourceConfig() {
         dataSourceConfig.getProfiles().forEach(dataSourceConfig::removeProfile);
         dataSourceConfig.getServers().forEach(dataSourceConfig::removeServer);
     }
+
     @Test
-    public void cannotAddDuplicatedServerByNameTest(){
+    public void cannotAddDuplicatedServerByNameTest() {
         clearDataSourceConfig();
         dataSourceConfig.addServer(server1);
         assertThrows(IllegalArgumentException.class, () -> dataSourceConfig.addServer(server1));
@@ -67,7 +76,7 @@ public class DataSourceConfigTest {
     }
 
     @Test
-    public void cannotAddDuplicatedProfileByNameTest(){
+    public void cannotAddDuplicatedProfileByNameTest() {
         clearDataSourceConfig();
         dataSourceConfig.addServer(server1);
 
@@ -77,23 +86,24 @@ public class DataSourceConfigTest {
     }
 
     @Test
-    public void canAddDuplicatedProfileNameForDifferentServerTest(){
+    public void canAddDuplicatedProfileNameForDifferentServerTest() {
         clearDataSourceConfig();
         dataSourceConfig.addServer(server1);
         dataSourceConfig.addServer(server2);
 
         dataSourceConfig.addProfile(profile1server1);
         DataSourceProfile duplicatedProfile = new DataSourceProfile(
-                server2.getName(),
-                profile1server1.getGeometry(),
-                profile1server1.getTags(),
-                profile1server1.getName()
+            server2.getName(),
+            profile1server1.getGeometry(),
+            profile1server1.getTags(),
+            profile1server1.getName()
         );
         dataSourceConfig.addProfile(duplicatedProfile);
         assertEquals(2, dataSourceConfig.getProfiles().size());
     }
+
     @Test
-    public void getServerProfilesTest(){
+    public void getServerProfilesTest() {
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
@@ -107,7 +117,7 @@ public class DataSourceConfigTest {
     }
 
     @Test
-    public void removeServerMultipleTimeTest(){
+    public void removeServerMultipleTimeTest() {
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
@@ -119,7 +129,7 @@ public class DataSourceConfigTest {
     }
 
     @Test
-    public void removeProfileMultipleTimeTest(){
+    public void removeProfileMultipleTimeTest() {
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
@@ -132,7 +142,7 @@ public class DataSourceConfigTest {
     }
 
     @Test
-    public void removeServerCauseRemoveAllConnectedProfilesTest(){
+    public void removeServerCauseRemoveAllConnectedProfilesTest() {
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
@@ -150,7 +160,7 @@ public class DataSourceConfigTest {
     }
 
     @Test
-    public void refreshFromServerProfileWhichNotExistInNewProfilesWillBeRemovedFromConfigTest(){
+    public void refreshFromServerProfileWhichNotExistInNewProfilesWillBeRemovedFromConfigTest() {
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
@@ -158,9 +168,9 @@ public class DataSourceConfigTest {
         dataSourceConfig.addProfile(profile1server1);
         dataSourceConfig.addProfile(profile2server1);
 
-        new MockUp<DataSourceProfileDownloader>(){
+        new MockUp<DataSourceProfileDownloader>() {
             @Mock
-            public Collection<DataSourceProfile> downloadProfiles(DataSourceServer server){
+            public Collection<DataSourceProfile> downloadProfiles(DataSourceServer server) {
                 return Collections.singletonList(profile2server1);
             }
         };
@@ -170,7 +180,7 @@ public class DataSourceConfigTest {
     }
 
     @Test
-    public void refreshFromServerProfileWhichUpdatedFieldsWillBeUpdatedTest(){
+    public void refreshFromServerProfileWhichUpdatedFieldsWillBeUpdatedTest() {
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
@@ -179,15 +189,15 @@ public class DataSourceConfigTest {
         dataSourceConfig.addProfile(profile2server1);
 
         DataSourceProfile modifiedDataSourceProfile = new DataSourceProfile(
-                profile2server1.getDataSourceServerName(),
-                profile2server1.getGeometry() + "modified",
-                profile2server1.getTags() + "modified",
-                profile2server1.getName()
+            profile2server1.getDataSourceServerName(),
+            profile2server1.getGeometry() + "modified",
+            profile2server1.getTags() + "modified",
+            profile2server1.getName()
         );
 
-        new MockUp<DataSourceProfileDownloader>(){
+        new MockUp<DataSourceProfileDownloader>() {
             @Mock
-            public Collection<DataSourceProfile> downloadProfiles(DataSourceServer server){
+            public Collection<DataSourceProfile> downloadProfiles(DataSourceServer server) {
                 return Arrays.asList(profile1server1, modifiedDataSourceProfile);
             }
         };
@@ -196,13 +206,14 @@ public class DataSourceConfigTest {
         assertEquals(2, dataSourceConfig.getProfiles().size());
 
         DataSourceProfile expectedUpdatedProfile = dataSourceConfig.getProfileByName(
-                profile2server1.getDataSourceServerName(),
-                profile2server1.getName()
+            profile2server1.getDataSourceServerName(),
+            profile2server1.getName()
         );
         assertEquals(expectedUpdatedProfile.getGeometry(), modifiedDataSourceProfile.getGeometry());
     }
+
     @Test
-    public void refreshFromServerProfileWontChangeVisibilityWhenProfileIsLocallyVisibleAndRemotelyInvisibleTest(){
+    public void refreshFromServerProfileWontChangeVisibilityWhenProfileIsLocallyVisibleAndRemotelyInvisibleTest() {
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
@@ -216,16 +227,16 @@ public class DataSourceConfigTest {
 
         dataSourceConfig.addProfile(visibleProfile);
         DataSourceProfile modifiedVisibleProfile = new DataSourceProfile(
-                visibleProfile.getDataSourceServerName(),
-                visibleProfile.getGeometry() + "modified",
-                visibleProfile.getTags() + "modified",
-                visibleProfile.getName(),
-                false
+            visibleProfile.getDataSourceServerName(),
+            visibleProfile.getGeometry() + "modified",
+            visibleProfile.getTags() + "modified",
+            visibleProfile.getName(),
+            false
         );
 
-        new MockUp<DataSourceProfileDownloader>(){
+        new MockUp<DataSourceProfileDownloader>() {
             @Mock
-            public Collection<DataSourceProfile> downloadProfiles(DataSourceServer server){
+            public Collection<DataSourceProfile> downloadProfiles(DataSourceServer server) {
                 return List.of(modifiedVisibleProfile);
             }
         };
@@ -234,37 +245,37 @@ public class DataSourceConfigTest {
         assertEquals(1, dataSourceConfig.getProfiles().size());
 
         DataSourceProfile expectedUpdatedVisibleProfile = dataSourceConfig.getProfileByName(
-                visibleProfile.getDataSourceServerName(),
-                visibleProfile.getName()
+            visibleProfile.getDataSourceServerName(),
+            visibleProfile.getName()
         );
         assertTrue(expectedUpdatedVisibleProfile.isVisible());
     }
 
     @Test
-    public void refreshFromServerProfileWontChangeVisibilityWhenProfileIsLocallyInvisibleAndRemotelyVisibleTest(){
+    public void refreshFromServerProfileWontChangeVisibilityWhenProfileIsLocallyInvisibleAndRemotelyVisibleTest() {
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
         DataSourceProfile invisibleProfile = new DataSourceProfile(
-                server1.getName(),
-                profile1server1.getGeometry(),
-                profile1server1.getTags(),
-                profile1server1.getName(),
-                false
+            server1.getName(),
+            profile1server1.getGeometry(),
+            profile1server1.getTags(),
+            profile1server1.getName(),
+            false
         );
 
         dataSourceConfig.addProfile(invisibleProfile);
         DataSourceProfile modifiedInvisibleProfile = new DataSourceProfile(
-                invisibleProfile.getDataSourceServerName(),
-                invisibleProfile.getGeometry() + "modified",
-                invisibleProfile.getTags() + "modified",
-                invisibleProfile.getName(),
-                true
+            invisibleProfile.getDataSourceServerName(),
+            invisibleProfile.getGeometry() + "modified",
+            invisibleProfile.getTags() + "modified",
+            invisibleProfile.getName(),
+            true
         );
 
-        new MockUp<DataSourceProfileDownloader>(){
+        new MockUp<DataSourceProfileDownloader>() {
             @Mock
-            public Collection<DataSourceProfile> downloadProfiles(DataSourceServer server){
+            public Collection<DataSourceProfile> downloadProfiles(DataSourceServer server) {
                 return List.of(modifiedInvisibleProfile);
             }
         };
@@ -273,14 +284,14 @@ public class DataSourceConfigTest {
         assertEquals(1, dataSourceConfig.getProfiles().size());
 
         DataSourceProfile expectedUpdatedInvisibleProfile = dataSourceConfig.getProfileByName(
-                invisibleProfile.getDataSourceServerName(),
-                invisibleProfile.getName()
+            invisibleProfile.getDataSourceServerName(),
+            invisibleProfile.getName()
         );
         assertFalse(expectedUpdatedInvisibleProfile.isVisible());
     }
 
     @Test
-    public void refreshFromServerProfileWhichNotExistConfigWillBeAddedTest(){
+    public void refreshFromServerProfileWhichNotExistConfigWillBeAddedTest() {
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
@@ -288,12 +299,12 @@ public class DataSourceConfigTest {
 
         dataSourceConfig.addProfile(profile1server1);
 
-        new MockUp<DataSourceProfileDownloader>(){
+        new MockUp<DataSourceProfileDownloader>() {
             @Mock
-            public Collection<DataSourceProfile> downloadProfiles(DataSourceServer server){
-                if (server.getName().equals(server1.getName())){
+            public Collection<DataSourceProfile> downloadProfiles(DataSourceServer server) {
+                if (server.getName().equals(server1.getName())) {
                     return Arrays.asList(profile1server1, profile2server1);
-                }else if (server.getName().equals(server2.getName())){
+                } else if (server.getName().equals(server2.getName())) {
                     return Collections.singletonList(profile3server2);
                 }
                 return null;
@@ -305,7 +316,7 @@ public class DataSourceConfigTest {
     }
 
     @Test
-    public void refreshFromServerProfilesNullResponseForOneServerShouldNotChangeAnythingInThisServerConfigTest(){
+    public void refreshFromServerProfilesNullResponseForOneServerShouldNotChangeAnythingInThisServerConfigTest() {
         clearDataSourceConfig();
 
         dataSourceConfig.addServer(server1);
@@ -315,18 +326,18 @@ public class DataSourceConfigTest {
         dataSourceConfig.addProfile(profile2server1);
 
         DataSourceProfile newProfile4Server2 = new DataSourceProfile(
-                server2.getName(),
-                "test",
-                "test",
-                profile3server2.getName() + "1"
+            server2.getName(),
+            "test",
+            "test",
+            profile3server2.getName() + "1"
         );
 
-        new MockUp<DataSourceProfileDownloader>(){
+        new MockUp<DataSourceProfileDownloader>() {
             @Mock
-            public Collection<DataSourceProfile> downloadProfiles(DataSourceServer server){
-                if (server.getName().equals(server1.getName())){
+            public Collection<DataSourceProfile> downloadProfiles(DataSourceServer server) {
+                if (server.getName().equals(server1.getName())) {
                     return null;
-                }else if (server.getName().equals(server2.getName())){
+                } else if (server.getName().equals(server2.getName())) {
                     return Arrays.asList(profile3server2, newProfile4Server2);
                 }
                 return null;
@@ -338,7 +349,7 @@ public class DataSourceConfigTest {
     }
 
     @Test
-    public void refreshFromServerProfileUpdateDoesNotChangeTheOrderOfProfilesTest(){
+    public void refreshFromServerProfileUpdateDoesNotChangeTheOrderOfProfilesTest() {
         clearDataSourceConfig();
 
         DataSourceProfile profile3server1 = new DataSourceProfile(
@@ -351,18 +362,18 @@ public class DataSourceConfigTest {
         dataSourceConfig.addServer(server1);
 
         ArrayList<DataSourceProfile> correctOrder = new ArrayList<>(Arrays.asList(
-                profile1server1, profile2server1, profile3server1
+            profile1server1, profile2server1, profile3server1
         ));
 
         ArrayList<DataSourceProfile> remoteOrder = new ArrayList<>(Arrays.asList(
-                profile3server1, profile2server1, profile1server1
+            profile3server1, profile2server1, profile1server1
         ));
         correctOrder.forEach(dataSourceConfig::addProfile);
 
         assertNotEquals(correctOrder, remoteOrder);
-        new MockUp<DataSourceProfileDownloader>(){
+        new MockUp<DataSourceProfileDownloader>() {
             @Mock
-            public Collection<DataSourceProfile> downloadProfiles(DataSourceServer server){
+            public Collection<DataSourceProfile> downloadProfiles(DataSourceServer server) {
                 return remoteOrder;
             }
         };
@@ -373,16 +384,16 @@ public class DataSourceConfigTest {
     }
 
     @Test
-    public void swapProfileOrderTest(){
+    public void swapProfileOrderTest() {
         clearDataSourceConfig();
         dataSourceConfig.addServer(server1);
         dataSourceConfig.addServer(server2);
 
         ArrayList<DataSourceProfile> currentOrder = new ArrayList<>(Arrays.asList(
-                profile1server1, profile2server1, profile3server2
+            profile1server1, profile2server1, profile3server2
         ));
         ArrayList<DataSourceProfile> expectedOrder = new ArrayList<>(Arrays.asList(
-                profile3server2, profile2server1, profile1server1
+            profile3server2, profile2server1, profile1server1
         ));
         assertNotEquals(expectedOrder, currentOrder);
         currentOrder.forEach(dataSourceConfig::addProfile);

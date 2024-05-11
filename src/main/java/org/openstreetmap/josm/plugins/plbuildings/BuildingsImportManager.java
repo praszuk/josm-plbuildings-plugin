@@ -1,11 +1,23 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import static org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction.performBuildingImport;
+import static org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy.ACCEPT;
+import static org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy.ASK_USER;
+import static org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy.CANCEL;
+import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.DOWNLOADING;
+import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.IDLE;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding.getNearestBuilding;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.findUncommonTags;
+
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.*;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.TagMap;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.controllers.NotificationsController;
 import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
-import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDSOptionDialog;
+import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDsOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOverlapOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.gui.UncommonTagDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
@@ -16,16 +28,9 @@ import org.openstreetmap.josm.plugins.plbuildings.utils.CloneBuilding;
 import org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding;
 import org.openstreetmap.josm.tools.Logging;
 
-import static org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction.performBuildingImport;
-import static org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy.*;
-import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.DOWNLOADING;
-import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.IDLE;
-import static org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding.getNearestBuilding;
-import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.findUncommonTags;
-
 
 /**
- * responsible for managing all import action workers, data sources, data, actions, GUI
+ * Responsible for managing all import action workers, data sources, data, actions, GUI.
  */
 public class BuildingsImportManager {
     private final LatLon cursorLatLon;
@@ -65,7 +70,7 @@ public class BuildingsImportManager {
         return editLayer;
     }
 
-    public DataSourceProfile getDataSourceProfile(){
+    public DataSourceProfile getDataSourceProfile() {
         return this.dataSourceProfile;
     }
 
@@ -73,41 +78,45 @@ public class BuildingsImportManager {
         this.importedData = importedData;
     }
 
-    public void setDataSourceProfile(DataSourceProfile dataSourceProfile){
+    public void setDataSourceProfile(DataSourceProfile dataSourceProfile) {
         this.dataSourceProfile = dataSourceProfile;
     }
+
     public void setResultBuilding(Way resultBuilding) {
         this.resultBuilding = resultBuilding;
     }
+
     public void setStatus(ImportStatus status, String reason) {
         this.status = status;
         updateGuiStatus();
         notificationsController.handleStatus(status, reason);
     }
 
-    public void run(){
+    public void run() {
         BuildingsDownloadTask task = new BuildingsDownloadTask(this);
         setStatus(DOWNLOADING, null);
         task.execute();
     }
+
     public void processDownloadedData() {
         performBuildingImport(this);
-        if (resultBuilding != null){
+        if (resultBuilding != null) {
             postCheck();
         }
     }
-    private void postCheck(){
+
+    private void postCheck() {
         boolean hasUncommonTags = false;
         TagMap uncommon = findUncommonTags(resultBuilding);
-        if (!uncommon.isEmpty()){
+        if (!uncommon.isEmpty()) {
             Logging.debug("Found uncommon tags {0}", uncommon);
             setStatus(ImportStatus.ACTION_REQUIRED, null);
             hasUncommonTags = true;
             UncommonTagDialog.show(
-                    uncommon.getTags()
-                            .toString()
-                            .replace("[", "")
-                            .replace("]", "")
+                uncommon.getTags()
+                    .toString()
+                    .replace("[", "")
+                    .replace("]", "")
             );
         }
 
@@ -115,12 +124,14 @@ public class BuildingsImportManager {
         updateGuiTags(hasUncommonTags);
     }
 
-    private void updateGuiStatus(){
-        if (BuildingsPlugin.toggleDialogController == null)  // for tests and no-gui execution of method
+    private void updateGuiStatus() {
+        // for tests and no-gui execution of method
+        if (BuildingsPlugin.toggleDialogController == null) {
             return;
+        }
 
         boolean autoChangeToDefault;
-        switch(status) {
+        switch (status) {
             case IDLE:
             case DOWNLOADING:
             case ACTION_REQUIRED:
@@ -141,9 +152,11 @@ public class BuildingsImportManager {
     /**
      * Helper function to updating GUI latest tags from action
      */
-    public void updateGuiTags(boolean hasUncommonTags){
-        if (BuildingsPlugin.toggleDialogController == null)  // for tests and no-gui execution of method
+    public void updateGuiTags(boolean hasUncommonTags) {
+        // for tests and no-gui execution of method
+        if (BuildingsPlugin.toggleDialogController == null) {
             return;
+        }
 
         BuildingsPlugin.toggleDialogController.updateTags(
             resultBuilding.getKeys().getOrDefault("building", ""),
@@ -152,34 +165,35 @@ public class BuildingsImportManager {
         );
     }
 
-    static CombineNearestStrategy getImportBuildingDataOneDSStrategy(String availableDataSource) {
+    static CombineNearestStrategy getImportBuildingDataOneDsStrategy(String availableDataSource) {
         CombineNearestStrategy strategy = CombineNearestStrategy.fromString(
             BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.get()
         );
-        if (strategy == ASK_USER){
-            strategy = ImportedBuildingOneDSOptionDialog.show(availableDataSource) ? ACCEPT : CANCEL;
+        if (strategy == ASK_USER) {
+            strategy = ImportedBuildingOneDsOptionDialog.show(availableDataSource) ? ACCEPT : CANCEL;
         }
         return strategy;
     }
 
     static CombineNearestStrategy getImportBuildingOverlapStrategy(
-            String geomDS,
-            String tagsDS,
-            double overlapPercentage
+        String geomDs,
+        String tagsDs,
+        double overlapPercentage
     ) {
         CombineNearestStrategy strategy = CombineNearestStrategy.fromString(
             BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_STRATEGY.get()
         );
-        if (strategy == CombineNearestStrategy.ASK_USER){
-            strategy = ImportedBuildingOverlapOptionDialog.show(geomDS, tagsDS, overlapPercentage);
+        if (strategy == CombineNearestStrategy.ASK_USER) {
+            strategy = ImportedBuildingOverlapOptionDialog.show(geomDs, tagsDs, overlapPercentage);
         }
         return strategy;
     }
 
     /**
      * Create a new building based on provided parameters. It's cloned with new id/nodes.
+     *
      * @param geometryBuilding – building from which only geometry will be reused
-     * @param tagsBuilding – building from which only tags will be reused
+     * @param tagsBuilding     – building from which only tags will be reused
      */
     static Way combineBuildings(Way geometryBuilding, Way tagsBuilding) {
         Way newBuilding = new Way();
@@ -188,6 +202,7 @@ public class BuildingsImportManager {
 
         return newBuilding;
     }
+
     /**
      * Get the nearest building object from 1-2 downloaded data sources as 1 building ready to import
      * It will use default strategies from settings for all problematic cases or ask user (GUI).
@@ -211,8 +226,8 @@ public class BuildingsImportManager {
      * ---- user doesn't allow -> return null
      *
      * @param importedData – should be matched to profile parameter and contain 1 or 2 data sources with buildings data
-     * @param profile – should be matched with importData parameter
-     * @param latLon – cursor/start point location which is used to get the nearest building
+     * @param profile      – should be matched with importData parameter
+     * @param latLon       – cursor/start point location which is used to get the nearest building
      * @return building or null if it couldn't combine building or datasets empty/user decision/settings etc.
      * @throws NullPointerException if dataSourceProfile is not set
      */
@@ -229,32 +244,34 @@ public class BuildingsImportManager {
         }
         // Multiple data source
         else {
-            DataSet geometryDS = importedData.get(profile.getGeometry());
-            DataSet tagsDS = importedData.get(profile.getTags());
+            DataSet geometryDs = importedData.get(profile.getGeometry());
+            DataSet tagsDs = importedData.get(profile.getTags());
 
             // Both empty
-            if (geometryDS.isEmpty() && tagsDS.isEmpty()){
+            if (geometryDs.isEmpty() && tagsDs.isEmpty()) {
                 importedBuilding = null;
             }
             // One empty
-            else if (geometryDS.isEmpty() != tagsDS.isEmpty()){
-                String availableDSName = geometryDS.isEmpty() ? profile.getTags() : profile.getGeometry();
+            else if (geometryDs.isEmpty() != tagsDs.isEmpty()) {
+                String availableDsName = geometryDs.isEmpty() ? profile.getTags() : profile.getGeometry();
 
-                if (getImportBuildingDataOneDSStrategy(availableDSName) == ACCEPT) {
-                    importedBuilding = NearestBuilding.getNearestBuilding(importedData.get(availableDSName), latLon);
+                if (getImportBuildingDataOneDsStrategy(availableDsName) == ACCEPT) {
+                    importedBuilding =
+                        NearestBuilding.getNearestBuilding(importedData.get(availableDsName), latLon);
                 } else {
                     importedBuilding = null;
                 }
             }
             // Both available
             else {
-                Way geometryBuilding = geometryDS.getWays().iterator().next();
-                Way tagsBuilding = tagsDS.getWays().iterator().next();
+                Way geometryBuilding = geometryDs.getWays().iterator().next();
+                Way tagsBuilding = tagsDs.getWays().iterator().next();
                 double overlapPercentage = BuildingsOverlapDetector.detect(geometryBuilding, tagsBuilding);
 
-                if (overlapPercentage >= BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD.get()){
+                if (overlapPercentage
+                    >= BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD.get()) {
                     importedBuilding = combineBuildings(geometryBuilding, tagsBuilding);
-                } else{
+                } else {
                     CombineNearestStrategy strategy = getImportBuildingOverlapStrategy(
                         profile.getGeometry(),
                         profile.getTags(),

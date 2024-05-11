@@ -1,12 +1,10 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import java.util.concurrent.ExecutionException;
+import javax.swing.SwingWorker;
 import org.openstreetmap.josm.plugins.plbuildings.io.BuildingsDownloader;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.tools.Logging;
-
-import javax.swing.*;
-
-import java.util.concurrent.ExecutionException;
 
 /**
  * responsible for running SwingWorker for doing background (downloading) task to avoid freezing GUI.
@@ -14,7 +12,7 @@ import java.util.concurrent.ExecutionException;
 public class BuildingsDownloadTask extends SwingWorker<BuildingsImportData, Object> {
     private final BuildingsImportManager buildingsImportManager;
 
-    public BuildingsDownloadTask(BuildingsImportManager buildingsImportManager){
+    public BuildingsDownloadTask(BuildingsImportManager buildingsImportManager) {
         this.buildingsImportManager = buildingsImportManager;
     }
 

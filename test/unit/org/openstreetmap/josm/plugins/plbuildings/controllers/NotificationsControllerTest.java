@@ -27,7 +27,8 @@ public class NotificationsControllerTest {
         String reason = "test reason";
 
         new Expectations() {{
-            NotifiableImportStatuses.getInstance().isNotifiable(status); result = true;
+            NotifiableImportStatuses.getInstance().isNotifiable(status);
+            result = true;
         }};
 
         // Act
@@ -35,8 +36,10 @@ public class NotificationsControllerTest {
 
         // Assert
         new Verifications() {{
-            NotificationPopup.showNotification(status + ": " + reason); times = 1;
-            NotificationPopup.showNotification(status + ":" + reason); times = 0;
+            NotificationPopup.showNotification(status + ": " + reason);
+            times = 1;
+            NotificationPopup.showNotification(status + ":" + reason);
+            times = 0;
         }};
     }
 
@@ -47,14 +50,16 @@ public class NotificationsControllerTest {
         String reason = "test reason";
 
         new Expectations() {{
-            NotifiableImportStatuses.getInstance().isNotifiable(status); result = false;
+            NotifiableImportStatuses.getInstance().isNotifiable(status);
+            result = false;
         }};
 
         // Act
         controller.handleStatus(status, reason);
 
         new Verifications() {{
-            NotificationPopup.showNotification(status + ": " + reason); times = 0;
+            NotificationPopup.showNotification(status + ": " + reason);
+            times = 0;
         }};
     }
 }

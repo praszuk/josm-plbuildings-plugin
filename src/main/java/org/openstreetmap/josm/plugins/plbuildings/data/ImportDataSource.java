@@ -5,7 +5,8 @@ public enum ImportDataSource {
     BDOT("BDOT");  // from budynki.openstreetmap.org.pl
     // EGIB("EGiB");  // In future (maybe)
     private final String text;
-    ImportDataSource(final String text){
+
+    ImportDataSource(final String text) {
         this.text = text;
     }
 

@@ -1,5 +1,13 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.isSameButClonedBuilding;
+
+import java.io.File;
 import mockit.Mock;
 import mockit.MockUp;
 import org.junit.Before;
@@ -18,61 +26,55 @@ import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import java.io.File;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.isSameButClonedBuilding;
-
 public class ImportDataCombineNearestTest {
     @Rule
     public JOSMTestRules rules = new JOSMTestRules().main();
 
-    public DataSourceProfile profileOneDS;
-    public DataSourceProfile profileTwoDS;
-    public DataSet emptyDS;
-    public DataSet oneBuildingDS;
-    public DataSet multipleBuildingDS;
+    public DataSourceProfile profileOneDs;
+    public DataSourceProfile profileTwoDs;
+    public DataSet emptyDs;
+    public DataSet oneBuildingDs;
+    public DataSet multipleBuildingDs;
 
-    public DataSet bothOverlapOver60oneBuildingGeometryDS;
-    public DataSet bothOverlapOver60oneBuildingTagsDS;
+    public DataSet bothOverlapOver60oneBuildingGeometryDs;
+    public DataSet bothOverlapOver60oneBuildingTagsDs;
 
-    public DataSet bothOverlapLt60oneBuildingGeometryDS;
-    public DataSet bothOverlapLt60oneBuildingTagsDS;
+    public DataSet bothOverlapLt60oneBuildingGeometryDs;
+    public DataSet bothOverlapLt60oneBuildingTagsDs;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:4326"));
 
         DataSourceServer server = new DataSourceServer("server", "127.0.0.1");
 
-        this.profileOneDS = new DataSourceProfile(server.getName(), "ds1", "ds1", "profile1");
-        this.profileTwoDS = new DataSourceProfile(server.getName(), "ds1", "ds2", "profile2");
+        this.profileOneDs = new DataSourceProfile(server.getName(), "ds1", "ds1", "profile1");
+        this.profileTwoDs = new DataSourceProfile(server.getName(), "ds1", "ds2", "profile2");
 
-        this.emptyDS = new DataSet();
-        this.oneBuildingDS = importOsmFile(
+        this.emptyDs = new DataSet();
+        this.oneBuildingDs = importOsmFile(
             new File("test/data/import_data_combine_nearest_one_ds/one_building.osm"),
             ""
         );
-        this.multipleBuildingDS = importOsmFile(
+        this.multipleBuildingDs = importOsmFile(
             new File("test/data/import_data_combine_nearest_one_ds/multiple_buildings.osm"),
             ""
         );
 
-        this.bothOverlapOver60oneBuildingGeometryDS = importOsmFile(
+        this.bothOverlapOver60oneBuildingGeometryDs = importOsmFile(
             new File("test/data/import_data_combine_nearest_both_ds_overlap_gt_60/one_building_geometry.osm"),
             ""
         );
-        this.bothOverlapOver60oneBuildingTagsDS = importOsmFile(
+        this.bothOverlapOver60oneBuildingTagsDs = importOsmFile(
             new File("test/data/import_data_combine_nearest_both_ds_overlap_gt_60/one_building_tags.osm"),
             ""
         );
 
-        this.bothOverlapLt60oneBuildingGeometryDS = importOsmFile(
+        this.bothOverlapLt60oneBuildingGeometryDs = importOsmFile(
             new File("test/data/import_data_combine_nearest_both_ds_overlap_lt_60/one_building_geometry.osm"),
             ""
         );
-        this.bothOverlapLt60oneBuildingTagsDS = importOsmFile(
+        this.bothOverlapLt60oneBuildingTagsDs = importOsmFile(
             new File("test/data/import_data_combine_nearest_both_ds_overlap_lt_60/one_building_tags.osm"),
             ""
         );
@@ -80,24 +82,24 @@ public class ImportDataCombineNearestTest {
     }
 
     @Test
-    public void testOneDSEmptyDS(){
+    public void testOneDsEmptyDs() {
         OsmPrimitive nearestBuilding = BuildingsImportManager.getNearestImportedBuilding(
-            new BuildingsImportData(profileOneDS.getGeometry(), emptyDS),
-            profileOneDS,
+            new BuildingsImportData(profileOneDs.getGeometry(), emptyDs),
+            profileOneDs,
             null
         );
         assertNull(nearestBuilding);
     }
 
     @Test
-    public void testOneDSOneBuilding(){
-        Way expectedBuilding = oneBuildingDS.getWays().iterator().next();
+    public void testOneDsOneBuilding() {
+        Way expectedBuilding = oneBuildingDs.getWays().iterator().next();
         Node buildingNode = expectedBuilding.getNodes().iterator().next();
         LatLon latLon = new LatLon(buildingNode.lat(), buildingNode.lon());
 
         Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
-            new BuildingsImportData(profileOneDS.getGeometry(), oneBuildingDS),
-            profileOneDS,
+            new BuildingsImportData(profileOneDs.getGeometry(), oneBuildingDs),
+            profileOneDs,
             latLon
         );
 
@@ -106,29 +108,29 @@ public class ImportDataCombineNearestTest {
     }
 
     @Test
-    public void testOneDSMultipleBuilding(){
-        Way[] buildings = multipleBuildingDS.getWays().toArray(Way[]::new);
+    public void testOneDsMultipleBuilding() {
+        Way[] buildings = multipleBuildingDs.getWays().toArray(Way[]::new);
 
         Way expectedBuilding = buildings[2]; // avoid first building to check "nearest" instead of id or something else
         Node buildingNode = expectedBuilding.getNodes().iterator().next();
         LatLon latLon = new LatLon(buildingNode.lat(), buildingNode.lon());
 
         Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
-            new BuildingsImportData(profileOneDS.getGeometry(), multipleBuildingDS),
-            profileOneDS,
+            new BuildingsImportData(profileOneDs.getGeometry(), multipleBuildingDs),
+            profileOneDs,
             latLon
         );
 
-        assertTrue(multipleBuildingDS.getWays().size() > 2);
+        assertTrue(multipleBuildingDs.getWays().size() > 2);
         assertNotNull(nearestBuilding);
         assertTrue(isSameButClonedBuilding(expectedBuilding, nearestBuilding));
     }
 
     @Test
-    public void testTwoDSEmptyBothDS(){
+    public void testTwoDsEmptyBothDs() {
         Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
-            new BuildingsImportData(profileTwoDS.getGeometry(), emptyDS),
-            profileTwoDS,
+            new BuildingsImportData(profileTwoDs.getGeometry(), emptyDs),
+            profileTwoDs,
             null
         );
 
@@ -136,8 +138,8 @@ public class ImportDataCombineNearestTest {
     }
 
     @Test
-    public void testTwoDSEmptyOneDSStrategyAcceptOneDS(){
-        Way expectedBuilding = oneBuildingDS.getWays().iterator().next();
+    public void testTwoDsEmptyOneDsStrategyAcceptOneDs() {
+        Way expectedBuilding = oneBuildingDs.getWays().iterator().next();
 
         Node buildingNode = expectedBuilding.getNodes().iterator().next();
         LatLon latLon = new LatLon(buildingNode.lat(), buildingNode.lon());
@@ -146,10 +148,10 @@ public class ImportDataCombineNearestTest {
 
         Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
             new BuildingsImportData(
-                profileTwoDS.getGeometry(), emptyDS,
-                profileTwoDS.getTags(), oneBuildingDS
+                profileTwoDs.getGeometry(), emptyDs,
+                profileTwoDs.getTags(), oneBuildingDs
             ),
-            profileTwoDS,
+            profileTwoDs,
             latLon
         );
 
@@ -158,8 +160,8 @@ public class ImportDataCombineNearestTest {
     }
 
     @Test
-    public void testTwoDSEmptyOneDSStrategyAcceptOneDSMultipleBuilding(){
-        Way[] buildings = multipleBuildingDS.getWays().toArray(Way[]::new);
+    public void testTwoDsEmptyOneDsStrategyAcceptOneDsMultipleBuilding() {
+        Way[] buildings = multipleBuildingDs.getWays().toArray(Way[]::new);
 
         Way expectedBuilding = buildings[2]; // avoid first building to check "nearest" instead of id or something else
         Node buildingNode = expectedBuilding.getNodes().iterator().next();
@@ -169,28 +171,28 @@ public class ImportDataCombineNearestTest {
 
         Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
             new BuildingsImportData(
-                profileTwoDS.getGeometry(), emptyDS,
-                profileTwoDS.getTags(), multipleBuildingDS
+                profileTwoDs.getGeometry(), emptyDs,
+                profileTwoDs.getTags(), multipleBuildingDs
             ),
-            profileTwoDS,
+            profileTwoDs,
             latLon
         );
 
-        assertTrue(multipleBuildingDS.getWays().size() > 2);
+        assertTrue(multipleBuildingDs.getWays().size() > 2);
         assertNotNull(nearestBuilding);
         assertTrue(isSameButClonedBuilding(expectedBuilding, nearestBuilding));
     }
 
     @Test
-    public void testTwoDSEmptyOneDSStrategyCancelOneDS(){
+    public void testTwoDsEmptyOneDsStrategyCancelOneDs() {
         BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.put(CombineNearestStrategy.CANCEL.toString());
 
         Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
             new BuildingsImportData(
-                profileTwoDS.getGeometry(), emptyDS,
-                profileTwoDS.getTags(), oneBuildingDS
+                profileTwoDs.getGeometry(), emptyDs,
+                profileTwoDs.getTags(), oneBuildingDs
             ),
-            profileTwoDS,
+            profileTwoDs,
             null
         );
 
@@ -198,26 +200,26 @@ public class ImportDataCombineNearestTest {
     }
 
     @Test
-    public void testTwoDSEmptyOneDSStrategyAskUserAcceptOneDS(){
-        Way expectedBuilding = oneBuildingDS.getWays().iterator().next();
+    public void testTwoDsEmptyOneDsStrategyAskUserAcceptOneDs() {
+        Way expectedBuilding = oneBuildingDs.getWays().iterator().next();
 
         Node buildingNode = expectedBuilding.getNodes().iterator().next();
         LatLon latLon = new LatLon(buildingNode.lat(), buildingNode.lon());
 
         BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.put(CombineNearestStrategy.ASK_USER.toString());
 
-        new MockUp<BuildingsImportManager>(){
+        new MockUp<BuildingsImportManager>() {
             @Mock
-            CombineNearestStrategy getImportBuildingDataOneDSStrategy(String availableDataSource){
+            CombineNearestStrategy getImportBuildingDataOneDsStrategy(String availableDataSource) {
                 return CombineNearestStrategy.ACCEPT;
             }
         };
         Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
             new BuildingsImportData(
-                profileTwoDS.getGeometry(), emptyDS,
-                profileTwoDS.getTags(), oneBuildingDS
+                profileTwoDs.getGeometry(), emptyDs,
+                profileTwoDs.getTags(), oneBuildingDs
             ),
-            profileTwoDS,
+            profileTwoDs,
             latLon
         );
 
@@ -226,21 +228,21 @@ public class ImportDataCombineNearestTest {
     }
 
     @Test
-    public void testTwoDSEmptyOneDSStrategyAskUserCancelOneDS(){
+    public void testTwoDsEmptyOneDsStrategyAskUserCancelOneDs() {
         BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.put(CombineNearestStrategy.ASK_USER.toString());
 
-        new MockUp<BuildingsImportManager>(){
+        new MockUp<BuildingsImportManager>() {
             @Mock
-            CombineNearestStrategy getImportBuildingDataOneDSStrategy(String availableDataSource){
+            CombineNearestStrategy getImportBuildingDataOneDsStrategy(String availableDataSource) {
                 return CombineNearestStrategy.CANCEL;
             }
         };
         Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
             new BuildingsImportData(
-                    profileTwoDS.getGeometry(), emptyDS,
-                    profileTwoDS.getTags(), oneBuildingDS
+                profileTwoDs.getGeometry(), emptyDs,
+                profileTwoDs.getTags(), oneBuildingDs
             ),
-            profileTwoDS,
+            profileTwoDs,
             null
         );
 
@@ -248,23 +250,23 @@ public class ImportDataCombineNearestTest {
     }
 
     @Test
-    public void testTwoDSBothDSOverlapOver60Merge(){
-        Way expectedGeometryBuilding =  bothOverlapOver60oneBuildingGeometryDS.getWays().iterator().next();
-        Way expectedTagsBuilding = bothOverlapOver60oneBuildingTagsDS.getWays().iterator().next();
+    public void testTwoDsBothDsOverlapOver60Merge() {
+        Way expectedGeometryBuilding = bothOverlapOver60oneBuildingGeometryDs.getWays().iterator().next();
+        Way expectedTagsBuilding = bothOverlapOver60oneBuildingTagsDs.getWays().iterator().next();
 
         Node buildingNode = expectedGeometryBuilding.getNodes().iterator().next();
         LatLon latLon = new LatLon(buildingNode.lat(), buildingNode.lon());
-        
+
         Way expectedBuilding = new Way();
         expectedGeometryBuilding.getNodes().forEach(expectedBuilding::addNode);
         expectedTagsBuilding.getKeys().forEach(expectedBuilding::put);
 
         Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
             new BuildingsImportData(
-                profileTwoDS.getGeometry(), bothOverlapOver60oneBuildingGeometryDS,
-                profileTwoDS.getTags(), bothOverlapOver60oneBuildingTagsDS
+                profileTwoDs.getGeometry(), bothOverlapOver60oneBuildingGeometryDs,
+                profileTwoDs.getTags(), bothOverlapOver60oneBuildingTagsDs
             ),
-            profileTwoDS,
+            profileTwoDs,
             latLon
         );
 
@@ -273,10 +275,10 @@ public class ImportDataCombineNearestTest {
     }
 
     @Test
-    public void testTwoDSBothDSOverlapLt60AskUserAccept(){
-        Way expectedGeometryBuilding =  bothOverlapLt60oneBuildingGeometryDS.getWays().iterator().next();
-        Way expectedTagsBuilding = bothOverlapLt60oneBuildingTagsDS.getWays().iterator().next();
-        
+    public void testTwoDsBothDsOverlapLt60AskUserAccept() {
+        Way expectedGeometryBuilding = bothOverlapLt60oneBuildingGeometryDs.getWays().iterator().next();
+        Way expectedTagsBuilding = bothOverlapLt60oneBuildingTagsDs.getWays().iterator().next();
+
         Way expectedBuilding = new Way();
         expectedGeometryBuilding.getNodes().forEach(expectedBuilding::addNode);
         expectedTagsBuilding.getKeys().forEach(expectedBuilding::put);
@@ -284,20 +286,20 @@ public class ImportDataCombineNearestTest {
         Node buildingNode = expectedGeometryBuilding.getNodes().iterator().next();
         LatLon latLon = new LatLon(buildingNode.lat(), buildingNode.lon());
 
-        new MockUp<BuildingsImportManager>(){
+        new MockUp<BuildingsImportManager>() {
             @Mock
             CombineNearestStrategy getImportBuildingOverlapStrategy(
-                    String geomDS, String tagsDS, double overlapPercentage){
+                String geomDs, String tagsDs, double overlapPercentage) {
                 return CombineNearestStrategy.ACCEPT;
             }
         };
 
         Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
             new BuildingsImportData(
-                profileTwoDS.getGeometry(), bothOverlapLt60oneBuildingGeometryDS,
-                profileTwoDS.getTags(), bothOverlapLt60oneBuildingTagsDS
+                profileTwoDs.getGeometry(), bothOverlapLt60oneBuildingGeometryDs,
+                profileTwoDs.getTags(), bothOverlapLt60oneBuildingTagsDs
             ),
-            profileTwoDS,
+            profileTwoDs,
             latLon
         );
 
@@ -306,28 +308,28 @@ public class ImportDataCombineNearestTest {
     }
 
     @Test
-    public void testTwoDSBothDSOverlapLt60AskUserAcceptGeometry(){
-        Way expectedGeometryBuilding =  bothOverlapLt60oneBuildingGeometryDS.getWays().iterator().next();
-        Way expectedTagsBuilding = bothOverlapLt60oneBuildingTagsDS.getWays().iterator().next();
+    public void testTwoDsBothDsOverlapLt60AskUserAcceptGeometry() {
+        Way expectedGeometryBuilding = bothOverlapLt60oneBuildingGeometryDs.getWays().iterator().next();
+        Way expectedTagsBuilding = bothOverlapLt60oneBuildingTagsDs.getWays().iterator().next();
 
         Node buildingNode = expectedGeometryBuilding.getNodes().iterator().next();
         LatLon latLon = new LatLon(buildingNode.lat(), buildingNode.lon());
 
-        new MockUp<BuildingsImportManager>(){
+        new MockUp<BuildingsImportManager>() {
             @Mock
             CombineNearestStrategy getImportBuildingOverlapStrategy(
-                    String geomDS, String tagsDS, double overlapPercentage
-            ){
+                String geomDs, String tagsDs, double overlapPercentage
+            ) {
                 return CombineNearestStrategy.ACCEPT_GEOMETRY;
             }
         };
 
         Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
             new BuildingsImportData(
-                    profileTwoDS.getGeometry(), bothOverlapLt60oneBuildingGeometryDS,
-                    profileTwoDS.getTags(), bothOverlapLt60oneBuildingTagsDS
+                profileTwoDs.getGeometry(), bothOverlapLt60oneBuildingGeometryDs,
+                profileTwoDs.getTags(), bothOverlapLt60oneBuildingTagsDs
             ),
-            profileTwoDS,
+            profileTwoDs,
             latLon
         );
 
@@ -338,28 +340,28 @@ public class ImportDataCombineNearestTest {
     }
 
     @Test
-    public void testTwoDSBothDSOverlapLt60AskUserAcceptTags(){
-        Way expectedGeometryBuilding =  bothOverlapLt60oneBuildingGeometryDS.getWays().iterator().next();
-        Way expectedTagsBuilding = bothOverlapLt60oneBuildingTagsDS.getWays().iterator().next();
+    public void testTwoDsBothDsOverlapLt60AskUserAcceptTags() {
+        Way expectedGeometryBuilding = bothOverlapLt60oneBuildingGeometryDs.getWays().iterator().next();
+        Way expectedTagsBuilding = bothOverlapLt60oneBuildingTagsDs.getWays().iterator().next();
 
         Node buildingNode = expectedGeometryBuilding.getNodes().iterator().next();
         LatLon latLon = new LatLon(buildingNode.lat(), buildingNode.lon());
 
-        new MockUp<BuildingsImportManager>(){
+        new MockUp<BuildingsImportManager>() {
             @Mock
             CombineNearestStrategy getImportBuildingOverlapStrategy(
-                    String geomDS, String tagsDS, double overlapPercentage
-            ){
+                String geomDs, String tagsDs, double overlapPercentage
+            ) {
                 return CombineNearestStrategy.ACCEPT_TAGS;
             }
         };
 
         Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
             new BuildingsImportData(
-                profileTwoDS.getGeometry(), bothOverlapLt60oneBuildingGeometryDS,
-                profileTwoDS.getTags(), bothOverlapLt60oneBuildingTagsDS
+                profileTwoDs.getGeometry(), bothOverlapLt60oneBuildingGeometryDs,
+                profileTwoDs.getTags(), bothOverlapLt60oneBuildingTagsDs
             ),
-            profileTwoDS,
+            profileTwoDs,
             latLon
         );
 
@@ -368,22 +370,22 @@ public class ImportDataCombineNearestTest {
     }
 
     @Test
-    public void testTwoDSBothDSOverlapLt60AskUserCancel(){
-        new MockUp<BuildingsImportManager>(){
+    public void testTwoDsBothDsOverlapLt60AskUserCancel() {
+        new MockUp<BuildingsImportManager>() {
             @Mock
             CombineNearestStrategy getImportBuildingOverlapStrategy(
-                    String geomDS, String tagsDS, double overlapPercentage
-            ){
+                String geomDs, String tagsDs, double overlapPercentage
+            ) {
                 return CombineNearestStrategy.CANCEL;
             }
         };
 
         Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
             new BuildingsImportData(
-                profileTwoDS.getGeometry(), bothOverlapLt60oneBuildingGeometryDS,
-                profileTwoDS.getTags(), bothOverlapLt60oneBuildingTagsDS
+                profileTwoDs.getGeometry(), bothOverlapLt60oneBuildingGeometryDs,
+                profileTwoDs.getTags(), bothOverlapLt60oneBuildingTagsDs
             ),
-            profileTwoDS,
+            profileTwoDs,
             null
         );
 

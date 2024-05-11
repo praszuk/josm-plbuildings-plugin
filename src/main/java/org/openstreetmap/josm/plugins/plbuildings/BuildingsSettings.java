@@ -1,12 +1,11 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import java.util.List;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
-
-import java.util.List;
 
 public class BuildingsSettings {
 
@@ -41,10 +40,11 @@ public class BuildingsSettings {
      * so if both buildings don't overlap above given threshold then use COMBINE_NEAREST_BUILDING_BOTH_DS_STRATEGY
      * to decide
      */
-    public static final DoubleProperty COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD = new DoubleProperty(
-        "plbuildings.combine_nearest_building_overlap_threshold",
-        60.0
-    );
+    public static final DoubleProperty COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD =
+        new DoubleProperty(
+            "plbuildings.combine_nearest_building_overlap_threshold",
+            60.0
+        );
 
     public static final StringProperty IMPORT_STATS = new StringProperty(
         "plbuildings.import_stats",
@@ -53,10 +53,10 @@ public class BuildingsSettings {
 
     public static final StringProperty DATA_SOURCE_SERVERS = new StringProperty(
         "plbuildings.data_source_servers",
-            DataSourceServer.toJson(List.of(new DataSourceServer(
-                "plbuildings",
-                "https://josm-plbuildings-server.openstreetmap.org.pl/api/v2"
-            ))).toString()
+        DataSourceServer.toJson(List.of(new DataSourceServer(
+            "plbuildings",
+            "https://josm-plbuildings-server.openstreetmap.org.pl/api/v2"
+        ))).toString()
     );
 
     public static final StringProperty DATA_SOURCE_PROFILES = new StringProperty(

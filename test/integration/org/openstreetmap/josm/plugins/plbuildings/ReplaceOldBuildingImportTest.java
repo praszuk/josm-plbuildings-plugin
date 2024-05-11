@@ -1,5 +1,16 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
+import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.testProfile;
+import static org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator.isBuildingWayValid;
+
+import java.io.File;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.UndoRedoHandler;
@@ -9,20 +20,12 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import java.io.File;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.*;
-import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.*;
-import static org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator.isBuildingWayValid;
-
 public class ReplaceOldBuildingImportTest {
     @Rule
     public JOSMTestRules rules = new JOSMTestRules().main();
 
     @Test
-    public void testImportBuildingWithReplaceWithOneBuildingIsSelected(){
+    public void testImportBuildingWithReplaceWithOneBuildingIsSelected() {
         DataSet importData = importOsmFile(new File("test/data/replace_building_1.osm"), "");
         assertNotNull(importData);
 
@@ -46,7 +49,7 @@ public class ReplaceOldBuildingImportTest {
     }
 
     @Test
-    public void testImportBuildingWithReplaceButMoreThanOneSoNullSoBuildingIsSelectedSoCancelImport(){
+    public void testImportBuildingWithReplaceButMoreThanOneSoNullSoBuildingIsSelectedSoCancelImport() {
         DataSet importData = importOsmFile(new File("test/data/replace_building_1.osm"), "");
         assertNotNull(importData);
 
@@ -66,7 +69,7 @@ public class ReplaceOldBuildingImportTest {
     }
 
     @Test
-    public void testImportBuildingWithReplaceWithOneBuildingIsSelectedUndoRedo(){
+    public void testImportBuildingWithReplaceWithOneBuildingIsSelectedUndoRedo() {
         DataSet importData = importOsmFile(new File("test/data/replace_building_1.osm"), "");
         assertNotNull(importData);
 

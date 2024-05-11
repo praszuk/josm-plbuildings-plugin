@@ -12,7 +12,8 @@ public enum CombineNearestStrategy {
     ACCEPT_TAGS("accept_tags");
 
     private final String text;
-    CombineNearestStrategy(final String text){
+
+    CombineNearestStrategy(final String text) {
         this.text = text;
     }
 

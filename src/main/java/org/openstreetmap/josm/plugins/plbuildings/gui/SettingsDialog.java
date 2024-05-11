@@ -1,16 +1,16 @@
 package org.openstreetmap.josm.plugins.plbuildings.gui;
-import org.openstreetmap.josm.gui.MainApplication;
-
-import javax.swing.*;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-public class SettingsDialog extends JFrame {
-    final static int HEIGHT = 600;
-    final static int WIDTH = 600;
-    final static String TITLE = tr("PlBuildings Settings");
+import javax.swing.JFrame;
+import org.openstreetmap.josm.gui.MainApplication;
 
-    public SettingsDialog(SettingsDataSourcesPanel settingsDataSourcesPanel){
+public class SettingsDialog extends JFrame {
+    static final int HEIGHT = 600;
+    static final int WIDTH = 600;
+    static final String TITLE = tr("PlBuildings Settings");
+
+    public SettingsDialog(SettingsDataSourcesPanel settingsDataSourcesPanel) {
         super();
         setSize(WIDTH, HEIGHT);
         setLocationRelativeTo(MainApplication.getMainFrame());

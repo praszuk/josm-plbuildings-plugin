@@ -28,7 +28,7 @@ public class BuildingsTags {
     2022-07-30
     They not need to be checked by mapper
      */
-    public final static Set<String> COMMON_BUILDING_VALUES = Collections.unmodifiableSet(
+    public static final Set<String> COMMON_BUILDING_VALUES = Collections.unmodifiableSet(
         Stream.of(
             Stream.of(
                 "apartments",
@@ -53,7 +53,7 @@ public class BuildingsTags {
     );
 
     // Some imported data can contain other tags than building, it should be checked by mapper
-    public final static List<String> UNCOMMON_NO_BUILDING_TAGS = Arrays.asList(
+    public static final List<String> UNCOMMON_NO_BUILDING_TAGS = Arrays.asList(
         "amenity",
         "leisure",
         "historic",

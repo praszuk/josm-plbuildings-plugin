@@ -1,9 +1,14 @@
 package org.openstreetmap.josm.plugins.plbuildings.models;
 
-import javax.json.*;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
 
 public class DataSourceProfile {
     private final String dataSourceServerName;
@@ -19,7 +24,8 @@ public class DataSourceProfile {
     private static final String FIELD_SERVER_NAME = "server_name";
     private static final String FIELD_VISIBLE = "visible";
 
-    public DataSourceProfile(String dataSourceServerName, String geometry, String tags, String name, Boolean visible) {
+    public DataSourceProfile(String dataSourceServerName, String geometry, String tags, String name,
+                             Boolean visible) {
         this.dataSourceServerName = dataSourceServerName;
         this.geometry = geometry;
         this.tags = tags;
@@ -46,7 +52,8 @@ public class DataSourceProfile {
     public String getName() {
         return name;
     }
-    public Boolean isVisible(){
+
+    public Boolean isVisible() {
         return visible;
     }
 
@@ -61,37 +68,38 @@ public class DataSourceProfile {
     private void setName(String name) {
         this.name = name;
     }
-    protected void setVisible(Boolean visible){
+
+    protected void setVisible(Boolean visible) {
         this.visible = visible;
     }
 
-    public void updateProfile(DataSourceProfile newProfile){
+    public void updateProfile(DataSourceProfile newProfile) {
         setName(newProfile.getName());
         setTags(newProfile.getTags());
         setGeometry(newProfile.getGeometry());
         setVisible(newProfile.isVisible());
     }
 
-    public static JsonArray toJson(Collection<DataSourceProfile> collection){
+    public static JsonArray toJson(Collection<DataSourceProfile> collection) {
         JsonArrayBuilder builder = Json.createArrayBuilder();
         collection.forEach(obj -> builder.add(
-                Json.createObjectBuilder()
-                    .add(FIELD_NAME, obj.name)
-                    .add(FIELD_GEOMETRY, obj.geometry)
-                    .add(FIELD_TAGS, obj.tags)
-                    .add(FIELD_SERVER_NAME, obj.dataSourceServerName)
-                    .add(FIELD_VISIBLE, obj.visible)
-                    .build()
+            Json.createObjectBuilder()
+                .add(FIELD_NAME, obj.name)
+                .add(FIELD_GEOMETRY, obj.geometry)
+                .add(FIELD_TAGS, obj.tags)
+                .add(FIELD_SERVER_NAME, obj.dataSourceServerName)
+                .add(FIELD_VISIBLE, obj.visible)
+                .build()
         ));
         return builder.build();
     }
 
-    public static Collection<DataSourceProfile> fromStringJson(String jsonString){
+    public static Collection<DataSourceProfile> fromStringJson(String jsonString) {
         JsonReader jsonReader = Json.createReader(new StringReader(jsonString));
         JsonArray jsonArray = jsonReader.readArray();
 
-        Collection <DataSourceProfile> collection = new ArrayList<>();
-        for (JsonValue jsonValue : jsonArray){
+        Collection<DataSourceProfile> collection = new ArrayList<>();
+        for (JsonValue jsonValue : jsonArray) {
             JsonObject jsonObject = jsonValue.asJsonObject();
             collection.add(
                 new DataSourceProfile(

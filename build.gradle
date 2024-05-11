@@ -1,5 +1,11 @@
 plugins {
     id("org.openstreetmap.josm").version("0.8.2")
+    id "checkstyle"
+}
+
+checkstyle {
+    toolVersion = "10.16.0"
+    maxWarnings = 0
 }
 
 dependencies {
@@ -12,6 +18,7 @@ dependencies {
     testImplementation("org.openstreetmap.josm:josm-unittest:"){changing=true}
     testImplementation('com.github.tomakehurst:wiremock-jre8:2.35.2')
     testImplementation("org.awaitility:awaitility:4.2.0")
+    checkstyle "com.puppycrawl.tools:checkstyle:${checkstyle.toolVersion}"
 }
 
 sourceSets {
@@ -42,3 +49,5 @@ test {
         }
     }
 }
+
+
