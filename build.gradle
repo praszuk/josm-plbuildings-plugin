@@ -5,6 +5,7 @@ plugins {
 
 checkstyle {
     toolVersion = "10.16.0"
+    maxWarnings = 0
 }
 
 dependencies {
