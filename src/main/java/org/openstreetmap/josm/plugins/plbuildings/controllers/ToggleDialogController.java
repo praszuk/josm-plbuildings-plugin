@@ -3,6 +3,10 @@ package org.openstreetmap.josm.plugins.plbuildings.controllers;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -16,44 +20,22 @@ import org.openstreetmap.josm.tools.Logging;
 public class ToggleDialogController {
     private final DataSourceConfig dataSourceConfigModel;
     private final BuildingsToggleDialog toggleDialogView;
-
-    private static final Color COLOR_DEFAULT = Color.BLACK;
-    /** Hex orange better than Color.ORANGE */
-    private static final Color COLOR_ORANGE = Color.decode("#ff781f");
     private final ToggleDialogProfilesComboBoxModel dataSourceProfilesComboBoxModel;
 
-    public ToggleDialogController(DataSourceConfig dataSourceConfig,
-                                  BuildingsToggleDialog toggleDialog) {
+    static final Color COLOR_DEFAULT = Color.BLACK;
+    /** Hex orange better than Color.ORANGE */
+    static final Color COLOR_ORANGE = Color.decode("#ff781f");
+
+    public ToggleDialogController(DataSourceConfig dataSourceConfig, BuildingsToggleDialog toggleDialog) {
         this.dataSourceConfigModel = dataSourceConfig;
         this.toggleDialogView = toggleDialog;
         this.dataSourceProfilesComboBoxModel = new ToggleDialogProfilesComboBoxModel();
 
         toggleDialogView.setDataSourceProfilesComboBoxModel(dataSourceProfilesComboBoxModel);
+        toggleDialogView.addDataSourceProfilesComboBoxActionListener(new DataSourceProfileComboBoxChanged());
+        dataSourceConfigModel.addPropertyChangeListener(DataSourceConfig.PROFILES, new DataSourceModelChanged());
 
-        initViewListeners();
-        initModelListeners();
-
-        setDefaultStatus();
-        updateTags("", "", false);
-        updateDataSourceProfilesComboBox();
-    }
-
-    private void initModelListeners() {
-        dataSourceConfigModel.addPropertyChangeListener(DataSourceConfig.PROFILES,
-            evt -> updateDataSourceProfilesComboBox());
-    }
-
-    private void initViewListeners() {
-        toggleDialogView.addDataSourceProfilesComboBoxActionListener(actionEvent -> {
-            int index = toggleDialogView.getDataSourceProfilesComboBoxSelectedIndex();
-            DataSourceProfile newCurrentProfile;
-            if (index == -1) {  // no selection
-                newCurrentProfile = null;
-            } else {
-                newCurrentProfile = dataSourceConfigModel.getProfiles().get(index);
-            }
-            dataSourceConfigModel.setCurrentProfile(newCurrentProfile);
-        });
+        initDefaultValues();
     }
 
     public void updateTags(String buildingType, String buildingLevels, boolean hasUncommonTag) {
@@ -79,31 +61,60 @@ public class ToggleDialogController {
         if (autoChangeToDefault) {
             setDefaultStatus();
         }
-
-    }
-
-    protected void updateDataSourceProfilesComboBox() {
-        dataSourceProfilesComboBoxModel.removeAllElements();
-        List<DataSourceProfile> profiles = dataSourceConfigModel.getProfiles();
-
-        dataSourceProfilesComboBoxModel.addAll(
-            profiles.stream() // TODO fix it, move it above!!!!
-                .filter(DataSourceProfile::isVisible)
-                .map(DataSourceProfile::getName)
-                .collect(Collectors.toList())
-        );
-        int currentProfileIndex;
-        try {
-            currentProfileIndex = profiles.indexOf(dataSourceConfigModel.getCurrentProfile());
-
-        } catch (NullPointerException ignore) {
-            currentProfileIndex = -1;  // no selection
-        }
-        this.toggleDialogView.setDataSourceProfilesComboBoxSelectedIndex(currentProfileIndex);
     }
 
     /**
-     * Select color for the JLabel status text depends on the ImportStatus.
+     * Load data from model to profiles comboxbox, update tags and set default status (IDLE).
+     */
+    private void initDefaultValues() {
+        updateDataSourceProfiles();
+        updateTags("", "", false);
+        setDefaultStatus();
+    }
+
+    private void updateDataSourceProfiles() {
+        updateProfilesComboBoxModel();
+        int currentProfileIndex = getCurrentProfileComboBoxModelIndex();
+        toggleDialogView.setDataSourceProfilesComboBoxSelectedIndex(currentProfileIndex);
+    }
+
+    private int getCurrentProfileComboBoxModelIndex() {
+        int currentProfileIndex;
+        try {
+            currentProfileIndex = dataSourceProfilesComboBoxModel.getIndexOf(dataSourceConfigModel.getCurrentProfile());
+        } catch (NullPointerException ignore) {
+            currentProfileIndex = -1;
+        }
+        return currentProfileIndex;
+    }
+
+
+    private List<DataSourceProfile> getFilteredDataSourceProfiles() {
+        return dataSourceConfigModel.getProfiles().stream()
+            .filter(DataSourceProfile::isVisible)
+            .collect(Collectors.toList());
+    }
+
+    private void updateProfilesComboBoxModel() {
+        dataSourceProfilesComboBoxModel.removeAllElements();
+        dataSourceProfilesComboBoxModel.addAll(
+            getFilteredDataSourceProfiles().stream().map(DataSourceProfile::getName).collect(Collectors.toList())
+        );
+    }
+
+    private DataSourceProfile getSelectedDataSourceProfileFromComboBox() {
+        int index = toggleDialogView.getDataSourceProfilesComboBoxSelectedIndex();
+        DataSourceProfile selectedProfile;
+        if (index == -1) {  // no selection
+            selectedProfile = null;
+        } else {
+            selectedProfile = getFilteredDataSourceProfiles().get(index);
+        }
+        return selectedProfile;
+    }
+
+    /**
+     * Select color for the status text depends on the ImportStatus.
      */
     private Color getStatusTextColor(ImportStatus status) {
         Color statusColor;
@@ -133,5 +144,20 @@ public class ToggleDialogController {
             actionEvent -> setStatus(ImportStatus.IDLE, false),
             false
         );
+    }
+
+    private class DataSourceProfileComboBoxChanged implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            DataSourceProfile selectedProfile = getSelectedDataSourceProfileFromComboBox();
+            dataSourceConfigModel.setCurrentProfile(selectedProfile);
+        }
+    }
+
+    private class DataSourceModelChanged implements PropertyChangeListener {
+        @Override
+        public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+            updateDataSourceProfiles();
+        }
     }
 }

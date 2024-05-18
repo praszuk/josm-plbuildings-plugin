@@ -43,8 +43,7 @@ public class BuildingsPlugin extends Plugin {
         super.mapFrameInitialized(oldFrame, newFrame);
         if (newFrame != null) {
             BuildingsToggleDialog toggleDialog = new BuildingsToggleDialog();
-            toggleDialogController =
-                new ToggleDialogController(DataSourceConfig.getInstance(), toggleDialog);
+            toggleDialogController = new ToggleDialogController(DataSourceConfig.getInstance(), toggleDialog);
             newFrame.addToggleDialog(toggleDialog);
         } else {
             toggleDialogController = null;
