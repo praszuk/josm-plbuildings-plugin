@@ -16,7 +16,7 @@ import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 
 public class NotifiableImportStatuses {
-    private static final List<ImportStatus> notifiableStatuses =
+    public static final List<ImportStatus> notifiableStatuses =
         List.of(NO_DATA, NO_UPDATE, CONNECTION_ERROR, IMPORT_ERROR);
 
     private static NotifiableImportStatuses instance;
@@ -36,6 +36,10 @@ public class NotifiableImportStatuses {
 
     static void reset() {
         instance = null;
+    }
+
+    public static String[] getNotifiableStatusesNames() {
+        return notifiableStatuses.stream().map(ImportStatus::toString).toArray(String[]::new);
     }
 
     public boolean isNotifiable(ImportStatus status) {
