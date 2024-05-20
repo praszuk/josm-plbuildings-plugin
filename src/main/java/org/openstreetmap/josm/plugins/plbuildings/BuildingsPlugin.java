@@ -10,10 +10,13 @@ import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsSettingsActio
 import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsStatsAction;
 import org.openstreetmap.josm.plugins.plbuildings.controllers.SettingsController;
 import org.openstreetmap.josm.plugins.plbuildings.controllers.SettingsDataSourcesController;
+import org.openstreetmap.josm.plugins.plbuildings.controllers.SettingsNotificationsController;
 import org.openstreetmap.josm.plugins.plbuildings.controllers.ToggleDialogController;
 import org.openstreetmap.josm.plugins.plbuildings.gui.BuildingsToggleDialog;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsDataSourcesPanel;
+import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsNotificationsPanel;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
+import org.openstreetmap.josm.plugins.plbuildings.models.NotifiableImportStatuses;
 
 public class BuildingsPlugin extends Plugin {
     public static PluginInformation info;
@@ -30,7 +33,12 @@ public class BuildingsPlugin extends Plugin {
 
         SettingsDataSourcesController settingsDataSourcesController =
             new SettingsDataSourcesController(dataSourceConfig, new SettingsDataSourcesPanel());
-        SettingsController settingsController = new SettingsController(settingsDataSourcesController);
+
+        SettingsNotificationsController settingsNotificationsController = new SettingsNotificationsController(
+            NotifiableImportStatuses.getInstance(), new SettingsNotificationsPanel());
+
+        SettingsController settingsController = new SettingsController(
+            settingsDataSourcesController, settingsNotificationsController);
 
         MainMenu.add(MainApplication.getMenu().dataMenu, new BuildingsStatsAction());
         MainMenu.add(MainApplication.getMenu().dataMenu,
