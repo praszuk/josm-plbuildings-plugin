@@ -18,7 +18,7 @@ public class BuildingsDownloadTask extends SwingWorker<BuildingsImportData, Obje
 
     @Override
     protected BuildingsImportData doInBackground() {
-        return BuildingsDownloader.downloadBuildings(buildingsImportManager);
+        return BuildingsDownloader.getBuildingsImportData(buildingsImportManager);
     }
 
     @Override

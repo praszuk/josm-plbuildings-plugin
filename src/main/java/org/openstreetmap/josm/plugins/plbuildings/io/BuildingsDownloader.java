@@ -2,15 +2,20 @@ package org.openstreetmap.josm.plugins.plbuildings.io;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.json.JsonValue;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.io.GeoJSONReader;
+import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmJsonReader;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
+import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
@@ -20,13 +25,33 @@ import org.openstreetmap.josm.tools.Logging;
 
 public class BuildingsDownloader {
     /**
-     * Download buildings from PLBuildings Server API and parse it as DataSet.
+     * Download buildings from PLBuildings Server API and parse it as DataSets. It also updates the status on any error.
      *
      * @param manager ImportManager which contains DataSourceConfig for current download.
-     * @return BuildingsImportData with downloaded data or empty datasets or empty obj if IO/parse error
+     * @return BuildingsImportData with downloaded data or empty datasets or null if IO/parse error
      */
-    public static BuildingsImportData downloadBuildings(BuildingsImportManager manager) {
-        DataSourceProfile currentProfile = manager.getDataSourceProfile();
+    public static BuildingsImportData getBuildingsImportData(BuildingsImportManager manager) {
+        String url = buildUrl(
+            DataSourceConfig.getInstance(), manager.getCursorLatLon(), manager.getDataSourceProfile()
+        );
+        try {
+            InputStream responseStream = download(url);
+            return parseData(responseStream);
+        } catch (IOException ioException) {
+            Logging.warn("Connection error with getting building data: {0}", ioException.getMessage());
+            manager.setStatus(ImportStatus.CONNECTION_ERROR, ioException.getMessage());
+        } catch (Exception parseAndOtherExceptions) {
+            Logging.error("Parsing error – dataset from the server: {0}", parseAndOtherExceptions.getMessage());
+            manager.setStatus(ImportStatus.IMPORT_ERROR, parseAndOtherExceptions.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * @param latLon location of searching building (EPSG 4326)
+     */
+    static String buildUrl(DataSourceConfig dataSourceConfig, LatLon latLon, DataSourceProfile currentProfile) {
+        String serverBaseApiUrl = dataSourceConfig.getServerByName(currentProfile.getDataSourceServerName()).getUrl();
 
         String dataSourceQueryParam = currentProfile.getGeometry();
         if (!currentProfile.getGeometry().equals(currentProfile.getTags())) {
@@ -34,85 +59,56 @@ public class BuildingsDownloader {
         }
         dataSourceQueryParam = dataSourceQueryParam.toLowerCase();
 
-        String serverUrl = DataSourceConfig
-            .getInstance()
-            .getServerByName(currentProfile.getDataSourceServerName())
-            .getUrl();
-
-        return downloadBuildings(serverUrl, manager.getCursorLatLon(), dataSourceQueryParam);
+        return String.format(
+            "%s%s?lat=%f&lon=%f&data_sources=%s",
+            serverBaseApiUrl, DownloaderConstants.API_BUILDING_AT, latLon.lat(), latLon.lon(), dataSourceQueryParam
+        );
     }
 
     /**
-     * Download buildings from PLBuildings Server API and parse it as DataSet.
-     *
-     * @param serverUrl   root url to server api e.g. "http://127.0.0.1/api/v1"
-     * @param latLon      location of searching building (EPSG 4326)
-     * @param dataSources dataSources of buildings separated with comma
-     * @return BuildingsImportData with downloaded data or empty datasets or empty obj if IO/parse error
+     * @param serverUrl full url to make request (with params etc.)
      */
-    public static BuildingsImportData downloadBuildings(String serverUrl, LatLon latLon,
-                                                        String dataSources) {
-        StringBuilder urlBuilder = new StringBuilder(serverUrl);
-        urlBuilder.append(DownloaderConstants.API_BUILDING_AT);
+    static InputStream download(String serverUrl) throws IOException {
+        Logging.info("Getting buildings data from: {0}", serverUrl);
 
-        urlBuilder.append("?");
-        urlBuilder.append("lat=");
-        urlBuilder.append(latLon.lat());
+        URL url = new URL(serverUrl);
+        HttpClient httpClient = new Http1Client(url, "GET");
+        httpClient.setHeader("User-Agent", DownloaderConstants.USER_AGENT);
+        httpClient.connect();
+        HttpClient.Response response = httpClient.getResponse();
 
-        urlBuilder.append("&");
-        urlBuilder.append("lon=");
-        urlBuilder.append(latLon.lon());
+        return response.getContent();
+    }
 
-        urlBuilder.append("&");
-        urlBuilder.append("data_sources=");
-        urlBuilder.append(dataSources);
-
-        Logging.info("Getting building data from: {0}", urlBuilder);
-
+    static BuildingsImportData parseData(InputStream responseStream) throws IllegalDataException {
         BuildingsImportData dataSourceBuildingsData = new BuildingsImportData();
-        JsonReader reader = null;
-        try {
-            URL url = new URL(urlBuilder.toString());
-            HttpClient httpClient = new Http1Client(url, "GET");
-            httpClient.setHeader("User-Agent", DownloaderConstants.USER_AGENT);
-            httpClient.connect();
-            HttpClient.Response response = httpClient.getResponse();
 
-            reader = Json.createReader(response.getContent());
-            // TODO something not work with empty data
-            JsonArray objects = reader.readArray();
-            for (int i = 0; i < objects.size(); i++) {
-                JsonObject ds = objects.getJsonObject(i);
+        JsonReader reader = Json.createReader(responseStream);
+        JsonArray dataSourcesObjectsData = reader.readArray();
+        for (JsonValue jsonValue : dataSourcesObjectsData) {
+            JsonObject dataSourceObject = jsonValue.asJsonObject();
 
-                String source = ds.getString("source");
-                String format = ds.getString("format");
-                String data = ds.getJsonObject("data").toString();
-
-                // TODO add check if source is in all available data sources
-
-                if (format.equals("geojson")) {
-                    dataSourceBuildingsData.add(
-                        source,
-                        GeoJSONReader.parseDataSet(new ByteArrayInputStream(data.getBytes()), null)
-                    );
-                } else if (format.equals("osmjson")) {
-                    dataSourceBuildingsData.add(
-                        source,
-                        OsmJsonReader.parseDataSet(new ByteArrayInputStream(data.getBytes()), null)
-                    );
-                } else {
-                    Logging.error("Downloading error: Incorrect data format!");
-                }
+            String source = dataSourceObject.getString("source");
+            String format = dataSourceObject.getString("format");
+            if (dataSourceObject.isNull("data")) {
+                dataSourceBuildingsData.add(source, new DataSet());
+                continue;
             }
-        } catch (IOException ioException) {
-            Logging.warn("Connection error with getting building data: {0}", ioException.getMessage());
-        } catch (Exception exception) {
-            Logging.error("Cannot parse data set from the server: {0}", exception.getMessage());
-        } finally {
-            if (reader != null) {
-                reader.close();
+            String data = dataSourceObject.getJsonObject("data").toString();
+
+            if (format.equals("geojson")) {
+                dataSourceBuildingsData.add(
+                    source, GeoJSONReader.parseDataSet(new ByteArrayInputStream(data.getBytes()), null)
+                );
+            } else if (format.equals("osmjson")) {
+                dataSourceBuildingsData.add(
+                    source, OsmJsonReader.parseDataSet(new ByteArrayInputStream(data.getBytes()), null)
+                );
+            } else {
+                Logging.warn("Error at parsing buildings data: Unsupported data format! ({0))", format);
             }
         }
+        reader.close();
         return dataSourceBuildingsData;
     }
 }
