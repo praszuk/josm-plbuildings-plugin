@@ -29,6 +29,7 @@ import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceBuildingGeomet
 import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SurveyConfirmationDialog;
+import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
 import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsDuplicateValidator;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -97,14 +98,19 @@ public class BuildingsImportAction extends JosmAction {
         final DataSet currentDataSet = manager.getEditLayer();
         BuildingsImportStats.getInstance().addTotalImportActionCounter(1);
 
+        BuildingsImportData buildingsImportData = manager.getImportedData();
+        if (buildingsImportData == null) {  // Some error at importing data
+            return;
+        }
+
         Way importedBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
-            manager.getImportedData(),
+            buildingsImportData,
             manager.getDataSourceProfile(),
             manager.getCursorLatLon()
         );
         if (importedBuilding == null) {
-            Logging.info("Cannot get imported building.");
-            manager.setStatus(ImportStatus.NO_DATA, tr("Cannot get imported building."));
+            Logging.info("Building not found.");
+            manager.setStatus(ImportStatus.NO_DATA, tr("Building not found."));
             return;
         }
         // Add importedBuilding to DataSet – it's needed to avoid DataIntegrityError (primitives without osm metadata)
