@@ -159,11 +159,13 @@ public class BuildingsImportManager {
             return;
         }
 
-        BuildingsPlugin.toggleDialogController.updateTags(
-            resultBuilding.getKeys().getOrDefault("building", ""),
-            resultBuilding.getKeys().getOrDefault("building:levels", ""),
-            hasUncommonTags
-        );
+        String buildingText = "";
+        String buildingLevelsText = "";
+        if (resultBuilding != null) {
+            buildingText = resultBuilding.getKeys().getOrDefault("building", "");
+            buildingLevelsText = resultBuilding.getKeys().getOrDefault("building:levels", "");
+        }
+        BuildingsPlugin.toggleDialogController.updateTags(buildingText, buildingLevelsText, hasUncommonTags);
     }
 
     static CombineNearestStrategy getImportBuildingDataOneDsStrategy(String availableDataSource) {
