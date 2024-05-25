@@ -74,4 +74,8 @@ public class BuildingsSettings {
         "{}"
     );
 
+    public static final BooleanProperty UNCOMMON_TAGS_CHECK = new BooleanProperty(
+        "plbuildings.uncommon_tags_check", true
+    );
+
 }
