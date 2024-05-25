@@ -3,6 +3,7 @@ package org.openstreetmap.josm.plugins.plbuildings;
 import java.util.List;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
@@ -76,6 +77,10 @@ public class BuildingsSettings {
 
     public static final BooleanProperty UNCOMMON_TAGS_CHECK = new BooleanProperty(
         "plbuildings.uncommon_tags_check", true
+    );
+
+    public static final IntegerProperty CONNECTION_TIMEOUT = new IntegerProperty(
+        "plbuildings.connection_timeout_ms", 10 * 1000
     );
 
 }

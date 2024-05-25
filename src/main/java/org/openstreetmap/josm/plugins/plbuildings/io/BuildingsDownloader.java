@@ -1,5 +1,7 @@
 package org.openstreetmap.josm.plugins.plbuildings.io;
 
+import static org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings.CONNECTION_TIMEOUT;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +17,7 @@ import org.openstreetmap.josm.io.GeoJSONReader;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmJsonReader;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
@@ -73,6 +76,7 @@ public class BuildingsDownloader {
 
         URL url = new URL(serverUrl);
         HttpClient httpClient = new Http1Client(url, "GET");
+        httpClient.setConnectTimeout(BuildingsSettings.CONNECTION_TIMEOUT.get());
         httpClient.setHeader("User-Agent", DownloaderConstants.USER_AGENT);
         httpClient.connect();
         HttpClient.Response response = httpClient.getResponse();
