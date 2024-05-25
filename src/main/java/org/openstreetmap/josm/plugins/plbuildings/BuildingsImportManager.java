@@ -100,28 +100,29 @@ public class BuildingsImportManager {
 
     public void processDownloadedData() {
         performBuildingImport(this);
-        if (resultBuilding != null) {
-            postCheck();
-        }
-    }
-
-    private void postCheck() {
         boolean hasUncommonTags = false;
-        TagMap uncommon = findUncommonTags(resultBuilding);
-        if (!uncommon.isEmpty()) {
-            Logging.debug("Found uncommon tags {0}", uncommon);
-            setStatus(ImportStatus.ACTION_REQUIRED, null);
-            hasUncommonTags = true;
-            UncommonTagDialog.show(
-                uncommon.getTags()
-                    .toString()
-                    .replace("[", "")
-                    .replace("]", "")
-            );
+        if (resultBuilding != null && BuildingsSettings.UNCOMMON_TAGS_CHECK.get()) {
+            hasUncommonTags = checkUncommonTags();
         }
-
         setStatus(ImportStatus.DONE, null);
         updateGuiTags(hasUncommonTags);
+    }
+
+    private boolean checkUncommonTags() {
+        TagMap uncommon = findUncommonTags(resultBuilding);
+        if (uncommon.isEmpty()) {
+            return false;
+        }
+
+        Logging.debug("Found uncommon tags {0}", uncommon);
+        setStatus(ImportStatus.ACTION_REQUIRED, null);
+        UncommonTagDialog.show(
+            uncommon.getTags()
+                .toString()
+                .replace("[", "")
+                .replace("]", "")
+        );
+        return true;
     }
 
     private void updateGuiStatus() {
