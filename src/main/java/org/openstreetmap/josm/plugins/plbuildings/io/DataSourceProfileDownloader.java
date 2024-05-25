@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.plugins.plbuildings.io;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,6 +9,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 import org.openstreetmap.josm.tools.Http1Client;
@@ -27,6 +29,7 @@ public class DataSourceProfileDownloader {
         try {
             URL url = new URL(rawUrl);
             HttpClient httpClient = new Http1Client(url, "GET");
+            httpClient.setConnectTimeout(BuildingsSettings.CONNECTION_TIMEOUT.get());
             httpClient.setHeader("User-Agent", DownloaderConstants.USER_AGENT);
             httpClient.connect();
             HttpClient.Response response = httpClient.getResponse();
