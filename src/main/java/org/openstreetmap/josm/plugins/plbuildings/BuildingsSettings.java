@@ -1,9 +1,13 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import static org.openstreetmap.josm.plugins.plbuildings.data.BuildingsTags.DEFAULT_COMMON_BUILDING_VALUES;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
@@ -83,4 +87,7 @@ public class BuildingsSettings {
         "plbuildings.connection_timeout_ms", 10 * 1000
     );
 
+    public static final ListProperty COMMON_BUILDING_TAGS = new ListProperty(
+        "plbuildings.common_building_tags", new ArrayList<>(DEFAULT_COMMON_BUILDING_VALUES)
+    );
 }

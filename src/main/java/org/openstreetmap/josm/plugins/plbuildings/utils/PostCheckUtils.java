@@ -2,6 +2,7 @@ package org.openstreetmap.josm.plugins.plbuildings.utils;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.TagMap;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.data.BuildingsTags;
 
 
@@ -18,7 +19,7 @@ public class PostCheckUtils {
         if (primitive == null || !primitive.hasTag("building")) {
             return uncommon;
         }
-        if (!BuildingsTags.COMMON_BUILDING_VALUES.contains(primitive.get("building"))) {
+        if (!BuildingsSettings.COMMON_BUILDING_TAGS.get().contains(primitive.get("building"))) {
             uncommon.put("building", primitive.get("building"));
         }
         BuildingsTags.UNCOMMON_NO_BUILDING_TAGS.stream()

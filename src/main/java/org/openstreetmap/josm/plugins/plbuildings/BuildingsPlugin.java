@@ -11,12 +11,15 @@ import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsStatsAction;
 import org.openstreetmap.josm.plugins.plbuildings.controllers.SettingsController;
 import org.openstreetmap.josm.plugins.plbuildings.controllers.SettingsDataSourcesController;
 import org.openstreetmap.josm.plugins.plbuildings.controllers.SettingsNotificationsController;
+import org.openstreetmap.josm.plugins.plbuildings.controllers.SettingsUncommonTagsController;
 import org.openstreetmap.josm.plugins.plbuildings.controllers.ToggleDialogController;
 import org.openstreetmap.josm.plugins.plbuildings.gui.BuildingsToggleDialog;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsDataSourcesPanel;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsNotificationsPanel;
+import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsUncommonTagsPanel;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.NotifiableImportStatuses;
+import org.openstreetmap.josm.plugins.plbuildings.models.UncommonTags;
 
 public class BuildingsPlugin extends Plugin {
     public static PluginInformation info;
@@ -37,8 +40,12 @@ public class BuildingsPlugin extends Plugin {
         SettingsNotificationsController settingsNotificationsController = new SettingsNotificationsController(
             NotifiableImportStatuses.getInstance(), new SettingsNotificationsPanel());
 
+        SettingsUncommonTagsController settingsUncommonTagsController = new SettingsUncommonTagsController(
+            UncommonTags.getInstance(), new SettingsUncommonTagsPanel()
+        );
+
         SettingsController settingsController = new SettingsController(
-            settingsDataSourcesController, settingsNotificationsController);
+            settingsDataSourcesController, settingsNotificationsController, settingsUncommonTagsController);
 
         MainMenu.add(MainApplication.getMenu().dataMenu, new BuildingsStatsAction());
         MainMenu.add(MainApplication.getMenu().dataMenu,

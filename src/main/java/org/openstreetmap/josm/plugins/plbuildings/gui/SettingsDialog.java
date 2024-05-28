@@ -12,7 +12,8 @@ public class SettingsDialog extends JFrame {
     static final String TITLE = tr("PlBuildings Settings");
 
     public SettingsDialog(SettingsDataSourcesPanel settingsDataSourcesPanel,
-                          SettingsNotificationsPanel settingsNotificationsPanel) {
+                          SettingsNotificationsPanel settingsNotificationsPanel,
+                          SettingsUncommonTagsPanel settingsUncommonTagsPanelView) {
         super();
         setSize(WIDTH, HEIGHT);
         setLocationRelativeTo(MainApplication.getMainFrame());
@@ -21,6 +22,7 @@ public class SettingsDialog extends JFrame {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab(tr("Data sources"), settingsDataSourcesPanel);
         tabbedPane.addTab(tr("Notifications"), settingsNotificationsPanel);
+        tabbedPane.addTab(tr("Uncommon tags"), settingsUncommonTagsPanelView);
         add(tabbedPane);
 
         setVisible(true);
