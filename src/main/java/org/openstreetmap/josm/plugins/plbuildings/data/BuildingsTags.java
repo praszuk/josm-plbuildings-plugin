@@ -28,7 +28,7 @@ public class BuildingsTags {
     2022-07-30
     They not need to be checked by mapper
      */
-    public static final Set<String> COMMON_BUILDING_VALUES = Collections.unmodifiableSet(
+    public static final Set<String> DEFAULT_COMMON_BUILDING_VALUES = Collections.unmodifiableSet(
         Stream.of(
             Stream.of(
                 "apartments",
