@@ -17,7 +17,7 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
     public static final String SERVERS = "servers";
 
     private final ArrayList<DataSourceServer> servers;
-    private final ArrayList<DataSourceProfile> profiles = new ArrayList<>();
+    private final ArrayList<DataSourceProfile> profiles;
 
     private DataSourceProfile currentProfile;
 
@@ -34,9 +34,8 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
 
     private DataSourceConfig() {
         this.servers = new ArrayList<>();
-
+        this.profiles = new ArrayList<>();
         load();
-        this.currentProfile = profiles.isEmpty() ? null : profiles.get(0);
     }
 
     public DataSourceServer getServerByName(String name) {
@@ -64,11 +63,12 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
     }
 
     public DataSourceProfile getCurrentProfile() {
-        return this.currentProfile;
+        return currentProfile;
     }
 
     public void setCurrentProfile(DataSourceProfile profile) {
-        this.currentProfile = profile;
+        currentProfile = profile;
+        save();
     }
 
     public Collection<DataSourceProfile> getServerProfiles(DataSourceServer server) {
@@ -130,12 +130,21 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
     private void load() {
         servers.clear();
         profiles.clear();
+        currentProfile = null;
 
         String serializedServers = BuildingsSettings.DATA_SOURCE_SERVERS.get();
         servers.addAll(DataSourceServer.fromStringJson(serializedServers));
 
         String serializedProfiles = BuildingsSettings.DATA_SOURCE_PROFILES.get();
         profiles.addAll(DataSourceProfile.fromStringJson(serializedProfiles));
+
+        List<String> serverAndProfileNames = BuildingsSettings.CURRENT_DATA_SOURCE_PROFILE.get();
+        if (serverAndProfileNames.size() != 2) {
+            return;
+        }
+        String currentProfileServerName = serverAndProfileNames.get(0);
+        String currentProfileName = serverAndProfileNames.get(1);
+        currentProfile = getProfileByName(currentProfileServerName, currentProfileName);
     }
 
     private void save() {
@@ -144,6 +153,12 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
 
         String serializedProfiles = DataSourceProfile.toJson(profiles).toString();
         BuildingsSettings.DATA_SOURCE_PROFILES.put(serializedProfiles);
+
+        if (currentProfile != null) {
+            BuildingsSettings.CURRENT_DATA_SOURCE_PROFILE.put(
+                new ArrayList<>(List.of(currentProfile.getDataSourceServerName(), currentProfile.getName()))
+            );
+        }
     }
 
     /**
