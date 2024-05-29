@@ -32,6 +32,7 @@ public class ToggleDialogController {
         this.dataSourceProfilesComboBoxModel = new ToggleDialogProfilesComboBoxModel();
 
         toggleDialogView.setDataSourceProfilesComboBoxModel(dataSourceProfilesComboBoxModel);
+        toggleDialogView.setDataSourceProfilesComboBoxRenderer((profile -> ((DataSourceProfile) (profile)).getName()));
         toggleDialogView.addDataSourceProfilesComboBoxActionListener(new DataSourceProfileComboBoxChanged());
         dataSourceConfigModel.addPropertyChangeListener(DataSourceConfig.PROFILES, new DataSourceModelChanged());
 
@@ -97,9 +98,7 @@ public class ToggleDialogController {
 
     private void updateProfilesComboBoxModel() {
         dataSourceProfilesComboBoxModel.removeAllElements();
-        dataSourceProfilesComboBoxModel.addAll(
-            getFilteredDataSourceProfiles().stream().map(DataSourceProfile::getName).collect(Collectors.toList())
-        );
+        dataSourceProfilesComboBoxModel.addAll(getFilteredDataSourceProfiles());
     }
 
     private DataSourceProfile getSelectedDataSourceProfileFromComboBox() {

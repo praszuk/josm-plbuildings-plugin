@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.function.Function;
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -50,20 +51,6 @@ public class BuildingsToggleDialog extends ToggleDialog {
 
         this.status = new JLabel("");
         this.dataSourceProfilesComboBox = new JComboBox<>();
-        this.dataSourceProfilesComboBox.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                          boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value == null) {
-                    return this;
-                }
-                String profileName = (String) value;
-                setText(profileName.substring(0,
-                    Math.min(DATA_SOURCE_PROFILE_MAX_CHARS, profileName.length())));
-                return this;
-            }
-        });
 
         this.buildingType = new JLabel("");
         this.buildingLevels = new JLabel("");
@@ -147,6 +134,23 @@ public class BuildingsToggleDialog extends ToggleDialog {
 
     public void setDataSourceProfilesComboBoxSelectedIndex(int index) {
         dataSourceProfilesComboBox.setSelectedIndex(index);
+    }
+
+    public void setDataSourceProfilesComboBoxRenderer(Function<Object, String> getValueFromModelObject) {
+        dataSourceProfilesComboBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                          boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) {
+                    return this;
+                }
+                String profileName = getValueFromModelObject.apply(value);
+                setText(profileName.substring(0,
+                    Math.min(DATA_SOURCE_PROFILE_MAX_CHARS, profileName.length())));
+                return this;
+            }
+        });
     }
 
 }

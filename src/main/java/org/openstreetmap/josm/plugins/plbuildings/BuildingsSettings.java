@@ -69,6 +69,11 @@ public class BuildingsSettings {
         "[]"
     );
 
+    /** first element: unique server name, second element: unique profile name */
+    public static final ListProperty CURRENT_DATA_SOURCE_PROFILE = new ListProperty(
+        "plbuildings.current_data_source_profile", new ArrayList<>()
+    );
+
     public static final BooleanProperty DATA_SOURCE_PROFILES_AUTO_REFRESH = new BooleanProperty(
         "plbuildings.data_source_profiles_auto_refresh",
         true
