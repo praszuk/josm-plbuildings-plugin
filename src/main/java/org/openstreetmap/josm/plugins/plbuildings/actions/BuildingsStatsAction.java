@@ -30,7 +30,7 @@ public class BuildingsStatsAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        BuildingsImportStats buildingsStats = BuildingsImportStats.getInstance();
+        BuildingsImportStats buildingsStats = new BuildingsImportStats();
         LinkedHashMap<String, String> statsPanelData = new LinkedHashMap<>();
         statsPanelData.put(
             tr("New buildings"),
