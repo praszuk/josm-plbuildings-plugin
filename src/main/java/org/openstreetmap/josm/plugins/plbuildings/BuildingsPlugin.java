@@ -38,9 +38,7 @@ public class BuildingsPlugin extends Plugin {
 
         List<SettingsTabController> settingsTabControllers = List.of(
             new SettingsDataSourcesController(dataSourceConfig, new SettingsDataSourcesPanel()),
-            new SettingsNotificationsController(
-                NotifiableImportStatuses.getInstance(), new SettingsNotificationsPanel()
-            ),
+            new SettingsNotificationsController(new NotifiableImportStatuses(), new SettingsNotificationsPanel()),
             new SettingsUncommonTagsController(new UncommonTags(), new SettingsUncommonTagsPanel())
         );
 

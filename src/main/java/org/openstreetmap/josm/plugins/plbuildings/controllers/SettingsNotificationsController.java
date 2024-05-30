@@ -17,7 +17,12 @@ public class SettingsNotificationsController implements SettingsTabController {
         this.notifiableImportStatusesModel = notifiableImportStatusesModel;
         this.settingsNotificationsPanelView = settingsNotificationsPanelView;
 
+        notifiableImportStatusesModel.addPropertyChangeListener(
+            NotifiableImportStatuses.NOTIFIABLE_IMPORT_STATUSES, propertyChangeEvent -> updateCheckboxes()
+        );
+
         initCheckboxes();
+        updateCheckboxes();
     }
 
     private void initCheckboxes() {
@@ -25,10 +30,16 @@ public class SettingsNotificationsController implements SettingsTabController {
         NotificationCheckboxesChanged listener = new NotificationCheckboxesChanged();
 
         for (int i = 0; i < NotifiableImportStatuses.notifiableStatuses.size(); i++) {
-            boolean isSelected = notifiableImportStatusesModel.isNotifiable(
-                NotifiableImportStatuses.notifiableStatuses.get(i));
-            settingsNotificationsPanelView.setCheckboxSelected(i, isSelected);
             settingsNotificationsPanelView.checkboxAddActionListener(i, listener);
+        }
+    }
+
+    private void updateCheckboxes() {
+        for (int i = 0; i < NotifiableImportStatuses.notifiableStatuses.size(); i++) {
+            boolean isSelected = notifiableImportStatusesModel.isNotifiable(
+                NotifiableImportStatuses.notifiableStatuses.get(i)
+            );
+            settingsNotificationsPanelView.setCheckboxSelected(i, isSelected);
         }
     }
 
