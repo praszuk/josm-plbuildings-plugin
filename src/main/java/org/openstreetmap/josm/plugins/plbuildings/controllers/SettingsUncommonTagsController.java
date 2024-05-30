@@ -1,10 +1,13 @@
 package org.openstreetmap.josm.plugins.plbuildings.controllers;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.Component;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsUncommonTagsPanel;
 import org.openstreetmap.josm.plugins.plbuildings.models.UncommonTags;
 import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsCommonBuildingValuesListModel;
 
-public class SettingsUncommonTagsController {
+public class SettingsUncommonTagsController implements SettingsTabController {
     private final UncommonTags uncommonTagsModel;
     private final SettingsUncommonTagsPanel uncommonTagsPanelView;
     private final SettingsCommonBuildingValuesListModel commonBuildingValuesListModel;
@@ -57,7 +60,13 @@ public class SettingsUncommonTagsController {
         uncommonTagsModel.getCommonBuildingValues().forEach(commonBuildingValuesListModel::addElement);
     }
 
-    public SettingsUncommonTagsPanel getSettingsUncommonTagsPanelView() {
+    @Override
+    public String getTabTitle() {
+        return tr("Uncommon tags");
+    }
+
+    @Override
+    public Component getTabView() {
         return uncommonTagsPanelView;
     }
 }

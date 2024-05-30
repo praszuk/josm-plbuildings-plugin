@@ -1,11 +1,14 @@
 package org.openstreetmap.josm.plugins.plbuildings.controllers;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsNotificationsPanel;
 import org.openstreetmap.josm.plugins.plbuildings.models.NotifiableImportStatuses;
 
-public class SettingsNotificationsController {
+public class SettingsNotificationsController implements SettingsTabController {
     private final NotifiableImportStatuses notifiableImportStatusesModel;
     private final SettingsNotificationsPanel settingsNotificationsPanelView;
 
@@ -29,11 +32,6 @@ public class SettingsNotificationsController {
         }
     }
 
-    public SettingsNotificationsPanel getSettingsNotificationsPanelView() {
-        return settingsNotificationsPanelView;
-    }
-
-
     private class NotificationCheckboxesChanged implements ActionListener {
 
         @Override
@@ -46,4 +44,13 @@ public class SettingsNotificationsController {
         }
     }
 
+    @Override
+    public String getTabTitle() {
+        return tr("Notifications");
+    }
+
+    @Override
+    public Component getTabView() {
+        return settingsNotificationsPanelView;
+    }
 }
