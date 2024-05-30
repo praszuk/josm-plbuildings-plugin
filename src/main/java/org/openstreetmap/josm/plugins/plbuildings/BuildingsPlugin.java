@@ -41,7 +41,7 @@ public class BuildingsPlugin extends Plugin {
             new SettingsNotificationsController(
                 NotifiableImportStatuses.getInstance(), new SettingsNotificationsPanel()
             ),
-            new SettingsUncommonTagsController(UncommonTags.getInstance(), new SettingsUncommonTagsPanel())
+            new SettingsUncommonTagsController(new UncommonTags(), new SettingsUncommonTagsPanel())
         );
 
         MainMenu.add(MainApplication.getMenu().dataMenu, new BuildingsStatsAction());
