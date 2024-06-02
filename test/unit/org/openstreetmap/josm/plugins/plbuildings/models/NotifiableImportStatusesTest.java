@@ -8,7 +8,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,22 +25,6 @@ public class NotifiableImportStatusesTest {
         ImportStatus.NO_DATA, ImportStatus.NO_UPDATE, ImportStatus.CONNECTION_ERROR, ImportStatus.IMPORT_ERROR
     );
 
-    @BeforeEach
-    void setUp() {
-        NotifiableImportStatuses.reset(); // Reset singleton state before each test
-    }
-
-    @Test
-    void testGetInstanceSingleton() {
-        // Act
-        NotifiableImportStatuses instance1 = NotifiableImportStatuses.getInstance();
-        NotifiableImportStatuses instance2 = NotifiableImportStatuses.getInstance();
-
-        // Assert
-        Assertions.assertNotNull(instance1);
-        Assertions.assertNotNull(instance2);
-        Assertions.assertEquals(instance1, instance2);
-    }
 
     @Test
     void testLoadStatuses() {
@@ -51,7 +34,7 @@ public class NotifiableImportStatusesTest {
         );
 
         // Act
-        NotifiableImportStatuses instance = NotifiableImportStatuses.getInstance();
+        NotifiableImportStatuses instance = new NotifiableImportStatuses();
 
         // Assert
         Assertions.assertTrue(instance.isNotifiable(ImportStatus.CONNECTION_ERROR));
@@ -63,7 +46,7 @@ public class NotifiableImportStatusesTest {
     @Test
     void testSetNotifiableIgnoresNotNotifiable() {
         // Arrange
-        NotifiableImportStatuses instance = NotifiableImportStatuses.getInstance();
+        NotifiableImportStatuses instance = new NotifiableImportStatuses();
         BuildingsSettings.NOTIFIABLE_IMPORT_STATUSES.put("{}");
 
         // Act
@@ -78,7 +61,7 @@ public class NotifiableImportStatusesTest {
     @Test
     void testSetNotifiableSavesNotifiable() {
         // Arrange
-        NotifiableImportStatuses instance = NotifiableImportStatuses.getInstance();
+        NotifiableImportStatuses instance = new NotifiableImportStatuses();
         BuildingsSettings.NOTIFIABLE_IMPORT_STATUSES.put("{}");
 
         // Act
@@ -100,7 +83,7 @@ public class NotifiableImportStatusesTest {
         BuildingsSettings.NOTIFIABLE_IMPORT_STATUSES.put("{}");
 
         // Act
-        NotifiableImportStatuses instance = NotifiableImportStatuses.getInstance();
+        NotifiableImportStatuses instance = new NotifiableImportStatuses();
 
         // Assert
         boolean expected = notifiable.contains(importStatus);

@@ -24,7 +24,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class DataSourceConfigTest {
     @Rule
-    public JOSMTestRules rules = new JOSMTestRules().main();
+    public JOSMTestRules rules = new JOSMTestRules();
 
     DataSourceConfig dataSourceConfig;
     DataSourceServer server1;
@@ -35,7 +35,11 @@ public class DataSourceConfigTest {
 
     @Before
     public void setUp() {
-        this.dataSourceConfig = DataSourceConfig.getInstance();
+        BuildingsSettings.DATA_SOURCE_SERVERS.put("[]");
+        BuildingsSettings.DATA_SOURCE_PROFILES.put("[]");
+        BuildingsSettings.CURRENT_DATA_SOURCE_PROFILE.put(null);
+
+        this.dataSourceConfig = new DataSourceConfig();
 
         this.server1 = new DataSourceServer("Test", "http://127.0.0.1");
         this.server2 = new DataSourceServer("NotTest", "http://127.0.0.2");
@@ -62,14 +66,8 @@ public class DataSourceConfigTest {
         );
     }
 
-    void clearDataSourceConfig() {
-        dataSourceConfig.getProfiles().forEach(dataSourceConfig::removeProfile);
-        dataSourceConfig.getServers().forEach(dataSourceConfig::removeServer);
-    }
-
     @Test
     public void cannotAddDuplicatedServerByNameTest() {
-        clearDataSourceConfig();
         dataSourceConfig.addServer(server1);
         assertThrows(IllegalArgumentException.class, () -> dataSourceConfig.addServer(server1));
         assertEquals(1, dataSourceConfig.getServers().size());
@@ -77,7 +75,6 @@ public class DataSourceConfigTest {
 
     @Test
     public void cannotAddDuplicatedProfileByNameTest() {
-        clearDataSourceConfig();
         dataSourceConfig.addServer(server1);
 
         dataSourceConfig.addProfile(profile1server1);
@@ -87,7 +84,6 @@ public class DataSourceConfigTest {
 
     @Test
     public void canAddDuplicatedProfileNameForDifferentServerTest() {
-        clearDataSourceConfig();
         dataSourceConfig.addServer(server1);
         dataSourceConfig.addServer(server2);
 
@@ -104,8 +100,6 @@ public class DataSourceConfigTest {
 
     @Test
     public void getServerProfilesTest() {
-        clearDataSourceConfig();
-
         dataSourceConfig.addServer(server1);
         dataSourceConfig.addServer(server2);
         dataSourceConfig.addProfile(profile1server1);
@@ -118,8 +112,6 @@ public class DataSourceConfigTest {
 
     @Test
     public void removeServerMultipleTimeTest() {
-        clearDataSourceConfig();
-
         dataSourceConfig.addServer(server1);
         assertEquals(1, dataSourceConfig.getServers().size());
         dataSourceConfig.removeServer(server1);
@@ -130,8 +122,6 @@ public class DataSourceConfigTest {
 
     @Test
     public void removeProfileMultipleTimeTest() {
-        clearDataSourceConfig();
-
         dataSourceConfig.addServer(server1);
         dataSourceConfig.addProfile(profile1server1);
         assertEquals(1, dataSourceConfig.getProfiles().size());
@@ -143,8 +133,6 @@ public class DataSourceConfigTest {
 
     @Test
     public void removeServerCauseRemoveAllConnectedProfilesTest() {
-        clearDataSourceConfig();
-
         dataSourceConfig.addServer(server1);
         dataSourceConfig.addServer(server2);
 
@@ -161,8 +149,6 @@ public class DataSourceConfigTest {
 
     @Test
     public void refreshFromServerProfileWhichNotExistInNewProfilesWillBeRemovedFromConfigTest() {
-        clearDataSourceConfig();
-
         dataSourceConfig.addServer(server1);
 
         dataSourceConfig.addProfile(profile1server1);
@@ -181,8 +167,6 @@ public class DataSourceConfigTest {
 
     @Test
     public void refreshFromServerProfileWhichUpdatedFieldsWillBeUpdatedTest() {
-        clearDataSourceConfig();
-
         dataSourceConfig.addServer(server1);
 
         dataSourceConfig.addProfile(profile1server1);
@@ -214,8 +198,6 @@ public class DataSourceConfigTest {
 
     @Test
     public void refreshFromServerProfileWontChangeVisibilityWhenProfileIsLocallyVisibleAndRemotelyInvisibleTest() {
-        clearDataSourceConfig();
-
         dataSourceConfig.addServer(server1);
         DataSourceProfile visibleProfile = new DataSourceProfile(
             server1.getName(),
@@ -253,8 +235,6 @@ public class DataSourceConfigTest {
 
     @Test
     public void refreshFromServerProfileWontChangeVisibilityWhenProfileIsLocallyInvisibleAndRemotelyVisibleTest() {
-        clearDataSourceConfig();
-
         dataSourceConfig.addServer(server1);
         DataSourceProfile invisibleProfile = new DataSourceProfile(
             server1.getName(),
@@ -292,8 +272,6 @@ public class DataSourceConfigTest {
 
     @Test
     public void refreshFromServerProfileWhichNotExistConfigWillBeAddedTest() {
-        clearDataSourceConfig();
-
         dataSourceConfig.addServer(server1);
         dataSourceConfig.addServer(server2);
 
@@ -317,8 +295,6 @@ public class DataSourceConfigTest {
 
     @Test
     public void refreshFromServerProfilesNullResponseForOneServerShouldNotChangeAnythingInThisServerConfigTest() {
-        clearDataSourceConfig();
-
         dataSourceConfig.addServer(server1);
         dataSourceConfig.addServer(server2);
 
@@ -350,8 +326,6 @@ public class DataSourceConfigTest {
 
     @Test
     public void refreshFromServerProfileUpdateDoesNotChangeTheOrderOfProfilesTest() {
-        clearDataSourceConfig();
-
         DataSourceProfile profile3server1 = new DataSourceProfile(
             server1.getName(),
             profile1server1.getGeometry(),
@@ -385,7 +359,6 @@ public class DataSourceConfigTest {
 
     @Test
     public void swapProfileOrderTest() {
-        clearDataSourceConfig();
         dataSourceConfig.addServer(server1);
         dataSourceConfig.addServer(server2);
 

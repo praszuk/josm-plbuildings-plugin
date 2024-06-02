@@ -3,6 +3,7 @@ package org.openstreetmap.josm.plugins.plbuildings.models;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
@@ -63,5 +64,25 @@ public class DataSourceServer {
         jsonReader.close();
 
         return collection;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DataSourceServer that = (DataSourceServer) o;
+        return Objects.equals(name, that.name) && Objects.equals(url, that.url);
+    }
+
+    @Override
+    public String toString() {
+        return "DataSourceServer{"
+            + "name='" + name + '\''
+            + ", url='" + url + '\''
+            + '}';
     }
 }

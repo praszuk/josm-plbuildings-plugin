@@ -3,6 +3,7 @@ package org.openstreetmap.josm.plugins.plbuildings.models;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
@@ -122,5 +123,30 @@ public class DataSourceProfile {
      */
     public boolean isOneDataSource() {
         return this.tags.equals(this.geometry);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DataSourceProfile that = (DataSourceProfile) o;
+        return visible == that.visible && Objects.equals(dataSourceServerName, that.dataSourceServerName)
+            && Objects.equals(geometry, that.geometry) && Objects.equals(tags, that.tags)
+            && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public String toString() {
+        return "DataSourceProfile{"
+            + "dataSourceServerName='" + dataSourceServerName + '\''
+            + ", geometry='" + geometry + '\''
+            + ", tags='" + tags + '\''
+            + ", name='" + name + '\''
+            + ", visible=" + visible
+            + '}';
     }
 }

@@ -96,7 +96,8 @@ public class BuildingsImportAction extends JosmAction {
      */
     public static void performBuildingImport(BuildingsImportManager manager) {
         final DataSet currentDataSet = manager.getEditLayer();
-        BuildingsImportStats.getInstance().addTotalImportActionCounter(1);
+        final BuildingsImportStats importStats = new BuildingsImportStats();
+        importStats.addTotalImportActionCounter(1);
 
         BuildingsImportData buildingsImportData = manager.getImportedData();
         if (buildingsImportData == null) {  // Some error at importing data
@@ -105,7 +106,7 @@ public class BuildingsImportAction extends JosmAction {
 
         Way importedBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
             buildingsImportData,
-            manager.getDataSourceProfile(),
+            manager.getCurrentProfile(),
             manager.getCursorLatLon()
         );
         if (importedBuilding == null) {
@@ -116,14 +117,6 @@ public class BuildingsImportAction extends JosmAction {
         // Add importedBuilding to DataSet – it's needed to avoid DataIntegrityError (primitives without osm metadata)
         DataSet importDataSet = new DataSet();
         importDataSet.addPrimitiveRecursive(importedBuilding);
-
-        //        TODO
-        //        // Imported data validation and getting building
-        //        if (importedBuildingsDataSet == null){
-        //            Logging.warn("Downloading error: Cannot import building!");
-        //            manager.setStatus(ImportStatus.CONNECTION_ERROR);
-        //            return;
-        //        }
 
         // Pre-check/modify import data section
         Way selectedBuilding = manager.getSelectedBuilding();
@@ -159,8 +152,6 @@ public class BuildingsImportAction extends JosmAction {
                 );
             }
         }
-        // temp for testing
-        // if (importedBuilding.hasTag("building", "house")){importedBuilding.put("building", "detached");}
 
         // general import section
         Way resultBuilding;
@@ -184,7 +175,7 @@ public class BuildingsImportAction extends JosmAction {
                     return;
                 }
                 UndoRedoHandler.getInstance().add(updateBuildingTagsCommand, false);
-                BuildingsImportStats.getInstance().addImportWithTagsUpdateCounter(1);
+                importStats.addImportWithTagsUpdateCounter(1);
                 resultBuilding = selectedBuilding;
                 Logging.info("Updated selected building tags (without geometry replacing)!");
             }
@@ -215,7 +206,7 @@ public class BuildingsImportAction extends JosmAction {
                     return;
                 }
                 UndoRedoHandler.getInstance().add(importedNewBuildingSequence, false);
-                BuildingsImportStats.getInstance().addImportNewBuildingCounter(1);
+                importStats.addImportNewBuildingCounter(1);
                 resultBuilding = addBuildingGeometryCommand.getResultBuilding();
                 Logging.debug("Imported building: {0}",
                     addBuildingGeometryCommand.getResultBuilding().getId());
@@ -255,7 +246,7 @@ public class BuildingsImportAction extends JosmAction {
                     return;
                 }
                 UndoRedoHandler.getInstance().add(mergedGeometryAndUpdatedTagsBuildingSequence, false);
-                BuildingsImportStats.getInstance().addImportWithReplaceCounter(1);
+                importStats.addImportWithReplaceCounter(1);
                 resultBuilding = selectedBuilding;
                 Logging.debug("Updated building {0} with new data", selectedBuilding.getId());
             }
@@ -279,7 +270,7 @@ public class BuildingsImportAction extends JosmAction {
             cursorLatLon,
             selectedBuilding
         );
-        if (buildingsImportManager.getDataSourceProfile() == null) {
+        if (buildingsImportManager.getCurrentProfile() == null) {
             Logging.info("BuildingsImportAction canceled! No DataSourceProfile selected!");
             return;
         }

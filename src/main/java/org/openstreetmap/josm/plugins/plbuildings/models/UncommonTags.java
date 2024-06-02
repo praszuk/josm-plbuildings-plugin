@@ -10,21 +10,15 @@ import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 public class UncommonTags {
     public static final String COMMON_BUILDING_VALUES = "common_building_values";
 
-    private static UncommonTags instance;
-
     private ArrayList<String> commonBuildingValues;
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
-
-    private UncommonTags() {
+    public UncommonTags() {
+        BuildingsSettings.COMMON_BUILDING_TAGS.addListener(valueChangeEvent -> {
+            load();
+            propertyChangeSupport.firePropertyChange(COMMON_BUILDING_VALUES, null, commonBuildingValues);
+        });
         load();
-    }
-
-    public static UncommonTags getInstance() {
-        if (instance == null) {
-            instance = new UncommonTags();
-        }
-        return instance;
     }
 
     private void load() {
@@ -40,14 +34,12 @@ public class UncommonTags {
         commonBuildingValues.add(value);
         Collections.sort(commonBuildingValues);
         save();
-        propertyChangeSupport.firePropertyChange(COMMON_BUILDING_VALUES, null, commonBuildingValues);
     }
 
     public void removeCommonBuildingValue(String value) {
         commonBuildingValues.remove(value);
         Collections.sort(commonBuildingValues);
         save();
-        propertyChangeSupport.firePropertyChange(COMMON_BUILDING_VALUES, null, commonBuildingValues);
     }
 
     public List<String> getCommonBuildingValues() {

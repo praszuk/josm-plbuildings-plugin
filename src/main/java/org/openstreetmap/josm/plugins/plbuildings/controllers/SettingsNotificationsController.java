@@ -1,11 +1,14 @@
 package org.openstreetmap.josm.plugins.plbuildings.controllers;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsNotificationsPanel;
 import org.openstreetmap.josm.plugins.plbuildings.models.NotifiableImportStatuses;
 
-public class SettingsNotificationsController {
+public class SettingsNotificationsController implements SettingsTabController {
     private final NotifiableImportStatuses notifiableImportStatusesModel;
     private final SettingsNotificationsPanel settingsNotificationsPanelView;
 
@@ -14,7 +17,12 @@ public class SettingsNotificationsController {
         this.notifiableImportStatusesModel = notifiableImportStatusesModel;
         this.settingsNotificationsPanelView = settingsNotificationsPanelView;
 
+        notifiableImportStatusesModel.addPropertyChangeListener(
+            NotifiableImportStatuses.NOTIFIABLE_IMPORT_STATUSES, propertyChangeEvent -> updateCheckboxes()
+        );
+
         initCheckboxes();
+        updateCheckboxes();
     }
 
     private void initCheckboxes() {
@@ -22,17 +30,18 @@ public class SettingsNotificationsController {
         NotificationCheckboxesChanged listener = new NotificationCheckboxesChanged();
 
         for (int i = 0; i < NotifiableImportStatuses.notifiableStatuses.size(); i++) {
-            boolean isSelected = notifiableImportStatusesModel.isNotifiable(
-                NotifiableImportStatuses.notifiableStatuses.get(i));
-            settingsNotificationsPanelView.setCheckboxSelected(i, isSelected);
             settingsNotificationsPanelView.checkboxAddActionListener(i, listener);
         }
     }
 
-    public SettingsNotificationsPanel getSettingsNotificationsPanelView() {
-        return settingsNotificationsPanelView;
+    private void updateCheckboxes() {
+        for (int i = 0; i < NotifiableImportStatuses.notifiableStatuses.size(); i++) {
+            boolean isSelected = notifiableImportStatusesModel.isNotifiable(
+                NotifiableImportStatuses.notifiableStatuses.get(i)
+            );
+            settingsNotificationsPanelView.setCheckboxSelected(i, isSelected);
+        }
     }
-
 
     private class NotificationCheckboxesChanged implements ActionListener {
 
@@ -46,4 +55,13 @@ public class SettingsNotificationsController {
         }
     }
 
+    @Override
+    public String getTabTitle() {
+        return tr("Notifications");
+    }
+
+    @Override
+    public Component getTabView() {
+        return settingsNotificationsPanelView;
+    }
 }

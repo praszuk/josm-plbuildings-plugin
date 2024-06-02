@@ -27,7 +27,7 @@ public class ShareNodesBuildingImportTest {
         DataSet ds = importOsmFile(new File("test/data/share_nodes/building_base.osm"), "");
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertNotNull(ds);
@@ -50,7 +50,7 @@ public class ShareNodesBuildingImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertNotNull(ds);
@@ -65,7 +65,7 @@ public class ShareNodesBuildingImportTest {
         DataSet ds = importOsmFile(new File("test/data/share_nodes/two_adjacent_sides_merged_building_base.osm"), "");
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertNotNull(ds);
@@ -87,7 +87,7 @@ public class ShareNodesBuildingImportTest {
         DataSet ds = importOsmFile(new File("test/data/share_nodes/two_opposite_building_base.osm"), "");
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertNotNull(ds);
@@ -108,7 +108,7 @@ public class ShareNodesBuildingImportTest {
         DataSet ds = importOsmFile(new File("test/data/share_nodes/three_adjacent_nwe_building_base.osm"), "");
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertNotNull(ds);

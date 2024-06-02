@@ -4,7 +4,9 @@ import static org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataS
 import static org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesProfilesTableModel.COL_SERVER;
 import static org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesProfilesTableModel.COL_VISIBLE;
 import static org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesProfilesTableModel.PROFILE_COLUMNS;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Component;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsDataSourcesPanel;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
@@ -13,7 +15,7 @@ import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesP
 import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesServersListModel;
 import org.openstreetmap.josm.tools.Logging;
 
-public class SettingsDataSourcesController {
+public class SettingsDataSourcesController implements SettingsTabController {
 
     private final DataSourceConfig dataSourceConfigModel;
     private final SettingsDataSourcesPanel settingsDataSourcesPanelView;
@@ -104,10 +106,6 @@ public class SettingsDataSourcesController {
         settingsDataSourcesPanelView.removeServerBtnAddActionListener(actionEvent -> removeServerAction());
     }
 
-    public SettingsDataSourcesPanel getSettingsDataSourcesPanelView() {
-        return settingsDataSourcesPanelView;
-    }
-
     private void updateServerList() {
         serversListModel.clear();
         dataSourceConfigModel.getServers().forEach(server -> serversListModel.addElement(
@@ -185,5 +183,15 @@ public class SettingsDataSourcesController {
         if (success) {
             dataSourceConfigModel.removeServer(selectedServer);
         }
+    }
+
+    @Override
+    public String getTabTitle() {
+        return tr("Data sources");
+    }
+
+    @Override
+    public Component getTabView() {
+        return settingsDataSourcesPanelView;
     }
 }

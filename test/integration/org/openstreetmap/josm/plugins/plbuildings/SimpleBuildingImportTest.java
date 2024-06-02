@@ -30,7 +30,7 @@ public class SimpleBuildingImportTest {
         DataSet ds = new DataSet();
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(1, ds.getWays().size());
@@ -47,7 +47,7 @@ public class SimpleBuildingImportTest {
         DataSet ds = new DataSet();
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
         assertTrue(ds.isEmpty());
     }
@@ -66,7 +66,7 @@ public class SimpleBuildingImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, latLon, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
         assertEquals(1, ds.getWays().size());
     }
@@ -82,7 +82,7 @@ public class SimpleBuildingImportTest {
         DataSet ds = new DataSet();
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(1, ds.getWays().size());

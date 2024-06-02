@@ -6,7 +6,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.util.function.Function;
 import javax.swing.BorderFactory;
@@ -96,8 +96,8 @@ public class BuildingsToggleDialog extends ToggleDialog {
         return dataSourceProfilesComboBox.getSelectedIndex();
     }
 
-    public void addDataSourceProfilesComboBoxActionListener(ActionListener listener) {
-        dataSourceProfilesComboBox.addActionListener(listener);
+    public void addDataSourceProfilesComboBoxItemListener(ItemListener listener) {
+        dataSourceProfilesComboBox.addItemListener(listener);
     }
 
     public void setBuildingTypeText(String buildingTypeText) {

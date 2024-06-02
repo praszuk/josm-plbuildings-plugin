@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStra
 import static org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy.CANCEL;
 import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.DOWNLOADING;
 import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.IDLE;
+import static org.openstreetmap.josm.plugins.plbuildings.gui.NotificationPopup.showNotification;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding.getNearestBuilding;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.findUncommonTags;
 
@@ -14,7 +15,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.plugins.plbuildings.controllers.NotificationsController;
 import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDsOptionDialog;
@@ -23,6 +23,7 @@ import org.openstreetmap.josm.plugins.plbuildings.gui.UncommonTagDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
+import org.openstreetmap.josm.plugins.plbuildings.models.NotifiableImportStatuses;
 import org.openstreetmap.josm.plugins.plbuildings.utils.BuildingsOverlapDetector;
 import org.openstreetmap.josm.plugins.plbuildings.utils.CloneBuilding;
 import org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding;
@@ -36,18 +37,21 @@ public class BuildingsImportManager {
     private final LatLon cursorLatLon;
     private final Way selectedBuilding;
     private final DataSet editLayer;
-    private DataSourceProfile dataSourceProfile;
+    private final DataSourceConfig dataSourceConfig;
+    private DataSourceProfile currentProfile;
     private BuildingsImportData importedData;
     private ImportStatus status;
     private Way resultBuilding;
 
-    private final NotificationsController notificationsController = new NotificationsController();
+    private final NotifiableImportStatuses notifiableImportStatuses;
 
     public BuildingsImportManager(DataSet editLayer, LatLon cursorLatLon, Way selectedBuilding) {
         this.editLayer = editLayer;
         this.cursorLatLon = cursorLatLon;
         this.selectedBuilding = selectedBuilding;
-        this.dataSourceProfile = DataSourceConfig.getInstance().getCurrentProfile();
+        this.dataSourceConfig = new DataSourceConfig();
+        this.currentProfile = dataSourceConfig.getCurrentProfile();
+        this.notifiableImportStatuses = new NotifiableImportStatuses();
 
         this.importedData = null;
         this.resultBuilding = null;
@@ -70,16 +74,21 @@ public class BuildingsImportManager {
         return editLayer;
     }
 
-    public DataSourceProfile getDataSourceProfile() {
-        return this.dataSourceProfile;
+    public DataSourceProfile getCurrentProfile() {
+        return this.currentProfile;
+    }
+
+
+    public DataSourceConfig getDataSourceConfig() {
+        return dataSourceConfig;
     }
 
     public void setImportedData(BuildingsImportData importedData) {
         this.importedData = importedData;
     }
 
-    public void setDataSourceProfile(DataSourceProfile dataSourceProfile) {
-        this.dataSourceProfile = dataSourceProfile;
+    public void setCurrentProfile(DataSourceProfile currentProfile) {
+        this.currentProfile = currentProfile;
     }
 
     public void setResultBuilding(Way resultBuilding) {
@@ -89,7 +98,9 @@ public class BuildingsImportManager {
     public void setStatus(ImportStatus status, String reason) {
         this.status = status;
         updateGuiStatus();
-        notificationsController.handleStatus(status, reason);
+        if (notifiableImportStatuses.isNotifiable(status)) {
+            showNotification(status + ": " + reason);
+        }
     }
 
     public void run() {

@@ -61,7 +61,7 @@ public class DuplicateImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(1, ds.getWays().stream().filter(BuildingsWayValidator::isBuildingWayValid).count());
@@ -79,7 +79,7 @@ public class DuplicateImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(1, ds.getWays().size());
@@ -102,7 +102,7 @@ public class DuplicateImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(1, ds.getWays().size());
@@ -121,7 +121,7 @@ public class DuplicateImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(1, ds.getWays().stream().filter(way -> way.hasTag("building", "house")).count());

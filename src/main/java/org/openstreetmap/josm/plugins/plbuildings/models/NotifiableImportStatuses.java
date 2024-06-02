@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.IMPOR
 import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.NO_DATA;
 import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.NO_UPDATE;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
@@ -16,26 +18,20 @@ import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 
 public class NotifiableImportStatuses {
+    public static final String NOTIFIABLE_IMPORT_STATUSES = "notifiable_import_statuses";
     public static final List<ImportStatus> notifiableStatuses =
         List.of(NO_DATA, NO_UPDATE, CONNECTION_ERROR, IMPORT_ERROR);
 
-    private static NotifiableImportStatuses instance;
     private final HashMap<ImportStatus, Boolean> enabledNotifications;
+    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
-    private NotifiableImportStatuses() {
+    public NotifiableImportStatuses() {
         this.enabledNotifications = new HashMap<>();
+        BuildingsSettings.NOTIFIABLE_IMPORT_STATUSES.addListener(valueChangeEvent -> {
+            load();
+            propertyChangeSupport.firePropertyChange(NOTIFIABLE_IMPORT_STATUSES, null, enabledNotifications);
+        });
         load();
-    }
-
-    public static NotifiableImportStatuses getInstance() {
-        if (instance == null) {
-            instance = new NotifiableImportStatuses();
-        }
-        return instance;
-    }
-
-    static void reset() {
-        instance = null;
     }
 
     public static String[] getNotifiableStatusesNames() {
@@ -78,5 +74,9 @@ public class NotifiableImportStatuses {
 
         enabledNotifications.put(status, enabled);
         save();
+    }
+
+    public void addPropertyChangeListener(String name, PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(name, listener);
     }
 }

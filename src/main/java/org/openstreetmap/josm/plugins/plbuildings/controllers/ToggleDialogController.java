@@ -3,8 +3,8 @@ package org.openstreetmap.josm.plugins.plbuildings.controllers;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
@@ -33,7 +33,7 @@ public class ToggleDialogController {
 
         toggleDialogView.setDataSourceProfilesComboBoxModel(dataSourceProfilesComboBoxModel);
         toggleDialogView.setDataSourceProfilesComboBoxRenderer((profile -> ((DataSourceProfile) (profile)).getName()));
-        toggleDialogView.addDataSourceProfilesComboBoxActionListener(new DataSourceProfileComboBoxChanged());
+        toggleDialogView.addDataSourceProfilesComboBoxItemListener(new DataSourceProfileComboBoxItemChanged());
         dataSourceConfigModel.addPropertyChangeListener(DataSourceConfig.PROFILES, new DataSourceModelChanged());
 
         initDefaultValues();
@@ -107,7 +107,7 @@ public class ToggleDialogController {
         if (index == -1) {  // no selection
             selectedProfile = null;
         } else {
-            selectedProfile = getFilteredDataSourceProfiles().get(index);
+            selectedProfile = (DataSourceProfile) dataSourceProfilesComboBoxModel.getElementAt(index);
         }
         return selectedProfile;
     }
@@ -145,11 +145,13 @@ public class ToggleDialogController {
         );
     }
 
-    private class DataSourceProfileComboBoxChanged implements ActionListener {
+    private class DataSourceProfileComboBoxItemChanged implements ItemListener {
         @Override
-        public void actionPerformed(ActionEvent actionEvent) {
-            DataSourceProfile selectedProfile = getSelectedDataSourceProfileFromComboBox();
-            dataSourceConfigModel.setCurrentProfile(selectedProfile);
+        public void itemStateChanged(ItemEvent itemEvent) {
+            if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+                DataSourceProfile selectedProfile = getSelectedDataSourceProfileFromComboBox();
+                dataSourceConfigModel.setCurrentProfile(selectedProfile);
+            }
         }
     }
 
