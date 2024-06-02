@@ -31,7 +31,7 @@ public class BuildingsPlugin extends Plugin {
         super(info);
         BuildingsPlugin.info = info;
 
-        DataSourceConfig dataSourceConfig = DataSourceConfig.getInstance();
+        DataSourceConfig dataSourceConfig = new DataSourceConfig();
         if (BuildingsSettings.DATA_SOURCE_PROFILES_AUTO_REFRESH.get()) {
             dataSourceConfig.refreshFromServer(true);
         }
@@ -55,7 +55,7 @@ public class BuildingsPlugin extends Plugin {
         super.mapFrameInitialized(oldFrame, newFrame);
         if (newFrame != null) {
             BuildingsToggleDialog toggleDialog = new BuildingsToggleDialog();
-            toggleDialogController = new ToggleDialogController(DataSourceConfig.getInstance(), toggleDialog);
+            toggleDialogController = new ToggleDialogController(new DataSourceConfig(), toggleDialog);
             newFrame.addToggleDialog(toggleDialog);
         } else {
             toggleDialogController = null;

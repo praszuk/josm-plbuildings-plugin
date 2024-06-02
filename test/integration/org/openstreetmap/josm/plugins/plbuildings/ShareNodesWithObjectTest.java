@@ -28,7 +28,7 @@ public class ShareNodesWithObjectTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         Way building = (Way) ds.getWays().toArray()[0]; // doesn't matter which one
@@ -51,7 +51,7 @@ public class ShareNodesWithObjectTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];
@@ -74,7 +74,7 @@ public class ShareNodesWithObjectTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];
@@ -97,7 +97,7 @@ public class ShareNodesWithObjectTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];

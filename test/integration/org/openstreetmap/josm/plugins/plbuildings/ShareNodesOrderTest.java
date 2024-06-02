@@ -32,7 +32,7 @@ public class ShareNodesOrderTest {
         DataSet ds = importOsmFile(new File("test/data/share_nodes_order/two_opposite_buildings_base.osm"), "");
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertNotNull(ds);

@@ -37,7 +37,8 @@ public class BuildingsImportManager {
     private final LatLon cursorLatLon;
     private final Way selectedBuilding;
     private final DataSet editLayer;
-    private DataSourceProfile dataSourceProfile;
+    private final DataSourceConfig dataSourceConfig;
+    private DataSourceProfile currentProfile;
     private BuildingsImportData importedData;
     private ImportStatus status;
     private Way resultBuilding;
@@ -48,7 +49,8 @@ public class BuildingsImportManager {
         this.editLayer = editLayer;
         this.cursorLatLon = cursorLatLon;
         this.selectedBuilding = selectedBuilding;
-        this.dataSourceProfile = DataSourceConfig.getInstance().getCurrentProfile();
+        this.dataSourceConfig = new DataSourceConfig();
+        this.currentProfile = dataSourceConfig.getCurrentProfile();
         this.notifiableImportStatuses = new NotifiableImportStatuses();
 
         this.importedData = null;
@@ -72,16 +74,21 @@ public class BuildingsImportManager {
         return editLayer;
     }
 
-    public DataSourceProfile getDataSourceProfile() {
-        return this.dataSourceProfile;
+    public DataSourceProfile getCurrentProfile() {
+        return this.currentProfile;
+    }
+
+
+    public DataSourceConfig getDataSourceConfig() {
+        return dataSourceConfig;
     }
 
     public void setImportedData(BuildingsImportData importedData) {
         this.importedData = importedData;
     }
 
-    public void setDataSourceProfile(DataSourceProfile dataSourceProfile) {
-        this.dataSourceProfile = dataSourceProfile;
+    public void setCurrentProfile(DataSourceProfile currentProfile) {
+        this.currentProfile = currentProfile;
     }
 
     public void setResultBuilding(Way resultBuilding) {

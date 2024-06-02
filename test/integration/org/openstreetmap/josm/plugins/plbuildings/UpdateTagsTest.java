@@ -44,7 +44,7 @@ public class UpdateTagsTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(version, buildingToReplace.getVersion());
@@ -77,7 +77,7 @@ public class UpdateTagsTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(1, ds.getWays().size());
@@ -115,7 +115,7 @@ public class UpdateTagsTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(1, ds.getWays().size());
@@ -150,7 +150,7 @@ public class UpdateTagsTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(1, ds.getWays().size());

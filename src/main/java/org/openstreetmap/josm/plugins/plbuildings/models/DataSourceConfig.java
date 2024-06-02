@@ -12,7 +12,7 @@ import org.openstreetmap.josm.plugins.plbuildings.io.DataSourceProfileDownloader
 import org.openstreetmap.josm.tools.Logging;
 
 
-public class DataSourceConfig {  // TODO Try to remove singleton if easily possible
+public class DataSourceConfig {
     public static final String PROFILES = "profiles";
     public static final String SERVERS = "servers";
 
@@ -21,20 +21,25 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
 
     private DataSourceProfile currentProfile;
 
-    private static DataSourceConfig instance;
-
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
-    public static DataSourceConfig getInstance() {
-        if (instance == null) {
-            instance = new DataSourceConfig();
-        }
-        return instance;
-    }
-
-    private DataSourceConfig() {
+    public DataSourceConfig() {
         this.servers = new ArrayList<>();
         this.profiles = new ArrayList<>();
+
+        BuildingsSettings.DATA_SOURCE_SERVERS.addListener(valueChangeEvent -> {
+            load();
+            propertyChangeSupport.firePropertyChange(SERVERS, null, getServers());
+        });
+        BuildingsSettings.DATA_SOURCE_PROFILES.addListener(valueChangeEvent -> {
+            load();
+            propertyChangeSupport.firePropertyChange(PROFILES, null, getProfiles());
+        });
+        BuildingsSettings.CURRENT_DATA_SOURCE_PROFILE.addListener(valueChangeEvent -> {
+            load();
+            propertyChangeSupport.firePropertyChange(PROFILES, null, getProfiles());
+        });
+
         load();
     }
 
@@ -67,7 +72,7 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
     }
 
     public void setCurrentProfile(DataSourceProfile profile) {
-        currentProfile = profile;
+        currentProfile = profiles.stream().filter(p -> p.equals(profile)).findFirst().orElse(null);
         save();
     }
 
@@ -79,13 +84,9 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
     }
 
     public void addServer(DataSourceServer newServer) {
-        final Collection<DataSourceServer> oldServers = getServers();
-
         validateServer(newServer);
         servers.add(newServer);
         save();
-
-        propertyChangeSupport.firePropertyChange(SERVERS, oldServers, servers);
     }
 
 
@@ -93,9 +94,6 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
      * It removes server and all related profiles.
      */
     public void removeServer(DataSourceServer server) {
-        final Collection<DataSourceProfile> oldProfiles = getProfiles();
-        final Collection<DataSourceServer> oldServers = getServers();
-
         new ArrayList<>(profiles)
             .stream()
             .filter(p -> p.getDataSourceServerName().equals(server.getName()))
@@ -103,28 +101,17 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
 
         servers.remove(server);
         save();
-
-        propertyChangeSupport.firePropertyChange(PROFILES, oldProfiles, servers);
-        propertyChangeSupport.firePropertyChange(SERVERS, oldServers, servers);
     }
 
     public void addProfile(DataSourceProfile newProfile) {
-        final Collection<DataSourceProfile> oldProfiles = getProfiles();
-
         validateProfile(newProfile);
         profiles.add(newProfile);
         save();
-
-        propertyChangeSupport.firePropertyChange(PROFILES, oldProfiles, profiles);
     }
 
     public void removeProfile(DataSourceProfile profile) {
-        final Collection<DataSourceProfile> oldProfiles = getProfiles();
-
         profiles.remove(profile);
         save();
-
-        propertyChangeSupport.firePropertyChange(PROFILES, oldProfiles, profiles);
     }
 
     private void load() {
@@ -158,6 +145,8 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
             BuildingsSettings.CURRENT_DATA_SOURCE_PROFILE.put(
                 new ArrayList<>(List.of(currentProfile.getDataSourceServerName(), currentProfile.getName()))
             );
+        } else {
+            BuildingsSettings.CURRENT_DATA_SOURCE_PROFILE.put(null);
         }
     }
 
@@ -219,24 +208,18 @@ public class DataSourceConfig {  // TODO Try to remove singleton if easily possi
         assert profiles.contains(src);
         assert profiles.contains(dst);
 
-        Collection<DataSourceProfile> oldProfiles = getProfiles();
-
         int srcIndex = profiles.indexOf(src);
         int dstIndex = profiles.indexOf(dst);
 
         profiles.set(srcIndex, dst);
         profiles.set(dstIndex, src);
 
-        propertyChangeSupport.firePropertyChange(PROFILES, oldProfiles, profiles);
+        save();
     }
 
     public void setProfileVisible(DataSourceProfile profile, boolean value) {
         profile.setVisible(value);
         save();
-
-        // It doesn't matter which profile changed, because it will need to reload all profiles.
-        // Old profiles here won't work, because they are the same object (list of profiles)
-        propertyChangeSupport.firePropertyChange(PROFILES, null, profiles);
     }
 
     private void validateServer(DataSourceServer newServer) throws IllegalArgumentException {

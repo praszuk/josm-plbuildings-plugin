@@ -35,7 +35,7 @@ public class DataSourceConfigTest {
 
     @Before
     public void setUp() {
-        this.dataSourceConfig = DataSourceConfig.getInstance();
+        this.dataSourceConfig = new DataSourceConfig();
 
         this.server1 = new DataSourceServer("Test", "http://127.0.0.1");
         this.server2 = new DataSourceServer("NotTest", "http://127.0.0.2");

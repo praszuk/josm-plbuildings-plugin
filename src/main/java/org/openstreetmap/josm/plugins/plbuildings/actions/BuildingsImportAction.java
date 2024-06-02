@@ -106,7 +106,7 @@ public class BuildingsImportAction extends JosmAction {
 
         Way importedBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
             buildingsImportData,
-            manager.getDataSourceProfile(),
+            manager.getCurrentProfile(),
             manager.getCursorLatLon()
         );
         if (importedBuilding == null) {
@@ -280,7 +280,7 @@ public class BuildingsImportAction extends JosmAction {
             cursorLatLon,
             selectedBuilding
         );
-        if (buildingsImportManager.getDataSourceProfile() == null) {
+        if (buildingsImportManager.getCurrentProfile() == null) {
             Logging.info("BuildingsImportAction canceled! No DataSourceProfile selected!");
             return;
         }

@@ -41,7 +41,7 @@ public class ReplaceOldBuildingImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importData));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertEquals(4, buildingToReplace.getNodesCount() - 1);
@@ -62,7 +62,7 @@ public class ReplaceOldBuildingImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importData));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertTrue(ds.getWays().stream().allMatch(way -> versions.contains(way.getVersion())));
@@ -84,7 +84,7 @@ public class ReplaceOldBuildingImportTest {
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importData));
-        manager.setDataSourceProfile(testProfile);
+        manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
         assertTrue(isBuildingWayValid(buildingToReplace));

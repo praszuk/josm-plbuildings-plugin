@@ -1,7 +1,5 @@
 package org.openstreetmap.josm.plugins.plbuildings.io;
 
-import static org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings.CONNECTION_TIMEOUT;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,9 +32,7 @@ public class BuildingsDownloader {
      * @return BuildingsImportData with downloaded data or empty datasets or null if IO/parse error
      */
     public static BuildingsImportData getBuildingsImportData(BuildingsImportManager manager) {
-        String url = buildUrl(
-            DataSourceConfig.getInstance(), manager.getCursorLatLon(), manager.getDataSourceProfile()
-        );
+        String url = buildUrl(manager.getDataSourceConfig(), manager.getCursorLatLon(), manager.getCurrentProfile());
         try {
             InputStream responseStream = download(url);
             return parseData(responseStream);
