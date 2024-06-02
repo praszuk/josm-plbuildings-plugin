@@ -118,14 +118,6 @@ public class BuildingsImportAction extends JosmAction {
         DataSet importDataSet = new DataSet();
         importDataSet.addPrimitiveRecursive(importedBuilding);
 
-        //        TODO
-        //        // Imported data validation and getting building
-        //        if (importedBuildingsDataSet == null){
-        //            Logging.warn("Downloading error: Cannot import building!");
-        //            manager.setStatus(ImportStatus.CONNECTION_ERROR);
-        //            return;
-        //        }
-
         // Pre-check/modify import data section
         Way selectedBuilding = manager.getSelectedBuilding();
         if (selectedBuilding != null) {
@@ -160,8 +152,6 @@ public class BuildingsImportAction extends JosmAction {
                 );
             }
         }
-        // temp for testing
-        // if (importedBuilding.hasTag("building", "house")){importedBuilding.put("building", "detached");}
 
         // general import section
         Way resultBuilding;
