@@ -41,6 +41,21 @@ public class BuildingsOverlappingTest {
     }
 
     @Test
+    public void testCrossOverlappingSecondOverlappedAbout20percent() {
+        DataSet ds = importOsmFile(new File("test/data/overlapping/crossing_about_20.osm"), "");
+        assertNotNull(ds);
+
+        Way b1 = ds.getWays().stream().filter(w -> w.hasTag("name", "1")).findFirst().orElse(null);
+        Way b2 = ds.getWays().stream().filter(w -> w.hasTag("name", "2")).findFirst().orElse(null);
+        assertNotNull(b1);
+        assertNotNull(b2);
+
+        assertEquals(detect(b1, b2), 25., 5);
+        assertEquals(detect(b2, b1), 25., 5);
+    }
+
+
+    @Test
     public void testFirstInSecondOverlappingOver50percent() {
         DataSet ds = importOsmFile(new File("test/data/overlapping/first_in_second_over_50.osm"), "");
         assertNotNull(ds);
