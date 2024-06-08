@@ -30,6 +30,10 @@ public class BuildingsSettings {
         0.000001
     );
 
+    public static final DoubleProperty OVERLAP_DETECT_DUPLICATED_BUILDING_THRESHOLD = new DoubleProperty(
+        "plbuildings.overlap_detect_duplicated_building_threshold", 98.0
+    );
+
     public static final StringProperty COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY = new StringProperty(
         "plbuildings.combine_nearest_building_one_ds_strategy",
         CombineNearestStrategy.ASK_USER.toString()

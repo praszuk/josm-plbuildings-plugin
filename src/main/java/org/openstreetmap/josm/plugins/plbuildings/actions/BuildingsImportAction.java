@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.commands.AddBuildingGeometryCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceBuildingGeometryCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
@@ -31,7 +32,8 @@ import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SurveyConfirmationDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
-import org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsDuplicateValidator;
+import org.openstreetmap.josm.plugins.plbuildings.utils.BuildingsOverlapDetector;
+import org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -155,7 +157,19 @@ public class BuildingsImportAction extends JosmAction {
 
         // general import section
         Way resultBuilding;
-        if (BuildingsDuplicateValidator.isDuplicate(currentDataSet, importedBuilding)) {
+
+
+        List<OsmPrimitive> closeBuildings = NearestBuilding.getCloseBuildings(
+            currentDataSet, importedBuilding.getBBox()
+        );
+        double overlapPercentage = 0.0;
+        for (OsmPrimitive closeBuilding : closeBuildings) {
+            overlapPercentage = Math.max(
+                overlapPercentage, BuildingsOverlapDetector.detect(closeBuilding, importedBuilding)
+            );
+        }
+
+        if (overlapPercentage > BuildingsSettings.OVERLAP_DETECT_DUPLICATED_BUILDING_THRESHOLD.get()) {
             if (selectedBuilding == null) {
                 Logging.info("Duplicated building geometry. Not selected any building. Canceling!");
                 manager.setStatus(ImportStatus.NO_UPDATE,
