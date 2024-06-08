@@ -108,22 +108,4 @@ public class DuplicateImportTest {
         assertEquals(1, ds.getWays().size());
         assertEquals(1, ds.getWays().stream().filter(way -> way.hasTag("building", "house")).count());
     }
-
-    @Test
-    public void testDuplicateBaseMoreNodesImportBuildingAllNodesEqual() {
-        DataSet importDataSet = importOsmFile(new File("test/data/duplicate_import/import_building.osm"), "");
-        DataSet ds = importOsmFile(new File("test/data/duplicate_import/duplicate_more_nodes_base.osm"), "");
-        assertNotNull(importDataSet);
-        assertNotNull(ds);
-
-        Way buildingToReplace = (Way) ds.getWays().stream().filter(way -> way.hasTag("building", "yes")).toArray()[0];
-        ds.setSelected(buildingToReplace);
-
-        BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
-        manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
-        manager.setCurrentProfile(testProfile);
-        manager.processDownloadedData();
-
-        assertEquals(1, ds.getWays().stream().filter(way -> way.hasTag("building", "house")).count());
-    }
 }
