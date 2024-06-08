@@ -23,14 +23,14 @@ public class BuildingsOverlapDetector {
      * For each point check if is in both buildings and then increase 1 from 3 counters (1st/2nd/both)
      * It uses OVERLAP_DETECT_FREQ_DEGREE_STEP setting to set frequency between points.
      * Smaller will give better accuracy, but it will be slower.
+     * There is no difference with order of b1 and 2
      *
      * @param building1 closed building not multipolygon
      * @param building2 closed building not multipolygon
      * @return percentage of buildings overlapping:
-     *     <ul><li>if no overlapping then 0.00, if crossing intersection will be return</li>
-     *     <li>if 1st is completely inside in 2nd then it will return how much percentage 1st takes in 2nd</li>
-     *     <li>if 2nd is completely inside in 1st
-     *         then it will return similar as up but reversed (how much 2nd takes from 1st)</li>
+     *     <ul><li>if no overlapping then 0.00, if crossing <b>smaller</b> intersection will be return</li>
+     *     <li>if 1st is completely inside in 2nd or 2nd in 1st then it will return percentage of ratio that
+     *     inner building takes for outside building </li>
      *     <li>if something went wrong it will return -1.</li></ul>
      */
     public static double detect(OsmPrimitive building1, OsmPrimitive building2) {
@@ -56,15 +56,14 @@ public class BuildingsOverlapDetector {
         int lonPointCount = (int) ((maxLon - minLon) / freqDegreeStep);
 
         AtomicInteger bothCounter = new AtomicInteger();
-        AtomicInteger b1Counter = new AtomicInteger();
-        AtomicInteger b2Counter = new AtomicInteger();
+        AtomicInteger b1Counter = new AtomicInteger(); // only nodes in the first building without in both
+        AtomicInteger b2Counter = new AtomicInteger(); // similar as up, but second building
 
         ArrayList<Node> nodesToCheck = new ArrayList<>();
         DoubleStream.iterate(minLat, lat -> lat + freqDegreeStep).limit(latPointCount + 1).forEach(
             lat -> DoubleStream.iterate(minLon, lon -> lon + freqDegreeStep).limit(lonPointCount + 1)
                 .forEach(lon -> nodesToCheck.add(new Node(new LatLon(lat, lon)))));
 
-        // System.out.println(("Number of points: " + nodesToCheck.size()));
         nodesToCheck.forEach(node -> {
             boolean isB1 = nodeInsidePolygon(node, b1.getNodes());
             boolean isB2 = nodeInsidePolygon(node, b2.getNodes());
@@ -85,7 +84,9 @@ public class BuildingsOverlapDetector {
         }
         // Crossing
         else if (b1Counter.get() != 0 && b2Counter.get() != 0) {
-            return bothCounter.get() * 100. / (b1Counter.get() + b2Counter.get());
+            double b1Overlapping = bothCounter.get() * 100. / (b1Counter.get() + bothCounter.get());
+            double b2Overlapping = bothCounter.get() * 100. / (b2Counter.get() + bothCounter.get());
+            return Math.min(b1Overlapping, b2Overlapping);
         }
         // Crossing with same coordinates (actually duplicated object)
         else if (b1Counter.get() == 0 && b2Counter.get() == 0 & bothCounter.get() != 0) {
@@ -93,11 +94,11 @@ public class BuildingsOverlapDetector {
         }
         // First building is completely inside second
         else if (b1Counter.get() == 0) {
-            return bothCounter.get() * 100. / b1Counter.get();
+            return 100.0 - (b2Counter.get() * 100.0 / (b2Counter.get() + bothCounter.get()));
         }
         // Second building is completely inside first
         else if (b2Counter.get() == 0) {
-            return bothCounter.get() * 100. / b2Counter.get();
+            return 100.0 - (b1Counter.get() * 100.0 / (b1Counter.get() + bothCounter.get()));
         }
 
         Logging.error(String.format(

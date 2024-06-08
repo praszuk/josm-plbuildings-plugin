@@ -57,6 +57,7 @@ public class CloneBuildingTest {
 
         this.buildingToClone.removeNode(this.buildingToClone.getNode(0));
         assertNotEquals(this.buildingToClone.getNodes().size(), clonedBuilding.getNodes().size());
+        assertEquals(clonedBuilding.firstNode(), clonedBuilding.lastNode());
     }
 
     @Test
