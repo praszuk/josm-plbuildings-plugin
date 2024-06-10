@@ -48,7 +48,7 @@ public class TagConflictUtils {
     static boolean isTagConflictCanBeSkipped(String key, String currentValue, String newValue) {
         switch (key) {
             case "building":
-                if (currentValue.equals("yes")) {
+                if (currentValue.equals("yes") && !newValue.equals("construction")) {
                     return true;
                 }
                 // farm_auxiliary is more like deprecated in Poland
