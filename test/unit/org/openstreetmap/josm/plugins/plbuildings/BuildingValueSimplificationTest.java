@@ -30,7 +30,7 @@ public class BuildingValueSimplificationTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"detached,house", "semidetached_house,house"})
+    @CsvSource({"detached,house", "semidetached_house,house", "house,residential", "detached,residential"})
     void testNewPrimitiveHasSimplifiedBuildingValue(String selectedValue, String newPrimitiveValue) {
         OsmPrimitive selected = new Way();
         OsmPrimitive newPrimitive = new Way();
@@ -41,7 +41,7 @@ public class BuildingValueSimplificationTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"yes,house", "house,detached"})
+    @CsvSource({"yes,house", "house,detached", "residential,house"})
     public void testNewPrimitiveHasNotSimplifiedBuildingValue(String selectedValue, String newPrimitiveValue) {
         OsmPrimitive selected = new Way();
         OsmPrimitive newPrimitive = new Way();
