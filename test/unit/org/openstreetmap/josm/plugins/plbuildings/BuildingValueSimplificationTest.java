@@ -1,60 +1,57 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class BuildingValueSimplificationTest {
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().main();
 
     @Test
-    public void testNewPrimitiveHasSimplifiedBuildingValue() {
-        OsmPrimitive selected1 = new Way();
-        selected1.put("building", "detached");
+    void testSelectedEmptyBuildingValue() {
+        OsmPrimitive selected = new Way();
+        OsmPrimitive newPrimitive = new Way();
+        newPrimitive.put("building", "yes");
 
-        OsmPrimitive newPrimitive1 = new Way();
-        newPrimitive1.put("building", "house");
-
-        assertTrue(PreCheckUtils.isBuildingValueSimplification(selected1, newPrimitive1));
-
-        OsmPrimitive selected2 = new Way();
-        selected2.put("building", "detached");
-
-        OsmPrimitive newPrimitive2 = new Way();
-
-        assertTrue(PreCheckUtils.isBuildingValueSimplification(selected2, newPrimitive2));
+        Assertions.assertFalse(PreCheckUtils.isBuildingValueSimplification(selected, newPrimitive));
     }
 
     @Test
-    public void testNewPrimitiveHasNotSimplifiedBuildingValue() {
-        OsmPrimitive selected1 = new Way();
-        selected1.put("building", "yes");
+    void testNewPrimitiveEmptyValue() {
+        OsmPrimitive selected = new Way();
+        selected.put("building", "yes");
+        OsmPrimitive newPrimitive = new Way();
 
-        OsmPrimitive newPrimitive1 = new Way();
-        newPrimitive1.put("building", "house");
+        Assertions.assertTrue(PreCheckUtils.isBuildingValueSimplification(selected, newPrimitive));
+    }
 
-        assertFalse(PreCheckUtils.isBuildingValueSimplification(selected1, newPrimitive1));
+    @ParameterizedTest
+    @CsvSource({
+        "detached,house", "semidetached_house,house",
+        "house,residential", "detached,residential",
+        "garage,outbuilding", "barn,outbuilding",
+    })
+    void testNewPrimitiveHasSimplifiedBuildingValue(String selectedValue, String newPrimitiveValue) {
+        OsmPrimitive selected = new Way();
+        OsmPrimitive newPrimitive = new Way();
+        selected.put("building", selectedValue);
+        newPrimitive.put("building", newPrimitiveValue);
 
-        OsmPrimitive selected2 = new Way();
-        selected2.put("building", "house");
+        Assertions.assertTrue(PreCheckUtils.isBuildingValueSimplification(selected, newPrimitive));
+    }
 
-        OsmPrimitive newPrimitive2 = new Way();
-        newPrimitive2.put("building", "detached");
+    @ParameterizedTest
+    @CsvSource({"yes,house", "house,detached", "residential,house", "yes,outbuilding"})
+    public void testNewPrimitiveHasNotSimplifiedBuildingValue(String selectedValue, String newPrimitiveValue) {
+        OsmPrimitive selected = new Way();
+        OsmPrimitive newPrimitive = new Way();
+        selected.put("building", selectedValue);
+        newPrimitive.put("building", newPrimitiveValue);
 
-        assertFalse(PreCheckUtils.isBuildingValueSimplification(selected2, newPrimitive2));
-
-        OsmPrimitive selected3 = new Way();
-
-        OsmPrimitive newPrimitive3 = new Way();
-        newPrimitive3.put("building", "house");
-
-        assertFalse(PreCheckUtils.isBuildingValueSimplification(selected3, newPrimitive3));
+        Assertions.assertFalse(PreCheckUtils.isBuildingValueSimplification(selected, newPrimitive));
     }
 }
