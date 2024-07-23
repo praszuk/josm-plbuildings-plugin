@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.plugins.plbuildings.actions;
 
 import static org.openstreetmap.josm.plugins.plbuildings.commands.CommandWithErrorReason.getLatestErrorReason;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.findUncommonTags;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.hasSurveyValue;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.isBuildingLevelsWithRoofEquals;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.isBuildingValueSimplification;
@@ -20,6 +21,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
@@ -30,6 +32,7 @@ import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceBuildingGeomet
 import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SurveyConfirmationDialog;
+import org.openstreetmap.josm.plugins.plbuildings.gui.UncommonTagDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
 import org.openstreetmap.josm.plugins.plbuildings.utils.BuildingsOverlapDetector;
@@ -82,44 +85,10 @@ public class BuildingsImportAction extends JosmAction {
         return selected.size() == 1 ? (Way) selected.toArray()[0] : null;
     }
 
-    /**
-     * Flow:
-     * Validate imported datasets with preprocessing to get prepared import data
-     * (matching multiple datasets).
-     * Check if it's unique (no geometry duplicate):
-     * -- duplicate:
-     * ---- check if 1 building is selected:
-     * ------ selected -> try to update tags
-     * ------ not selected -> end
-     * -- not duplicate:
-     * ---- check if 1 building is selected:
-     * ------ selected -> try to replace geometry and update tags
-     * ------ not selected -> just import new building
-     */
-    public static void performBuildingImport(BuildingsImportManager manager) {
-        final DataSet currentDataSet = manager.getEditLayer();
-        final BuildingsImportStats importStats = new BuildingsImportStats();
-        importStats.addTotalImportActionCounter(1);
 
-        BuildingsImportData buildingsImportData = manager.getImportedData();
-        if (buildingsImportData == null) {  // Some error at importing data
-            return;
-        }
-
-        Way importedBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
-            buildingsImportData,
-            manager.getCurrentProfile(),
-            manager.getCursorLatLon()
-        );
-        if (importedBuilding == null) {
-            Logging.info("Building not found.");
-            manager.setStatus(ImportStatus.NO_DATA, tr("Building not found."));
-            return;
-        }
-        // Add importedBuilding to DataSet – it's needed to avoid DataIntegrityError (primitives without osm metadata)
-        DataSet importDataSet = new DataSet();
-        importDataSet.addPrimitiveRecursive(importedBuilding);
-
+    public static Way performFullBuildingImport(DataSet currentDataSet, BuildingsImportManager manager,
+                                                Way importedBuilding, BuildingsImportStats importStats) {
+        // TODO refactor
         // Pre-check/modify import data section
         Way selectedBuilding = manager.getSelectedBuilding();
         if (selectedBuilding != null) {
@@ -130,7 +99,7 @@ public class BuildingsImportAction extends JosmAction {
                     Logging.info("Canceled import with rejecting survey dialog confirmation.");
                     manager.setStatus(ImportStatus.CANCELED,
                         tr("Canceled import by rejected survey dialog confirmation."));
-                    return;
+                    return null;
                 }
             }
 
@@ -174,7 +143,7 @@ public class BuildingsImportAction extends JosmAction {
                 Logging.info("Duplicated building geometry. Not selected any building. Canceling!");
                 manager.setStatus(ImportStatus.NO_UPDATE,
                     tr("Duplicated building geometry, but not selected any building. Canceling!"));
-                return;
+                return null;
             } else {
                 Logging.info("Duplicated building geometry. Trying to update tags!");
                 UpdateBuildingTagsCommand updateBuildingTagsCommand = new UpdateBuildingTagsCommand(
@@ -186,15 +155,14 @@ public class BuildingsImportAction extends JosmAction {
                 if (!isUpdated) {
                     Logging.info("Error with updating tags!");
                     manager.setStatus(ImportStatus.IMPORT_ERROR, updateBuildingTagsCommand.getErrorReason());
-                    return;
+                    return null;
                 }
                 UndoRedoHandler.getInstance().add(updateBuildingTagsCommand, false);
                 importStats.addImportWithTagsUpdateCounter(1);
                 resultBuilding = selectedBuilding;
                 Logging.info("Updated selected building tags (without geometry replacing)!");
             }
-        }
-        else {
+        } else {
             if (selectedBuilding == null) {
                 Logging.info("Importing new building (without geometry replacing)!");
                 AddBuildingGeometryCommand addBuildingGeometryCommand = new AddBuildingGeometryCommand(
@@ -217,7 +185,7 @@ public class BuildingsImportAction extends JosmAction {
                 if (!isSuccess) {
                     Logging.debug("Import of a new building failed!");
                     manager.setStatus(ImportStatus.IMPORT_ERROR, getLatestErrorReason(commands));
-                    return;
+                    return null;
                 }
                 UndoRedoHandler.getInstance().add(importedNewBuildingSequence, false);
                 importStats.addImportNewBuildingCounter(1);
@@ -257,7 +225,7 @@ public class BuildingsImportAction extends JosmAction {
                 if (!isSuccess) {
                     Logging.debug("Update (geometry and tags) building failed!");
                     manager.setStatus(ImportStatus.IMPORT_ERROR, getLatestErrorReason(commands));
-                    return;
+                    return null;
                 }
                 UndoRedoHandler.getInstance().add(mergedGeometryAndUpdatedTagsBuildingSequence, false);
                 importStats.addImportWithReplaceCounter(1);
@@ -265,7 +233,198 @@ public class BuildingsImportAction extends JosmAction {
                 Logging.debug("Updated building {0} with new data", selectedBuilding.getId());
             }
         }
+        return resultBuilding;
+    }
+
+    public static Way performGeometryUpdateImport(DataSet currentDataSet, BuildingsImportManager manager,
+                                                   Way importedBuilding, BuildingsImportStats importStats) {
+        // TODO refactor
+        // Pre-check section
+        Way selectedBuilding = manager.getSelectedBuilding();
+        if (selectedBuilding == null) {
+            manager.setStatus(
+                ImportStatus.CANCELED, tr("Cannot perform building update geometry without selected building.")
+            );
+            return null;
+        }
+        if (hasSurveyValue(selectedBuilding)) {
+            manager.setStatus(ImportStatus.ACTION_REQUIRED, null);
+            boolean isContinue = SurveyConfirmationDialog.show();
+            if (!isContinue) {
+                Logging.info("Canceled import with rejecting survey dialog confirmation.");
+                manager.setStatus(ImportStatus.CANCELED,
+                    tr("Canceled import by rejected survey dialog confirmation."));
+                return null;
+            }
+        }
+
+        List<OsmPrimitive> closeBuildings = NearestBuilding.getCloseBuildings(
+            currentDataSet, importedBuilding.getBBox()
+        );
+        double overlapPercentage = 0.0;
+        for (OsmPrimitive closeBuilding : closeBuildings) {
+            overlapPercentage = Math.max(
+                overlapPercentage, BuildingsOverlapDetector.detect(closeBuilding, importedBuilding)
+            );
+        }
+
+        if (overlapPercentage > BuildingsSettings.OVERLAP_DETECT_DUPLICATED_BUILDING_THRESHOLD.get()) {
+            Logging.info("Duplicated building geometry. Canceling!");
+            manager.setStatus(ImportStatus.NO_UPDATE, tr("Duplicated building geometry. Canceling!"));
+            return null;
+        }
+
+        Logging.info("Importing new geometry!");
+        AddBuildingGeometryCommand addBuildingGeometryCommand = new AddBuildingGeometryCommand(
+            currentDataSet,
+            importedBuilding
+        );
+        ReplaceBuildingGeometryCommand replaceBuildingGeometryCommand =
+            new ReplaceBuildingGeometryCommand(
+                currentDataSet,
+                selectedBuilding,
+                addBuildingGeometryCommand
+            );
+
+        List<Command> commands = Arrays.asList(addBuildingGeometryCommand, replaceBuildingGeometryCommand);
+        SequenceCommand mergedGeometryBuildingSequence = new SequenceCommand(
+            tr("Updated building geometry"),
+            commands
+        );
+        boolean isSuccess = mergedGeometryBuildingSequence.executeCommand();
+        if (!isSuccess) {
+            Logging.debug("Update building geometry failed!");
+            manager.setStatus(ImportStatus.IMPORT_ERROR, getLatestErrorReason(commands));
+            return null;
+        }
+        UndoRedoHandler.getInstance().add(mergedGeometryBuildingSequence, false);
+        importStats.addImportWithReplaceCounter(1);
+        Logging.debug("Updated building {0} with new geometry", selectedBuilding.getId());
+
+        return selectedBuilding;
+    }
+
+    public static Way performTagsUpdateImport(DataSet currentDataSet, BuildingsImportManager manager,
+                                               Way importedBuilding, BuildingsImportStats importStats) {
+        // TODO refactor
+        // Pre-check section
+        Way selectedBuilding = manager.getSelectedBuilding();
+        if (selectedBuilding == null) {
+            manager.setStatus(
+                ImportStatus.CANCELED, tr("Cannot perform building update tags without selected building.")
+            );
+            return null;
+        }
+        // Pre-check/modify import data section
+
+        if (hasSurveyValue(selectedBuilding)) {
+            manager.setStatus(ImportStatus.ACTION_REQUIRED, null);
+            boolean isContinue = SurveyConfirmationDialog.show();
+            if (!isContinue) {
+                Logging.info("Canceled import with rejecting survey dialog confirmation.");
+                manager.setStatus(ImportStatus.CANCELED,
+                    tr("Canceled import by rejected survey dialog confirmation."));
+                return null;
+            }
+        }
+
+        if (isBuildingValueSimplification(selectedBuilding, importedBuilding)) {
+            String oldValue = selectedBuilding.get("building");
+            String newValue = importedBuilding.get("building");
+
+            importedBuilding.put("building", selectedBuilding.get("building"));
+            Logging.info("Avoiding building details simplification ({0} -\\> {1})", oldValue, newValue);
+        }
+
+        if (isBuildingLevelsWithRoofEquals(selectedBuilding, importedBuilding)) {
+            String oldValue = selectedBuilding.get("building:levels");
+            String newValue = importedBuilding.get("building:levels");
+
+            importedBuilding.put("building:levels", selectedBuilding.get("building:levels"));
+            Logging.info(
+                "Avoiding breaking building:levels caused by roof levels ({0} -\\> {1})",
+                oldValue,
+                newValue
+            );
+        }
+
+        // general import section
+        UpdateBuildingTagsCommand updateBuildingTagsCommand = new UpdateBuildingTagsCommand(
+            currentDataSet,
+            () -> selectedBuilding,
+            importedBuilding
+        );
+        boolean isSuccess = updateBuildingTagsCommand.executeCommand();
+        if (!isSuccess) {
+            Logging.debug("Update tags building failed!");
+            manager.setStatus(ImportStatus.IMPORT_ERROR, updateBuildingTagsCommand.getErrorReason());
+            return null;
+        }
+        UndoRedoHandler.getInstance().add(updateBuildingTagsCommand, false);
+        importStats.addImportWithReplaceCounter(1);
+        Logging.debug("Updated building {0} with new data", selectedBuilding.getId());
+
+        return selectedBuilding;
+    }
+
+    /**
+     * Flow:
+     * Validate imported datasets with preprocessing to get prepared import data
+     * (matching multiple datasets).
+     * Check if it's unique (no geometry duplicate):
+     * -- duplicate:
+     * ---- check if 1 building is selected:
+     * ------ selected -> try to update tags
+     * ------ not selected -> end
+     * -- not duplicate:
+     * ---- check if 1 building is selected:
+     * ------ selected -> try to replace geometry and update tags
+     * ------ not selected -> just import new building
+     */
+    public static void performBuildingImport(BuildingsImportManager manager) {
+        // TODO refactor
+        final DataSet currentDataSet = manager.getEditLayer();
+        final BuildingsImportStats importStats = new BuildingsImportStats();
+        importStats.addTotalImportActionCounter(1);
+
+        BuildingsImportData buildingsImportData = manager.getImportedData();
+        if (buildingsImportData == null) {  // Some error at importing data
+            return;
+        }
+
+        Way importedBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
+            buildingsImportData,
+            manager.getCurrentProfile(),
+            manager.getCursorLatLon()
+        );
+        if (importedBuilding == null) {
+            Logging.info("Building not found.");
+            manager.setStatus(ImportStatus.NO_DATA, tr("Building not found."));
+            return;
+        }
+        // Add importedBuilding to DataSet – it's needed to avoid DataIntegrityError (primitives without osm metadata)
+        DataSet importDataSet = new DataSet();
+        importDataSet.addPrimitiveRecursive(importedBuilding);
+
+        Way resultBuilding = performFullBuildingImport(currentDataSet, manager, importedBuilding, importStats);
+        // Way resultBuilding = performGeometryUpdateImport(currentDataSet, manager, importedBuilding, importStats);
+        // Way resultBuilding = performTagsUpdateImport(currentDataSet, manager, importedBuilding, importStats);
         manager.setResultBuilding(resultBuilding);
+
+        boolean hasUncommonTags = false;
+        if (resultBuilding != null && BuildingsSettings.UNCOMMON_TAGS_CHECK.get()) {
+            TagMap uncommon = findUncommonTags(resultBuilding);
+            if (!uncommon.isEmpty()) {
+                Logging.debug("Found uncommon tags {0}", uncommon);
+                manager.setStatus(ImportStatus.ACTION_REQUIRED, null);
+                UncommonTagDialog.show(
+                    uncommon.getTags().toString().replace("[", "").replace("]", "")
+                );
+            }
+        }
+        manager.setStatus(ImportStatus.DONE, null);
+        manager.updateGuiTags(hasUncommonTags);
+
         currentDataSet.clearSelection();
     }
 
