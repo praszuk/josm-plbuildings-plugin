@@ -21,6 +21,7 @@ import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.actions.importstrategy.FullImportStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.actions.importstrategy.ImportStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
+import org.openstreetmap.josm.plugins.plbuildings.exceptions.ImportActionCanceledException;
 import org.openstreetmap.josm.plugins.plbuildings.gui.UncommonTagDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
@@ -113,23 +114,31 @@ public class BuildingsImportAction extends JosmAction {
         ImportStrategy importStrategy = new FullImportStrategy(manager, importStats, importedBuilding);
         // ImportStrategy importStrategy = new GeometryUpdateStrategy(manager, importStats, importedBuilding); TODO
         // ImportStrategy importStrategy = new TagsUpdateStrategy(manager, importStats, importedBuilding); TODO
-        Way resultBuilding = importStrategy.performImport();
-        manager.setResultBuilding(resultBuilding);
+        try {
+            Way resultBuilding = importStrategy.performImport();
+            manager.setResultBuilding(resultBuilding);
 
-        boolean hasUncommonTags = false;
-        if (resultBuilding != null && BuildingsSettings.UNCOMMON_TAGS_CHECK.get()) {
-            TagMap uncommon = findUncommonTags(resultBuilding);
-            if (!uncommon.isEmpty()) {
-                Logging.debug("Found uncommon tags {0}", uncommon);
-                manager.setStatus(ImportStatus.ACTION_REQUIRED, null);
-                UncommonTagDialog.show(
-                    uncommon.getTags().toString().replace("[", "").replace("]", "")
-                );
+            boolean hasUncommonTags = false;
+            if (resultBuilding != null && BuildingsSettings.UNCOMMON_TAGS_CHECK.get()) {
+                TagMap uncommon = findUncommonTags(resultBuilding);
+                if (!uncommon.isEmpty()) {
+                    Logging.debug("Found uncommon tags {0}", uncommon);
+                    manager.setStatus(ImportStatus.ACTION_REQUIRED, null);
+                    UncommonTagDialog.show(
+                        uncommon.getTags().toString().replace("[", "").replace("]", "")
+                    );
+                }
             }
+            manager.setStatus(ImportStatus.DONE, null);
+            manager.updateGuiTags(hasUncommonTags);
+        } catch (ImportActionCanceledException exception) {
+            Logging.info("{0} {1}", exception.getStatus(), exception.getMessage());
+            manager.setStatus(exception.getStatus(), exception.getMessage());
         }
-        manager.setStatus(ImportStatus.DONE, null);
-        manager.updateGuiTags(hasUncommonTags);
-        manager.getEditLayer().clearSelection();
+        finally {
+            manager.getEditLayer().clearSelection();
+        }
+
     }
 
     @Override

@@ -1,9 +1,6 @@
 package org.openstreetmap.josm.plugins.plbuildings.actions.importstrategy;
 
 import static org.openstreetmap.josm.plugins.plbuildings.commands.CommandWithErrorReason.getLatestErrorReason;
-import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.hasSurveyValue;
-import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.isBuildingLevelsWithRoofEquals;
-import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.isBuildingValueSimplification;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Arrays;
@@ -11,7 +8,6 @@ import java.util.List;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
@@ -19,12 +15,9 @@ import org.openstreetmap.josm.plugins.plbuildings.commands.AddBuildingGeometryCo
 import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceBuildingGeometryCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
-import org.openstreetmap.josm.plugins.plbuildings.gui.SurveyConfirmationDialog;
+import org.openstreetmap.josm.plugins.plbuildings.exceptions.ImportActionCanceledException;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
-import org.openstreetmap.josm.plugins.plbuildings.utils.BuildingsOverlapDetector;
-import org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.UserCancelException;
 
 public class FullImportStrategy extends ImportStrategy {
 
@@ -33,67 +26,12 @@ public class FullImportStrategy extends ImportStrategy {
         super(manager, importStats, importedBuilding);
     }
 
-    public void tryPreventImportIfDataFromSurvey() throws UserCancelException {
-        if (hasSurveyValue(manager.getSelectedBuilding())) {
-            manager.setStatus(ImportStatus.ACTION_REQUIRED, null);
-            boolean isContinue = SurveyConfirmationDialog.show();
-            if (!isContinue) {
-                throw new UserCancelException("Canceled import by rejected survey dialog confirmation");
-            }
-        }
-    }
-
-    public void trySimplifyBuildingValue() {
-        if (isBuildingValueSimplification(manager.getSelectedBuilding(), importedBuilding)) {
-            String oldValue = manager.getSelectedBuilding().get("building");
-            String newValue = importedBuilding.get("building");
-
-            importedBuilding.put("building", manager.getSelectedBuilding().get("building"));
-            Logging.info("Avoiding building details simplification ({0} -\\> {1})", oldValue, newValue);
-        }
-    }
-
-    public void tryPreventBreakingRoofLevels() {
-        if (isBuildingLevelsWithRoofEquals(manager.getSelectedBuilding(), importedBuilding)) {
-            String oldValue = manager.getSelectedBuilding().get("building:levels");
-            String newValue = importedBuilding.get("building:levels");
-
-            importedBuilding.put("building:levels", manager.getSelectedBuilding().get("building:levels"));
-            Logging.info(
-                "Avoiding breaking building:levels caused by roof levels ({0} -\\> {1})",
-                oldValue,
-                newValue
-            );
-        }
-    }
-
-    public double calcMaxOverlapPercentageForCloseBuildings() {
-        List<OsmPrimitive> closeBuildings = NearestBuilding.getCloseBuildings(
-            currentDataSet, importedBuilding.getBBox()
-        );
-        double overlapPercentage = 0.0;
-        for (OsmPrimitive closeBuilding : closeBuildings) {
-            overlapPercentage = Math.max(
-                overlapPercentage, BuildingsOverlapDetector.detect(closeBuilding, importedBuilding)
-            );
-        }
-        return overlapPercentage;
-    }
-
     @Override
-    public Way performImport() {
+    public Way performImport() throws ImportActionCanceledException {
         // Pre-check/modify import data section
         Way selectedBuilding = manager.getSelectedBuilding();
         if (selectedBuilding != null) {
-            try {
-                tryPreventImportIfDataFromSurvey();
-            } catch (UserCancelException e) {
-                Logging.info("Canceled import with rejecting survey dialog confirmation.");
-                manager.setStatus(
-                    ImportStatus.CANCELED, tr("Canceled import by rejected survey dialog confirmation.")
-                );
-                return null;
-            }
+            tryPreventImportIfDataFromSurvey();
             trySimplifyBuildingValue();
             tryPreventBreakingRoofLevels();
         }
@@ -104,12 +42,10 @@ public class FullImportStrategy extends ImportStrategy {
         double overlapPercentage = calcMaxOverlapPercentageForCloseBuildings();
         if (overlapPercentage > BuildingsSettings.OVERLAP_DETECT_DUPLICATED_BUILDING_THRESHOLD.get()) {
             if (selectedBuilding == null) {
-                Logging.info("Duplicated building geometry. Not selected any building. Canceling!");
-                manager.setStatus(
-                    ImportStatus.NO_UPDATE,
-                    tr("Duplicated building geometry, but not selected any building. Canceling!")
+                throw new ImportActionCanceledException(
+                    tr("Duplicated building geometry, but not selected any building. Canceling!"),
+                    ImportStatus.NO_UPDATE
                 );
-                return null;
             } else {
                 Logging.info("Duplicated building geometry. Trying to update tags!");
                 UpdateBuildingTagsCommand updateBuildingTagsCommand = new UpdateBuildingTagsCommand(
@@ -119,9 +55,10 @@ public class FullImportStrategy extends ImportStrategy {
                 );
                 boolean isUpdated = updateBuildingTagsCommand.executeCommand();
                 if (!isUpdated) {
-                    Logging.info("Error with updating tags!");
-                    manager.setStatus(ImportStatus.IMPORT_ERROR, updateBuildingTagsCommand.getErrorReason());
-                    return null;
+                    throw new ImportActionCanceledException(
+                        updateBuildingTagsCommand.getErrorReason(),
+                        ImportStatus.IMPORT_ERROR
+                    );
                 }
                 UndoRedoHandler.getInstance().add(updateBuildingTagsCommand, false);
                 importStats.addImportWithTagsUpdateCounter(1);
@@ -150,14 +87,12 @@ public class FullImportStrategy extends ImportStrategy {
                 boolean isSuccess = importedNewBuildingSequence.executeCommand();
                 if (!isSuccess) {
                     Logging.debug("Import of a new building failed!");
-                    manager.setStatus(ImportStatus.IMPORT_ERROR, getLatestErrorReason(commands));
-                    return null;
+                    throw new ImportActionCanceledException(getLatestErrorReason(commands), ImportStatus.IMPORT_ERROR);
                 }
                 UndoRedoHandler.getInstance().add(importedNewBuildingSequence, false);
                 importStats.addImportNewBuildingCounter(1);
                 resultBuilding = addBuildingGeometryCommand.getResultBuilding();
-                Logging.debug("Imported building: {0}",
-                    addBuildingGeometryCommand.getResultBuilding().getId());
+                Logging.debug("Imported building: {0}", addBuildingGeometryCommand.getResultBuilding().getId());
             } else {
                 Logging.info("Importing new building (with geometry replacing and tags update)!");
 
@@ -190,8 +125,7 @@ public class FullImportStrategy extends ImportStrategy {
                 boolean isSuccess = mergedGeometryAndUpdatedTagsBuildingSequence.executeCommand();
                 if (!isSuccess) {
                     Logging.debug("Update (geometry and tags) building failed!");
-                    manager.setStatus(ImportStatus.IMPORT_ERROR, getLatestErrorReason(commands));
-                    return null;
+                    throw new ImportActionCanceledException(getLatestErrorReason(commands), ImportStatus.IMPORT_ERROR);
                 }
                 UndoRedoHandler.getInstance().add(mergedGeometryAndUpdatedTagsBuildingSequence, false);
                 importStats.addImportWithReplaceCounter(1);
