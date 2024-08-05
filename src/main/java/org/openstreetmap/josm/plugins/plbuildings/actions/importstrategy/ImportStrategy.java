@@ -10,6 +10,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.exceptions.ImportActionCanceledException;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SurveyConfirmationDialog;
@@ -68,6 +69,11 @@ public abstract class ImportStrategy {
                 newValue
             );
         }
+    }
+
+    public boolean isBuildingDuplicate() {
+        double overlapPercentage = calcMaxOverlapPercentageForCloseBuildings();
+        return overlapPercentage > BuildingsSettings.OVERLAP_DETECT_DUPLICATED_BUILDING_THRESHOLD.get();
     }
 
     public double calcMaxOverlapPercentageForCloseBuildings() {

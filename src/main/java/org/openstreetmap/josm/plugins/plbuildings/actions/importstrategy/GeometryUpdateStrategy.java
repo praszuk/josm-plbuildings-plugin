@@ -10,7 +10,6 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
-import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.commands.AddBuildingGeometryCommand;
 import org.openstreetmap.josm.plugins.plbuildings.commands.ReplaceBuildingGeometryCommand;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
@@ -37,8 +36,7 @@ public class GeometryUpdateStrategy extends ImportStrategy {
         }
         tryPreventImportIfDataFromSurvey();
 
-        double overlapPercentage = calcMaxOverlapPercentageForCloseBuildings();
-        if (overlapPercentage > BuildingsSettings.OVERLAP_DETECT_DUPLICATED_BUILDING_THRESHOLD.get()) {
+        if (isBuildingDuplicate()) {
             throw new ImportActionCanceledException(
                 tr("Duplicated building geometry. Canceling!"),
                 ImportStatus.NO_UPDATE
