@@ -19,7 +19,9 @@ import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.actions.importstrategy.FullImportStrategy;
+import org.openstreetmap.josm.plugins.plbuildings.actions.importstrategy.GeometryUpdateStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.actions.importstrategy.ImportStrategy;
+import org.openstreetmap.josm.plugins.plbuildings.actions.importstrategy.TagsUpdateStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.exceptions.ImportActionCanceledException;
 import org.openstreetmap.josm.plugins.plbuildings.gui.UncommonTagDialog;
@@ -107,13 +109,26 @@ public class BuildingsImportAction extends JosmAction {
             manager.setStatus(ImportStatus.NO_DATA, tr("Building not found."));
             return;
         }
-        // Add importedBuilding to DataSet – it's needed to avoid DataIntegrityError (primitives without osm metadata)
-        DataSet importDataSet = new DataSet();
-        importDataSet.addPrimitiveRecursive(importedBuilding);
+        // Add importedBuilding to DataSet to prevent DataIntegrityError (primitives without osm metadata)
+        new DataSet().addPrimitiveRecursive(importedBuilding);
 
-        ImportStrategy importStrategy = new FullImportStrategy(manager, importStats, importedBuilding);
-        // ImportStrategy importStrategy = new GeometryUpdateStrategy(manager, importStats, importedBuilding); TODO
-        // ImportStrategy importStrategy = new TagsUpdateStrategy(manager, importStats, importedBuilding); TODO
+        ImportStrategy importStrategy;
+        switch (BuildingsSettings.IMPORT_MODE.get()) {
+            case FULL:
+                importStrategy = new FullImportStrategy(manager, importStats, importedBuilding);
+                break;
+            case GEOMETRY:
+                importStrategy = new GeometryUpdateStrategy(manager, importStats, importedBuilding);
+                break;
+            case TAGS:
+                importStrategy = new TagsUpdateStrategy(manager, importStats, importedBuilding);
+                break;
+            default:
+                Logging.error("Incorrect import mode: " + BuildingsSettings.IMPORT_MODE.get());
+                manager.setStatus(ImportStatus.IMPORT_ERROR, tr("Incorrect import mode."));
+                return;
+        }
+
         try {
             Way resultBuilding = importStrategy.performImport();
             manager.setResultBuilding(resultBuilding);
