@@ -29,6 +29,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
 
     private final JLabel status;
 
+    private final JComboBox<Object> importModeComboBox;
     private final JComboBox<Object> dataSourceProfilesComboBox;
 
     private final JLabel buildingType;
@@ -50,6 +51,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
         );
 
         this.status = new JLabel("");
+        this.importModeComboBox = new JComboBox<>();
         this.dataSourceProfilesComboBox = new JComboBox<>();
 
         this.buildingType = new JLabel("");
@@ -58,12 +60,18 @@ public class BuildingsToggleDialog extends ToggleDialog {
 
         final JPanel rootPanel = new JPanel(new GridLayout(0, 1));
 
-        final JPanel configPanel = new JPanel(new GridLayout(2, 2));
+        final JPanel configPanel = new JPanel(new GridLayout(3, 2));
         final JLabel statusLabel = new JLabel(tr("Status") + ": ");
         statusLabel.setBorder(new EmptyBorder(0, 5, 0, 0));
 
         configPanel.add(statusLabel);
         configPanel.add(status);
+
+        final JLabel importModeLabel = new JLabel(tr("Import mode") + ": ");
+        importModeLabel.setBorder(new EmptyBorder(0, 5, 0, 0));
+
+        configPanel.add(importModeLabel);
+        configPanel.add(importModeComboBox);
 
         final JLabel dataSourceLabel = new JLabel(tr("Data source") + ": ");
         dataSourceLabel.setBorder(new EmptyBorder(0, 5, 0, 0));
@@ -96,8 +104,16 @@ public class BuildingsToggleDialog extends ToggleDialog {
         return dataSourceProfilesComboBox.getSelectedIndex();
     }
 
+    public int getImportModeComboBoxSelectedIndex() {
+        return importModeComboBox.getSelectedIndex();
+    }
+
     public void addDataSourceProfilesComboBoxItemListener(ItemListener listener) {
         dataSourceProfilesComboBox.addItemListener(listener);
+    }
+
+    public void addImportModeComboBoxItemListener(ItemListener listener) {
+        importModeComboBox.addItemListener(listener);
     }
 
     public void setBuildingTypeText(String buildingTypeText) {
@@ -130,6 +146,10 @@ public class BuildingsToggleDialog extends ToggleDialog {
 
     public void setDataSourceProfilesComboBoxModel(ComboBoxModel<Object> model) {
         dataSourceProfilesComboBox.setModel(model);
+    }
+
+    public void setImportModeComboBoxModel(ComboBoxModel<Object> model) {
+        importModeComboBox.setModel(model);
     }
 
     public void setDataSourceProfilesComboBoxSelectedIndex(int index) {
