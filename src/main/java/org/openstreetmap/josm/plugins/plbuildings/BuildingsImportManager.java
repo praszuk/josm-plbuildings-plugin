@@ -8,18 +8,15 @@ import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.DOWNL
 import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.IDLE;
 import static org.openstreetmap.josm.plugins.plbuildings.gui.NotificationPopup.showNotification;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding.getNearestBuilding;
-import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.findUncommonTags;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDsOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOverlapOptionDialog;
-import org.openstreetmap.josm.plugins.plbuildings.gui.UncommonTagDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
@@ -27,7 +24,6 @@ import org.openstreetmap.josm.plugins.plbuildings.models.NotifiableImportStatuse
 import org.openstreetmap.josm.plugins.plbuildings.utils.BuildingsOverlapDetector;
 import org.openstreetmap.josm.plugins.plbuildings.utils.CloneBuilding;
 import org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding;
-import org.openstreetmap.josm.tools.Logging;
 
 
 /**
@@ -111,29 +107,6 @@ public class BuildingsImportManager {
 
     public void processDownloadedData() {
         performBuildingImport(this);
-        boolean hasUncommonTags = false;
-        if (resultBuilding != null && BuildingsSettings.UNCOMMON_TAGS_CHECK.get()) {
-            hasUncommonTags = checkUncommonTags();
-        }
-        setStatus(ImportStatus.DONE, null);
-        updateGuiTags(hasUncommonTags);
-    }
-
-    private boolean checkUncommonTags() {
-        TagMap uncommon = findUncommonTags(resultBuilding);
-        if (uncommon.isEmpty()) {
-            return false;
-        }
-
-        Logging.debug("Found uncommon tags {0}", uncommon);
-        setStatus(ImportStatus.ACTION_REQUIRED, null);
-        UncommonTagDialog.show(
-            uncommon.getTags()
-                .toString()
-                .replace("[", "")
-                .replace("]", "")
-        );
-        return true;
     }
 
     private void updateGuiStatus() {

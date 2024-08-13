@@ -10,17 +10,21 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.gui.BuildingsToggleDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
+import org.openstreetmap.josm.plugins.plbuildings.models.ImportMode;
 import org.openstreetmap.josm.plugins.plbuildings.models.ui.ToggleDialogProfilesComboBoxModel;
+import org.openstreetmap.josm.plugins.plbuildings.models.ui.TogleDialogImportModeComboBoxModel;
 import org.openstreetmap.josm.tools.Logging;
 
 public class ToggleDialogController {
     private final DataSourceConfig dataSourceConfigModel;
     private final BuildingsToggleDialog toggleDialogView;
     private final ToggleDialogProfilesComboBoxModel dataSourceProfilesComboBoxModel;
+    private final TogleDialogImportModeComboBoxModel importModeComboBoxModel;
 
     static final Color COLOR_DEFAULT = Color.BLACK;
     /** Hex orange better than Color.ORANGE */
@@ -30,10 +34,13 @@ public class ToggleDialogController {
         this.dataSourceConfigModel = dataSourceConfig;
         this.toggleDialogView = toggleDialog;
         this.dataSourceProfilesComboBoxModel = new ToggleDialogProfilesComboBoxModel();
+        this.importModeComboBoxModel = new TogleDialogImportModeComboBoxModel();
 
         toggleDialogView.setDataSourceProfilesComboBoxModel(dataSourceProfilesComboBoxModel);
         toggleDialogView.setDataSourceProfilesComboBoxRenderer((profile -> ((DataSourceProfile) (profile)).getName()));
         toggleDialogView.addDataSourceProfilesComboBoxItemListener(new DataSourceProfileComboBoxItemChanged());
+        toggleDialogView.setImportModeComboBoxModel(importModeComboBoxModel);
+        toggleDialogView.addImportModeComboBoxItemListener(new ImportModeComboBoxItemChanged());
         dataSourceConfigModel.addPropertyChangeListener(DataSourceConfig.PROFILES, new DataSourceModelChanged());
 
         initDefaultValues();
@@ -151,6 +158,17 @@ public class ToggleDialogController {
             if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
                 DataSourceProfile selectedProfile = getSelectedDataSourceProfileFromComboBox();
                 dataSourceConfigModel.setCurrentProfile(selectedProfile);
+            }
+        }
+    }
+
+    private class ImportModeComboBoxItemChanged implements ItemListener {
+        @Override
+        public void itemStateChanged(ItemEvent itemEvent) {
+            if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+                int selectedIndex = toggleDialogView.getImportModeComboBoxSelectedIndex();
+                ImportMode importMode = (ImportMode) importModeComboBoxModel.getElementAt(selectedIndex);
+                BuildingsSettings.IMPORT_MODE.put(importMode);
             }
         }
     }

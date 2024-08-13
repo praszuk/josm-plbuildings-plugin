@@ -11,8 +11,10 @@ import static org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWay
 import java.io.File;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -22,7 +24,12 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class ReplaceOldBuildingImportTest {
     @Rule
-    public JOSMTestRules rules = new JOSMTestRules().main();
+    public JOSMTestRules rules = new JOSMTestRules().main().projection();
+
+    @Before
+    public void setUp() {
+        ExpertToggleAction.getInstance().setExpert(true);
+    }
 
     @Test
     public void testImportBuildingWithReplaceWithOneBuildingIsSelected() {

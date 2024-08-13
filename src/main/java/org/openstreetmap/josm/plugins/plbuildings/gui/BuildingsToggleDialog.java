@@ -29,6 +29,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
 
     private final JLabel status;
 
+    private final JComboBox<Object> importModeComboBox;
     private final JComboBox<Object> dataSourceProfilesComboBox;
 
     private final JLabel buildingType;
@@ -50,6 +51,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
         );
 
         this.status = new JLabel("");
+        this.importModeComboBox = new JComboBox<>();
         this.dataSourceProfilesComboBox = new JComboBox<>();
 
         this.buildingType = new JLabel("");
@@ -58,19 +60,31 @@ public class BuildingsToggleDialog extends ToggleDialog {
 
         final JPanel rootPanel = new JPanel(new GridLayout(0, 1));
 
-        final JPanel configPanel = new JPanel(new GridLayout(2, 2));
-        final JLabel statusLabel = new JLabel(tr("Status") + ": ");
-        statusLabel.setBorder(new EmptyBorder(0, 5, 0, 0));
+        rootPanel.add(createConfigPanel());
+        rootPanel.add(createLatestTagsPanel());
 
-        configPanel.add(statusLabel);
+        rootPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
+        createLayout(rootPanel, true, null);
+    }
+
+    private JPanel createConfigPanel() {
+        final JPanel configPanel = new JPanel(new GridLayout(3, 2));
+
+        configPanel.add(new JLabel(tr("Status") + ": "));
         configPanel.add(status);
 
-        final JLabel dataSourceLabel = new JLabel(tr("Data source") + ": ");
-        dataSourceLabel.setBorder(new EmptyBorder(0, 5, 0, 0));
+        configPanel.add(new JLabel(tr("Import mode") + ": "));
+        configPanel.add(importModeComboBox);
 
-        configPanel.add(dataSourceLabel);
+        configPanel.add(new JLabel(tr("Data source") + ": "));
         configPanel.add(dataSourceProfilesComboBox);
 
+        configPanel.setBorder(new EmptyBorder(0, 5, 0, 0));
+
+        return configPanel;
+    }
+
+    private JPanel createLatestTagsPanel() {
         final JPanel lastImportTagsPanel = new JPanel(new GridLayout(0, 2));
 
         lastImportTagsPanel.add(new JLabel("building: "));
@@ -83,21 +97,24 @@ public class BuildingsToggleDialog extends ToggleDialog {
         lastImportTagsPanel.add(hasUncommonTag);
 
         lastImportTagsPanel.setBorder(BorderFactory.createTitledBorder(tr("Latest tags")));
-        rootPanel.add(configPanel);
 
-        rootPanel.add(lastImportTagsPanel);
-
-        rootPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
-        createLayout(rootPanel, true, null);
+        return lastImportTagsPanel;
     }
-
 
     public int getDataSourceProfilesComboBoxSelectedIndex() {
         return dataSourceProfilesComboBox.getSelectedIndex();
     }
 
+    public int getImportModeComboBoxSelectedIndex() {
+        return importModeComboBox.getSelectedIndex();
+    }
+
     public void addDataSourceProfilesComboBoxItemListener(ItemListener listener) {
         dataSourceProfilesComboBox.addItemListener(listener);
+    }
+
+    public void addImportModeComboBoxItemListener(ItemListener listener) {
+        importModeComboBox.addItemListener(listener);
     }
 
     public void setBuildingTypeText(String buildingTypeText) {
@@ -130,6 +147,10 @@ public class BuildingsToggleDialog extends ToggleDialog {
 
     public void setDataSourceProfilesComboBoxModel(ComboBoxModel<Object> model) {
         dataSourceProfilesComboBox.setModel(model);
+    }
+
+    public void setImportModeComboBoxModel(ComboBoxModel<Object> model) {
+        importModeComboBox.setModel(model);
     }
 
     public void setDataSourceProfilesComboBoxSelectedIndex(int index) {

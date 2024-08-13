@@ -6,11 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
+import org.openstreetmap.josm.data.preferences.EnumProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
+import org.openstreetmap.josm.plugins.plbuildings.models.ImportMode;
 
 public class BuildingsSettings {
 
@@ -98,5 +100,9 @@ public class BuildingsSettings {
 
     public static final ListProperty COMMON_BUILDING_TAGS = new ListProperty(
         "plbuildings.common_building_tags", new ArrayList<>(DEFAULT_COMMON_BUILDING_VALUES)
+    );
+
+    public static final EnumProperty<ImportMode> IMPORT_MODE = new EnumProperty<>(
+        "plbuildings.import_mode", ImportMode.class, ImportMode.FULL
     );
 }
