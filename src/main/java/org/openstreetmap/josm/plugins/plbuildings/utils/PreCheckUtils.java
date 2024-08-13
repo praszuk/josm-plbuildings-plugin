@@ -3,8 +3,8 @@ package org.openstreetmap.josm.plugins.plbuildings.utils;
 import static org.openstreetmap.josm.plugins.plbuildings.data.BuildingsTags.HOUSE_DETAILS;
 import static org.openstreetmap.josm.plugins.plbuildings.data.BuildingsTags.LIVING_BUILDINGS;
 
+import jakarta.annotation.Nonnull;
 import java.util.List;
-import javax.annotation.Nonnull;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.Logging;
 

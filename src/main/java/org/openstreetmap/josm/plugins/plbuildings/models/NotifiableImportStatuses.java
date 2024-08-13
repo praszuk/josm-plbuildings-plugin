@@ -5,15 +5,15 @@ import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.IMPOR
 import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.NO_DATA;
 import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.NO_UPDATE;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonReader;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonReader;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
 
