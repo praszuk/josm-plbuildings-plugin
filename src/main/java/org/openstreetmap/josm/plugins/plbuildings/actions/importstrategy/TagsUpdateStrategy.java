@@ -47,7 +47,7 @@ public class TagsUpdateStrategy extends ImportStrategy {
             );
         }
         UndoRedoHandler.getInstance().add(updateBuildingTagsCommand, false);
-        importStats.addImportWithReplaceCounter(1);
+        importStats.addImportWithTagsUpdateCounter(1);
         Logging.debug("Updated building {0} with new data", selectedBuilding.getId());
 
         return selectedBuilding;

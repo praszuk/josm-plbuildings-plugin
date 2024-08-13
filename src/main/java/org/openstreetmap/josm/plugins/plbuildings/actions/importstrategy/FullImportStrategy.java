@@ -111,6 +111,7 @@ public class FullImportStrategy extends ImportStrategy {
         }
         UndoRedoHandler.getInstance().add(mergedGeometryAndUpdatedTagsBuildingSequence, false);
         importStats.addImportWithReplaceCounter(1);
+        importStats.addImportWithTagsUpdateCounter(1);
         Logging.debug("Updated building {0} with new data", selectedBuilding.getId());
         return selectedBuilding;
     }
