@@ -66,6 +66,8 @@ public class TagConflictUtils {
                 break;
 
             case "source":
+            case "source:building":
+            case "source:geometry":
                 return !currentValue.contains("survey");
 
             default:
