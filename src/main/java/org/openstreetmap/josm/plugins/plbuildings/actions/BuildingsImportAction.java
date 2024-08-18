@@ -109,6 +109,12 @@ public class BuildingsImportAction extends JosmAction {
             manager.setStatus(ImportStatus.NO_DATA, tr("Building not found."));
             return;
         }
+        // Inject source tags
+        importedBuilding.put("source:building", manager.getCurrentProfile().getTags());
+        if (!manager.getCurrentProfile().getTags().equals(manager.getCurrentProfile().getGeometry())) {
+            importedBuilding.put("source:geometry", manager.getCurrentProfile().getGeometry());
+        }
+
         // Add importedBuilding to DataSet to prevent DataIntegrityError (primitives without osm metadata)
         new DataSet().addPrimitiveRecursive(importedBuilding);
 
