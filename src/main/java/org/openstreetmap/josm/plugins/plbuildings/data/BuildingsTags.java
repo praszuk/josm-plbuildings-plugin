@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 public class BuildingsTags {
 
     public static final Set<String> LIVING_BUILDINGS = Collections.unmodifiableSet(Stream.of(
-        "house", "apartments", "detached", "semidetached_house", "terrace"
+        "house", "apartments", "detached", "semidetached_house", "terrace", "residential"
     ).collect(Collectors.toSet()));
 
     public static final Set<String> HOUSE_DETAILS = Collections.unmodifiableSet(Stream.of(
@@ -31,7 +31,6 @@ public class BuildingsTags {
     public static final Set<String> DEFAULT_COMMON_BUILDING_VALUES = Collections.unmodifiableSet(
         Stream.of(
             Stream.of(
-                "apartments",
                 "bungalow",
                 "cabin",
                 "commercial",
