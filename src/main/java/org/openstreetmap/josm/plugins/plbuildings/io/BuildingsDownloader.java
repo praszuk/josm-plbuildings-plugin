@@ -56,7 +56,6 @@ public class BuildingsDownloader {
         if (!currentProfile.getGeometry().equals(currentProfile.getTags())) {
             dataSourceQueryParam += "," + currentProfile.getTags();
         }
-        dataSourceQueryParam = dataSourceQueryParam.toLowerCase();
 
         return String.format(
             "%s%s?lat=%f&lon=%f&data_sources=%s",
