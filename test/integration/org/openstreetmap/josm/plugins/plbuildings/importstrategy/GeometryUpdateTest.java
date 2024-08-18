@@ -48,6 +48,7 @@ public class GeometryUpdateTest {
 
         Way buildingToReplace = ds.getWays().stream().findFirst().orElseThrow();
         ds.setSelected(buildingToReplace);
+        int numberOfTags = buildingToReplace.getKeys().size();
 
         Assertions.assertNotEquals(buildingToReplace.getNodesCount(), buildingToImport.getNodesCount());
         Assertions.assertNotEquals(buildingToReplace.get("building"), buildingToImport.get("building"));
@@ -61,6 +62,7 @@ public class GeometryUpdateTest {
 
         Assertions.assertEquals(buildingToImport.getNodesCount(), buildingToReplace.getNodesCount());
         Assertions.assertNotEquals(buildingToImport.get("building"), buildingToReplace.get("building"));
+        Assertions.assertEquals(numberOfTags, buildingToReplace.getKeys().size());
 
         Assertions.assertEquals(replaceCounter + 1, new BuildingsImportStats().getImportWithReplaceCounter());
     }

@@ -97,15 +97,27 @@ public class TagConflictUtilsTest {
     }
 
     @Test
-    void testNoConflictButHasSourceTagButWithoutSurveyValue() {
+    void testNoConflictButHasSourceTagsButWithoutSurveyValue() {
         Assertions.assertFalse(isConflict(List.of(new Tag("source", "test")), List.of(new Tag("source", "new data"))));
+        Assertions.assertFalse(
+            isConflict(List.of(new Tag("source:building", "test")), List.of(new Tag("source:building", "new data")))
+        );
+        Assertions.assertFalse(
+            isConflict(List.of(new Tag("source:geometry", "test")), List.of(new Tag("source:geometry", "new data")))
+        );
     }
 
     @ParameterizedTest
     @CsvSource({"survey", "My survey"})
-    void testConflictSourceTagWithSurveyValue(String surveyValue) {
+    void testConflictSourceTagsWithSurveyValue(String surveyValue) {
         Assertions.assertTrue(isConflict(
             List.of(new Tag("source", surveyValue)), List.of(new Tag("source", "new value")))
+        );
+        Assertions.assertTrue(isConflict(
+            List.of(new Tag("source:building", surveyValue)), List.of(new Tag("source:building", "new value")))
+        );
+        Assertions.assertTrue(isConflict(
+            List.of(new Tag("source:geometry", surveyValue)), List.of(new Tag("source:geometry", "new value")))
         );
     }
 
