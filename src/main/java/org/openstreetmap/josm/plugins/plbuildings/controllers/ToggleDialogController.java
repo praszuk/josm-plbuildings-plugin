@@ -34,7 +34,7 @@ public class ToggleDialogController {
         this.dataSourceConfigModel = dataSourceConfig;
         this.toggleDialogView = toggleDialog;
         this.dataSourceProfilesComboBoxModel = new ToggleDialogProfilesComboBoxModel();
-        this.importModeComboBoxModel = new TogleDialogImportModeComboBoxModel();
+        this.importModeComboBoxModel = new TogleDialogImportModeComboBoxModel(BuildingsSettings.IMPORT_MODE.get());
 
         toggleDialogView.setDataSourceProfilesComboBoxModel(dataSourceProfilesComboBoxModel);
         toggleDialogView.setDataSourceProfilesComboBoxRenderer((profile -> ((DataSourceProfile) (profile)).getName()));
