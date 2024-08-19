@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -15,6 +16,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UserCancelException;
 
@@ -67,13 +69,24 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
         return DESCRIPTION_TEXT;
     }
 
+
+    private Command removeSourceGeoportal() {
+        if (!BuildingsSettings.AUTOREMOVE_SOURCE_GEOPORTAL_GOV_PL.get()) {
+            return null;
+        }
+        if (!selectedBuilding.hasTag("source") || !selectedBuilding.get("source").contains("geoportal.gov.pl")) {
+            return null;
+        }
+        return new ChangePropertyCommand(selectedBuilding, "source", null);
+    }
+
     @Override
     public boolean executeCommand() {
         if (this.updateTagsCommand == null) {
             this.selectedBuilding = resultSelectedBuilding.getResultBuilding();
             List<Command> commands;
             try {
-                commands = prepareUpdateTagsCommands(selectedBuilding, newBuilding);
+                commands = new ArrayList<>(prepareUpdateTagsCommands(selectedBuilding, newBuilding));
             } catch (UserCancelException exception) {
                 Logging.debug(
                     "No building tags (id: {0}) update, caused: Cancel conflict dialog by user",
@@ -82,6 +95,12 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
                 executeErrorReason = tr("Conflict tag dialog canceled by user");
                 return false;
             }
+
+            Command removeSourceGeoportal = removeSourceGeoportal();
+            if (removeSourceGeoportal != null) {
+                commands.add(removeSourceGeoportal);
+            }
+
             if (commands.isEmpty()) {
                 Logging.debug("No tags difference! Canceling!");
                 return true;

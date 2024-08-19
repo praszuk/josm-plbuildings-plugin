@@ -105,4 +105,8 @@ public class BuildingsSettings {
     public static final EnumProperty<ImportMode> IMPORT_MODE = new EnumProperty<>(
         "plbuildings.import_mode", ImportMode.class, ImportMode.FULL
     );
+
+    public static final BooleanProperty AUTOREMOVE_SOURCE_GEOPORTAL_GOV_PL = new BooleanProperty(
+        "plbuildings.autoremove_source_geoportal_gov_pl", true
+    );
 }
