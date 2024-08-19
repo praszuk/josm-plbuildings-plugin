@@ -11,8 +11,8 @@ public class TogleDialogImportModeComboBoxModel implements ComboBoxModel<Object>
     private Object selectedItem;
 
 
-    public TogleDialogImportModeComboBoxModel() {
-        this.selectedItem = ImportMode.FULL;
+    public TogleDialogImportModeComboBoxModel(ImportMode selectedItem) {
+        this.selectedItem = selectedItem;
     }
 
     @Override
