@@ -11,8 +11,8 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestStrategy;
-import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 import org.openstreetmap.josm.plugins.plbuildings.enums.ImportMode;
+import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 
 public class BuildingsSettings {
     static final String SETTING_PREFIX = "plbuildings.";
