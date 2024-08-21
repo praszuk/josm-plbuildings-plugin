@@ -49,7 +49,7 @@ public final class ImportUtils {
     }
 
     /**
-     * Helper function to compare cloned building. It checks deeps copy..
+     * Helper function to compare cloned building. It checks deeps copy.
      */
     public static boolean isSameButClonedBuilding(Way way1, Way way2) {
         if (!way1.getKeys().equals(way2.getKeys())) {
