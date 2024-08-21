@@ -32,8 +32,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class BuildingsImportAction extends JosmAction {
-    static final String DESCRIPTION =
-        tr("Import building at cursor position or replace/update selected.");
+    static final String DESCRIPTION = tr("Import building at cursor position or replace/update selected.");
     static final String TITLE = tr("Download building");
 
     public BuildingsImportAction() {
@@ -75,6 +74,22 @@ public class BuildingsImportAction extends JosmAction {
         return selected.size() == 1 ? (Way) selected.toArray()[0] : null;
     }
 
+    public static boolean showDialogIfFoundUncommonTags(Way resultBuilding, BuildingsImportManager manager) {
+        if (resultBuilding == null) {
+            return false;
+        }
+
+        TagMap uncommon = findUncommonTags(resultBuilding);
+        if (uncommon.isEmpty()) {
+            return false;
+        }
+
+        Logging.debug("Found uncommon tags {0}", uncommon);
+        manager.setStatus(ImportStatus.ACTION_REQUIRED, null);
+        UncommonTagDialog.show(uncommon.getTags().toString().replace("[", "").replace("]", ""));
+        return true;
+    }
+
     public static void performBuildingImport(BuildingsImportManager manager) {
         final BuildingsImportStats importStats = new BuildingsImportStats();
         importStats.addTotalImportActionCounter(1);
@@ -94,14 +109,14 @@ public class BuildingsImportAction extends JosmAction {
             manager.setStatus(ImportStatus.NO_DATA, tr("Building not found."));
             return;
         }
+        // Add importedBuilding to DataSet to prevent DataIntegrityError (primitives without osm metadata)
+        new DataSet().addPrimitiveRecursive(importedBuilding);
+
         // Inject source tags
         importedBuilding.put("source:building", manager.getCurrentProfile().getTags());
         if (!manager.getCurrentProfile().getTags().equals(manager.getCurrentProfile().getGeometry())) {
             importedBuilding.put("source:geometry", manager.getCurrentProfile().getGeometry());
         }
-
-        // Add importedBuilding to DataSet to prevent DataIntegrityError (primitives without osm metadata)
-        new DataSet().addPrimitiveRecursive(importedBuilding);
 
         ImportStrategy importStrategy;
         switch (BuildingsSettings.IMPORT_MODE.get()) {
@@ -124,17 +139,8 @@ public class BuildingsImportAction extends JosmAction {
             Way resultBuilding = importStrategy.performImport();
             manager.setResultBuilding(resultBuilding);
 
-            boolean hasUncommonTags = false;
-            if (resultBuilding != null && BuildingsSettings.UNCOMMON_TAGS_CHECK.get()) {
-                TagMap uncommon = findUncommonTags(resultBuilding);
-                if (!uncommon.isEmpty()) {
-                    Logging.debug("Found uncommon tags {0}", uncommon);
-                    manager.setStatus(ImportStatus.ACTION_REQUIRED, null);
-                    UncommonTagDialog.show(
-                        uncommon.getTags().toString().replace("[", "").replace("]", "")
-                    );
-                }
-            }
+            boolean hasUncommonTags = BuildingsSettings.UNCOMMON_TAGS_CHECK.get()
+                && showDialogIfFoundUncommonTags(resultBuilding, manager);
             manager.setStatus(ImportStatus.DONE, null);
             manager.updateGuiTags(hasUncommonTags);
         } catch (ImportActionCanceledException exception) {
@@ -144,7 +150,6 @@ public class BuildingsImportAction extends JosmAction {
         finally {
             manager.getEditLayer().clearSelection();
         }
-
     }
 
     @Override
