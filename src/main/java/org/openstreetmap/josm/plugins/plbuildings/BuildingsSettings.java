@@ -15,7 +15,7 @@ import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 import org.openstreetmap.josm.plugins.plbuildings.models.ImportMode;
 
 public class BuildingsSettings {
-    static final String SETTING_PREFIX = BuildingsPlugin.info.name + ".";
+    static final String SETTING_PREFIX = "plbuildings.";
 
     public static final DoubleProperty BBOX_OFFSET = new DoubleProperty(
         SETTING_PREFIX + "bbox_offset",
@@ -66,7 +66,7 @@ public class BuildingsSettings {
     public static final StringProperty DATA_SOURCE_SERVERS = new StringProperty(
         SETTING_PREFIX + "data_source_servers",
         DataSourceServer.toJson(List.of(new DataSourceServer(
-            BuildingsPlugin.info.name,
+            "plbuildings",
             "https://josm-plbuildings-server.openstreetmap.org.pl/api/v2"
         ))).toString()
     );
