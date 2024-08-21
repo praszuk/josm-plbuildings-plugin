@@ -46,7 +46,6 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
 
     @Override
     public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
-        // I am not sure if I implemented it correctly.
         Collection<OsmPrimitive> primitives = new ArrayList<>();
         if (selectedBuilding != null) {
             primitives.add(selectedBuilding);
@@ -81,7 +80,7 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
     }
 
     private void handleException(Exception exception) {
-        // If user cancel conflict window do nothing
+        // If user cancel conflict window
         if (exception instanceof IllegalArgumentException) {
             executeErrorReason = tr("Canceled merging buildings!");
             Logging.debug(

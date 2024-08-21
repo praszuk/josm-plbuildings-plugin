@@ -75,22 +75,7 @@ public class BuildingsImportAction extends JosmAction {
         return selected.size() == 1 ? (Way) selected.toArray()[0] : null;
     }
 
-    /**
-     * Flow:
-     * Validate imported datasets with preprocessing to get prepared import data
-     * (matching multiple datasets).
-     * Check if it's unique (no geometry duplicate):
-     * -- duplicate:
-     * ---- check if 1 building is selected:
-     * ------ selected -> try to update tags
-     * ------ not selected -> end
-     * -- not duplicate:
-     * ---- check if 1 building is selected:
-     * ------ selected -> try to replace geometry and update tags
-     * ------ not selected -> just import new building
-     */
     public static void performBuildingImport(BuildingsImportManager manager) {
-        // TODO refactor
         final BuildingsImportStats importStats = new BuildingsImportStats();
         importStats.addTotalImportActionCounter(1);
 

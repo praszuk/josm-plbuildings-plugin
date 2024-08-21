@@ -49,10 +49,9 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
 
     @Override
     public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
-        // I am not sure if I implemented it correctly.
         Collection<OsmPrimitive> primitives = new ArrayList<>();
         if (selectedBuilding != null) {
-            primitives.add(selectedBuilding); // Tags change
+            primitives.add(selectedBuilding);  // Tags change
         }
         return primitives;
     }

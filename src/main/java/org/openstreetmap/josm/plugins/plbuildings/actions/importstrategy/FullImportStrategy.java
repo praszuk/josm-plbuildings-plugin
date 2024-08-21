@@ -88,7 +88,6 @@ public class FullImportStrategy extends ImportStrategy {
                 selectedBuilding,
                 addBuildingGeometryCommand
             );
-        // Here it can be checked for detached/semi/terrace
         UpdateBuildingTagsCommand updateBuildingTagsCommand = new UpdateBuildingTagsCommand(
             currentDataSet,
             () -> selectedBuilding,
