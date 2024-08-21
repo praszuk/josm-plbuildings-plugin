@@ -22,13 +22,13 @@ public class BuildingsSettingsAction extends JosmAction {
             (ImageProvider) null,
             DESCRIPTION,
             Shortcut.registerShortcut(
-                "plbuildings:settings",
+                BuildingsPlugin.info.name + ":settings",
                 tr("Open") + " " + TITLE,
                 KeyEvent.CHAR_UNDEFINED,
                 Shortcut.NONE
             ),
             true,
-            String.format("%s:buildings_settings", BuildingsPlugin.info.name),
+            BuildingsPlugin.info.name + ":buildings_settings",
             false
         );
         this.settingsController = settingsController;

@@ -43,7 +43,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
             "plbuildings",
             tr("Open the {0} window", BuildingsPlugin.info.name),
             Shortcut.registerShortcut(
-                "plbuildings:window",
+                BuildingsPlugin.info.name + ":window",
                 tr("PlBuildings window"),
                 KeyEvent.CHAR_UNDEFINED, Shortcut.NONE
             ),

@@ -42,13 +42,13 @@ public class BuildingsImportAction extends JosmAction {
             (ImageProvider) null,
             DESCRIPTION,
             Shortcut.registerShortcut(
-                "download:building",
+                BuildingsPlugin.info.name + ":download:building",
                 TITLE,
                 KeyEvent.VK_1,
                 Shortcut.CTRL_SHIFT
             ),
             false,
-            String.format("%s:buildings_import", BuildingsPlugin.info.name),
+            BuildingsPlugin.info.name + ":buildings_import",
             false
         );
     }
