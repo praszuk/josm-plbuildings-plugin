@@ -20,10 +20,10 @@ import org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding;
 import org.openstreetmap.josm.tools.Logging;
 
 public abstract class ImportStrategy {
-    protected BuildingsImportManager manager;
-    protected BuildingsImportStats importStats;
-    protected DataSet currentDataSet;
-    protected Way importedBuilding;
+    protected final BuildingsImportManager manager;
+    protected final BuildingsImportStats importStats;
+    protected final DataSet currentDataSet;
+    protected final Way importedBuilding;
 
     public ImportStrategy(BuildingsImportManager manager, BuildingsImportStats importStats, Way importedBuilding) {
         this.manager = manager;
