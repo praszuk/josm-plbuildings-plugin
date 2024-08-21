@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.JOptionPane;
-import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
+import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestStrategy;
 import org.openstreetmap.josm.tools.Pair;
 
 /**

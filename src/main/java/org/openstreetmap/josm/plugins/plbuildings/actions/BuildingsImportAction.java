@@ -22,7 +22,7 @@ import org.openstreetmap.josm.plugins.plbuildings.actions.importstrategy.FullImp
 import org.openstreetmap.josm.plugins.plbuildings.actions.importstrategy.GeometryUpdateStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.actions.importstrategy.ImportStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.actions.importstrategy.TagsUpdateStrategy;
-import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
+import org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.exceptions.ImportActionCanceledException;
 import org.openstreetmap.josm.plugins.plbuildings.gui.UncommonTagDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;

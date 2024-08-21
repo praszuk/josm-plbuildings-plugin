@@ -19,7 +19,7 @@ import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
-import org.openstreetmap.josm.plugins.plbuildings.models.ImportMode;
+import org.openstreetmap.josm.plugins.plbuildings.enums.ImportMode;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class GeometryUpdateTest {
