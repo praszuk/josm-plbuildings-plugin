@@ -1,9 +1,9 @@
 package org.openstreetmap.josm.plugins.plbuildings.models;
 
-import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.CONNECTION_ERROR;
-import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.IMPORT_ERROR;
-import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.NO_DATA;
-import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.NO_UPDATE;
+import static org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus.CONNECTION_ERROR;
+import static org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus.IMPORT_ERROR;
+import static org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus.NO_DATA;
+import static org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus.NO_UPDATE;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
@@ -15,7 +15,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
-import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
+import org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus;
 
 public class NotifiableImportStatuses {
     public static final String NOTIFIABLE_IMPORT_STATUSES = "notifiable_import_statuses";

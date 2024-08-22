@@ -10,14 +10,15 @@ import org.openstreetmap.josm.data.preferences.EnumProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
-import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
+import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestStrategy;
+import org.openstreetmap.josm.plugins.plbuildings.enums.ImportMode;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
-import org.openstreetmap.josm.plugins.plbuildings.models.ImportMode;
 
 public class BuildingsSettings {
+    static final String SETTING_PREFIX = "plbuildings.";
 
     public static final DoubleProperty BBOX_OFFSET = new DoubleProperty(
-        "plbuildings.bbox_offset",
+        SETTING_PREFIX + "bbox_offset",
         0.0000005
     );
 
@@ -28,21 +29,21 @@ public class BuildingsSettings {
      * 0.0000001 ~1_000_000 points ~1 seconds per building
      */
     public static final DoubleProperty OVERLAP_DETECT_FREQ_DEGREE_STEP = new DoubleProperty(
-        "plbuildings.overlap_detect_freq_degree_step",
+        SETTING_PREFIX + "overlap_detect_freq_degree_step",
         0.000001
     );
 
     public static final DoubleProperty OVERLAP_DETECT_DUPLICATED_BUILDING_THRESHOLD = new DoubleProperty(
-        "plbuildings.overlap_detect_duplicated_building_threshold", 98.0
+        SETTING_PREFIX + "overlap_detect_duplicated_building_threshold", 98.0
     );
 
     public static final StringProperty COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY = new StringProperty(
-        "plbuildings.combine_nearest_building_one_ds_strategy",
+        SETTING_PREFIX + "combine_nearest_building_one_ds_strategy",
         CombineNearestStrategy.ASK_USER.toString()
     );
 
     public static final StringProperty COMBINE_NEAREST_BUILDING_OVERLAP_STRATEGY = new StringProperty(
-        "plbuildings.combine_nearest_building_both_ds_strategy",
+        SETTING_PREFIX + "combine_nearest_building_both_ds_strategy",
         CombineNearestStrategy.ASK_USER.toString()
     );
     /**
@@ -53,17 +54,17 @@ public class BuildingsSettings {
      */
     public static final DoubleProperty COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD =
         new DoubleProperty(
-            "plbuildings.combine_nearest_building_overlap_threshold",
+            SETTING_PREFIX + "combine_nearest_building_overlap_threshold",
             60.0
         );
 
     public static final StringProperty IMPORT_STATS = new StringProperty(
-        "plbuildings.import_stats",
+        SETTING_PREFIX + "import_stats",
         "e30="  // "{}" (base64) – empty JSON
     );
 
     public static final StringProperty DATA_SOURCE_SERVERS = new StringProperty(
-        "plbuildings.data_source_servers",
+        SETTING_PREFIX + "data_source_servers",
         DataSourceServer.toJson(List.of(new DataSourceServer(
             "plbuildings",
             "https://josm-plbuildings-server.openstreetmap.org.pl/api/v2"
@@ -71,42 +72,42 @@ public class BuildingsSettings {
     );
 
     public static final StringProperty DATA_SOURCE_PROFILES = new StringProperty(
-        "plbuildings.data_source_profiles",
+        SETTING_PREFIX + "data_source_profiles",
         "[]"
     );
 
     /** first element: unique server name, second element: unique profile name */
     public static final ListProperty CURRENT_DATA_SOURCE_PROFILE = new ListProperty(
-        "plbuildings.current_data_source_profile", new ArrayList<>()
+        SETTING_PREFIX + "current_data_source_profile", new ArrayList<>()
     );
 
     public static final BooleanProperty DATA_SOURCE_PROFILES_AUTO_REFRESH = new BooleanProperty(
-        "plbuildings.data_source_profiles_auto_refresh",
+        SETTING_PREFIX + "data_source_profiles_auto_refresh",
         true
     );
 
     public static final StringProperty NOTIFIABLE_IMPORT_STATUSES = new StringProperty(
-        "plbuildings.notifiable_import_statuses",
+        SETTING_PREFIX + "notifiable_import_statuses",
         "{}"
     );
 
     public static final BooleanProperty UNCOMMON_TAGS_CHECK = new BooleanProperty(
-        "plbuildings.uncommon_tags_check", true
+        SETTING_PREFIX + "uncommon_tags_check", true
     );
 
     public static final IntegerProperty CONNECTION_TIMEOUT = new IntegerProperty(
-        "plbuildings.connection_timeout_ms", 10 * 1000
+        SETTING_PREFIX + "connection_timeout_ms", 10 * 1000
     );
 
     public static final ListProperty COMMON_BUILDING_TAGS = new ListProperty(
-        "plbuildings.common_building_tags", new ArrayList<>(DEFAULT_COMMON_BUILDING_VALUES)
+        SETTING_PREFIX + "common_building_tags", new ArrayList<>(DEFAULT_COMMON_BUILDING_VALUES)
     );
 
     public static final EnumProperty<ImportMode> IMPORT_MODE = new EnumProperty<>(
-        "plbuildings.import_mode", ImportMode.class, ImportMode.FULL
+        SETTING_PREFIX + "import_mode", ImportMode.class, ImportMode.FULL
     );
 
     public static final BooleanProperty AUTOREMOVE_SOURCE_GEOPORTAL_GOV_PL = new BooleanProperty(
-        "plbuildings.autoremove_source_geoportal_gov_pl", true
+        SETTING_PREFIX + "autoremove_source_geoportal_gov_pl", true
     );
 }

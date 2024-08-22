@@ -1,6 +1,6 @@
 package org.openstreetmap.josm.plugins.plbuildings.exceptions;
 
-import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
+import org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus;
 
 public class ImportActionCanceledException  extends Exception {
     private final ImportStatus status;

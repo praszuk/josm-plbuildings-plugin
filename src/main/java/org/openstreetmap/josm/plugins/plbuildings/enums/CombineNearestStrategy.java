@@ -1,4 +1,4 @@
-package org.openstreetmap.josm.plugins.plbuildings.data;
+package org.openstreetmap.josm.plugins.plbuildings.enums;
 
 /**
  * It is used for decide when merging buildings from multiple datasets into one building

@@ -1,11 +1,11 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
 import static org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction.performBuildingImport;
-import static org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy.ACCEPT;
-import static org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy.ASK_USER;
-import static org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy.CANCEL;
-import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.DOWNLOADING;
-import static org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus.IDLE;
+import static org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestStrategy.ACCEPT;
+import static org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestStrategy.ASK_USER;
+import static org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestStrategy.CANCEL;
+import static org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus.DOWNLOADING;
+import static org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus.IDLE;
 import static org.openstreetmap.josm.plugins.plbuildings.gui.NotificationPopup.showNotification;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding.getNearestBuilding;
 
@@ -13,8 +13,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.plugins.plbuildings.data.CombineNearestStrategy;
-import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
+import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestStrategy;
+import org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDsOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOverlapOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;

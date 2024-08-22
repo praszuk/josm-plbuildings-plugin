@@ -1,4 +1,4 @@
-package org.openstreetmap.josm.plugins.plbuildings.models;
+package org.openstreetmap.josm.plugins.plbuildings.enums;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 

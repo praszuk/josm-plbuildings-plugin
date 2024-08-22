@@ -9,13 +9,11 @@ import java.util.stream.Stream;
 
 public class BuildingsTags {
 
-    public static final Set<String> LIVING_BUILDINGS = Collections.unmodifiableSet(Stream.of(
+    public static final Set<String> LIVING_BUILDINGS = Set.of(
         "house", "apartments", "detached", "semidetached_house", "terrace", "residential"
-    ).collect(Collectors.toSet()));
+    );
 
-    public static final Set<String> HOUSE_DETAILS = Collections.unmodifiableSet(Stream.of(
-        "detached", "semidetached_house", "terrace"
-    ).collect(Collectors.toSet()));
+    public static final Set<String> HOUSE_DETAILS = Set.of("detached", "semidetached_house", "terrace");
 
     /*
     Tags extracted from
@@ -29,8 +27,8 @@ public class BuildingsTags {
     They not need to be checked by mapper
      */
     public static final Set<String> DEFAULT_COMMON_BUILDING_VALUES = Collections.unmodifiableSet(
-        Stream.of(
-            Stream.of(
+        Stream.concat(
+            Set.of(
                 "bungalow",
                 "cabin",
                 "commercial",
@@ -46,9 +44,9 @@ public class BuildingsTags {
                 "yes",
 
                 "construction"
-            ).collect(Collectors.toSet()),
-            LIVING_BUILDINGS
-        ).flatMap(Set::stream).collect(Collectors.toSet())
+            ).stream(),
+            LIVING_BUILDINGS.stream()
+        ).collect(Collectors.toSet())
     );
 
     // Some imported data can contain other tags than building, it should be checked by mapper

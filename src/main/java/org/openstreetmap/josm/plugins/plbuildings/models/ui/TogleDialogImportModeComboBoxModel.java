@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.event.ListDataListener;
-import org.openstreetmap.josm.plugins.plbuildings.models.ImportMode;
+import org.openstreetmap.josm.plugins.plbuildings.enums.ImportMode;
 
 public class TogleDialogImportModeComboBoxModel implements ComboBoxModel<Object> {
     private final List<Object> items = new ArrayList<>(List.of(ImportMode.values()));

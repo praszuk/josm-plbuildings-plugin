@@ -23,7 +23,7 @@ public class BuildingsStatsAction extends JosmAction {
             DESCRIPTION,
             null,
             true,
-            String.format("%s:buildings_stats", BuildingsPlugin.info.name),
+            BuildingsPlugin.info.name + ":buildings_stats",
             false
         );
     }
