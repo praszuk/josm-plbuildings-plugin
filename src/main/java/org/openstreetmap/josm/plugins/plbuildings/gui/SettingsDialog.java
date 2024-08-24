@@ -10,7 +10,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 public class SettingsDialog extends JFrame {
     static final int HEIGHT = 600;
     static final int WIDTH = 600;
-    static final String TITLE = tr("PlBuildings Settings");
+    static final String TITLE = tr("PlBuildings settings");
 
     private final JTabbedPane tabbedPane;
 

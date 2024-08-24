@@ -11,7 +11,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class BuildingsSettingsAction extends JosmAction {
-    public static final String DESCRIPTION = tr("Show plbuildings settings");
+    public static final String DESCRIPTION = tr("Show PlBuildings settings");
     public static final String TITLE = tr("PlBuildings settings");
 
     private final SettingsController settingsController;

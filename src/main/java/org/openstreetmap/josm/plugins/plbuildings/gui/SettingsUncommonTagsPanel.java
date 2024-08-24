@@ -27,7 +27,7 @@ public class SettingsUncommonTagsPanel extends JPanel {
             "When a building is imported, an additional check is performed to ensure that the building does not"
             + " contain uncommon tags."
             + " Common values for the %s key that should not trigger the check mechanism can be added below."
-            + "%sKeep in mind that if an object contains a common value, but also contains a tag such as %s, a dialog"
+            + "%s Keep in mind that if an object contains a common value, but also contains a tag such as %s, a dialog"
             + " message will appear."
         )
         + "</html>",
