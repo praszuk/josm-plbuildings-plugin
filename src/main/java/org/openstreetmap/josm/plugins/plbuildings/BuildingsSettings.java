@@ -67,7 +67,7 @@ public class BuildingsSettings {
         SETTING_PREFIX + "data_source_servers",
         DataSourceServer.toJson(List.of(new DataSourceServer(
             "plbuildings",
-            "https://josm-plbuildings-server.openstreetmap.org.pl/api/v2"
+            "https://plbuildings.niewnen.net/api/v2"
         ))).toString()
     );
 
