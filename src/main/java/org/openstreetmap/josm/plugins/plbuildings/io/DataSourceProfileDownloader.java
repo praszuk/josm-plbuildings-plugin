@@ -20,7 +20,7 @@ public class DataSourceProfileDownloader {
      * @return profiles collection if response is parsed ok (might be empty), else return null if parse/request error
      */
     public static Collection<DataSourceProfile> downloadProfiles(DataSourceServer server) {
-        String rawUrl = server.getUrl() + DownloaderConstants.API_DATA_SOURCES_PROFILES;
+        String rawUrl = server.getUrl() + DownloaderConstants.API_DATA_SOURCES_PROFILES + "/";
 
         JsonReader reader = null;
         Collection<DataSourceProfile> dataSourcesProfiles = new ArrayList<>();
