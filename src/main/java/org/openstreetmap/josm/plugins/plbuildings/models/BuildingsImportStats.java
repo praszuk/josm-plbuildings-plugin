@@ -30,7 +30,7 @@ public class BuildingsImportStats {
     private static final String FIELD_TOTAL_IMPORT_ACTION = "totalImportAction";
 
     public BuildingsImportStats() {
-        BuildingsSettings.IMPORT_STATS.addListener(valueChangeEvent -> load());
+        BuildingsSettings.IMPORT_STATS.addWeakListener(valueChangeEvent -> load());
         load();
     }
 
