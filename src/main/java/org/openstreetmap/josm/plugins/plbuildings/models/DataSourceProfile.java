@@ -1,6 +1,8 @@
 package org.openstreetmap.josm.plugins.plbuildings.models;
 
-import jakarta.json.Json;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.JsonUtil.jsonFactory;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.JsonUtil.provider;
+
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
@@ -82,9 +84,9 @@ public class DataSourceProfile {
     }
 
     public static JsonArray toJson(Collection<DataSourceProfile> collection) {
-        JsonArrayBuilder builder = Json.createArrayBuilder();
+        JsonArrayBuilder builder = provider.createArrayBuilder();
         collection.forEach(obj -> builder.add(
-            Json.createObjectBuilder()
+            jsonFactory.createObjectBuilder()
                 .add(FIELD_NAME, obj.name)
                 .add(FIELD_GEOMETRY, obj.geometry)
                 .add(FIELD_TAGS, obj.tags)
@@ -96,7 +98,7 @@ public class DataSourceProfile {
     }
 
     public static Collection<DataSourceProfile> fromStringJson(String jsonString) {
-        JsonReader jsonReader = Json.createReader(new StringReader(jsonString));
+        JsonReader jsonReader = provider.createReader(new StringReader(jsonString));
         JsonArray jsonArray = jsonReader.readArray();
 
         Collection<DataSourceProfile> collection = new ArrayList<>();

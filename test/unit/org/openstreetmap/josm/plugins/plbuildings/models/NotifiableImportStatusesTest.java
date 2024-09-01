@@ -1,7 +1,8 @@
 package org.openstreetmap.josm.plugins.plbuildings.models;
 
 
-import jakarta.json.Json;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.JsonUtil.provider;
+
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import java.io.StringReader;
@@ -71,7 +72,7 @@ public class NotifiableImportStatusesTest {
 
         // Assert
         String rawJson = BuildingsSettings.NOTIFIABLE_IMPORT_STATUSES.get();
-        JsonReader jsonReader = Json.createReader(new StringReader(rawJson));
+        JsonReader jsonReader = provider.createReader(new StringReader(rawJson));
         JsonObject jsonStatuses = jsonReader.readObject();
         Assertions.assertEquals(jsonStatuses.entrySet().size(), notifiable.size());
     }

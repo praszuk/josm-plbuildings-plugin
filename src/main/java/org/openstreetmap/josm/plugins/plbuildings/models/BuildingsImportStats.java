@@ -1,6 +1,8 @@
 package org.openstreetmap.josm.plugins.plbuildings.models;
 
-import jakarta.json.Json;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.JsonUtil.jsonFactory;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.JsonUtil.provider;
+
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import java.io.StringReader;
@@ -17,6 +19,7 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class BuildingsImportStats {
     private static final BuildingsImportStats instance = new BuildingsImportStats();
+
 
     private int importNewBuildingCounter;
     private int importWithReplaceCounter;
@@ -105,7 +108,7 @@ public class BuildingsImportStats {
      */
     public void save() {
         Logging.debug("Saving import stats: {0}", toString());
-        JsonObject jsonStats = Json.createObjectBuilder()
+        JsonObject jsonStats = jsonFactory.createObjectBuilder()
             .add(FIELD_IMPORT_NEW_BUILDING_COUNTER, importNewBuildingCounter)
             .add(FIELD_IMPORT_WITH_REPLACE_COUNTER, importWithReplaceCounter)
             .add(FIELD_IMPORT_WITH_TAGS_UPDATE_COUNTER, importWithTagsUpdateCounter)
@@ -125,7 +128,7 @@ public class BuildingsImportStats {
     private void load() {
         String encodedB64Stats = BuildingsSettings.IMPORT_STATS.get();
         String decodedJsonStats = new String(Base64.getDecoder().decode(encodedB64Stats));
-        JsonReader jsonReader = Json.createReader(new StringReader(decodedJsonStats));
+        JsonReader jsonReader = provider.createReader(new StringReader(decodedJsonStats));
         JsonObject jsonStats = jsonReader.readObject();
         jsonReader.close();
 
