@@ -16,6 +16,8 @@ import org.openstreetmap.josm.tools.Logging;
  * and manages serialization/deserialization between BuildingSettings
  */
 public class BuildingsImportStats {
+    private static final BuildingsImportStats instance = new BuildingsImportStats();
+
     private int importNewBuildingCounter;
     private int importWithReplaceCounter;
 
@@ -29,9 +31,13 @@ public class BuildingsImportStats {
     private static final String FIELD_IMPORT_WITH_TAGS_UPDATE_COUNTER = "importWithTagsUpdate";
     private static final String FIELD_TOTAL_IMPORT_ACTION = "totalImportAction";
 
-    public BuildingsImportStats() {
-        BuildingsSettings.IMPORT_STATS.addWeakListener(valueChangeEvent -> load());
+    private BuildingsImportStats() {
+        BuildingsSettings.IMPORT_STATS.addListener(valueChangeEvent -> load());
         load();
+    }
+
+    public static BuildingsImportStats getInstance() {
+        return instance;
     }
 
     public int getImportNewBuildingCounter() {
@@ -55,7 +61,6 @@ public class BuildingsImportStats {
             throw new IllegalArgumentException("Number must be greater than 0");
         }
         importNewBuildingCounter += value;
-        save();
     }
 
     public void addImportWithReplaceCounter(int value) {
@@ -63,7 +68,6 @@ public class BuildingsImportStats {
             throw new IllegalArgumentException("Number must be greater than 0");
         }
         importWithReplaceCounter += value;
-        save();
     }
 
     public void addImportWithTagsUpdateCounter(int value) {
@@ -71,7 +75,6 @@ public class BuildingsImportStats {
             throw new IllegalArgumentException("Number must be greater than 0");
         }
         importWithTagsUpdateCounter += value;
-        save();
     }
 
     public void addTotalImportActionCounter(int value) {
@@ -79,7 +82,6 @@ public class BuildingsImportStats {
             throw new IllegalArgumentException("Number must be greater than 0");
         }
         totalImportActionCounter += value;
-        save();
     }
 
     public HashMap<String, Object> getStats() {
@@ -101,7 +103,7 @@ public class BuildingsImportStats {
     /**
      * Saves data to JOSM settings.
      */
-    private void save() {
+    public void save() {
         Logging.debug("Saving import stats: {0}", toString());
         JsonObject jsonStats = Json.createObjectBuilder()
             .add(FIELD_IMPORT_NEW_BUILDING_COUNTER, importNewBuildingCounter)

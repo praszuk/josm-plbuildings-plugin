@@ -34,6 +34,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class BuildingsImportAction extends JosmAction {
     static final String DESCRIPTION = tr("Import building at cursor position or replace/update selected.");
     static final String TITLE = tr("Download building");
+    static final BuildingsImportStats importStats = BuildingsImportStats.getInstance();
 
     public BuildingsImportAction() {
         super(
@@ -91,7 +92,6 @@ public class BuildingsImportAction extends JosmAction {
     }
 
     public static void performBuildingImport(BuildingsImportManager manager) {
-        final BuildingsImportStats importStats = new BuildingsImportStats();
         importStats.addTotalImportActionCounter(1);
 
         BuildingsImportData buildingsImportData = manager.getImportedData();
@@ -138,6 +138,7 @@ public class BuildingsImportAction extends JosmAction {
         try {
             Way resultBuilding = importStrategy.performImport();
             manager.setResultBuilding(resultBuilding);
+            importStats.save();
 
             boolean hasUncommonTags = BuildingsSettings.UNCOMMON_TAGS_CHECK.get()
                 && showDialogIfFoundUncommonTags(resultBuilding, manager);

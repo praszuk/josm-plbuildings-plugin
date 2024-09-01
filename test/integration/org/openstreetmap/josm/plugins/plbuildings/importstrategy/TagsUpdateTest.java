@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.testProfile
 import static org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator.isBuildingWayValid;
 
 import java.io.File;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,12 @@ public class TagsUpdateTest {
     public void setUp() {
         ExpertToggleAction.getInstance().setExpert(true);
         BuildingsSettings.IMPORT_MODE.put(ImportMode.TAGS);
+        BuildingsSettings.IMPORT_STATS.put(BuildingsSettings.IMPORT_STATS.getDefaultValue());
+    }
+
+    @AfterEach
+    public void teardown() {
+        BuildingsSettings.IMPORT_STATS.put(BuildingsSettings.IMPORT_STATS.getDefaultValue());
     }
 
     @Test
@@ -42,7 +49,7 @@ public class TagsUpdateTest {
         DataSet ds = importOsmFile(new File("test/data/import_strategy/current_building.osm"), "");
         MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, "test", null));
 
-        int tagsUpdateCounter = new BuildingsImportStats().getImportWithTagsUpdateCounter();
+        int tagsUpdateCounter = BuildingsImportStats.getInstance().getImportWithTagsUpdateCounter();
 
         Assertions.assertNotNull(ds);
 
@@ -62,7 +69,9 @@ public class TagsUpdateTest {
         Assertions.assertNotEquals(buildingToImport.getNodesCount(), buildingToReplace.getNodesCount());
         Assertions.assertEquals(buildingToImport.get("building"), buildingToReplace.get("building"));
 
-        Assertions.assertEquals(tagsUpdateCounter + 1, new BuildingsImportStats().getImportWithTagsUpdateCounter());
+        Assertions.assertEquals(
+            tagsUpdateCounter + 1, BuildingsImportStats.getInstance().getImportWithTagsUpdateCounter()
+        );
     }
 
     @Test
@@ -75,7 +84,7 @@ public class TagsUpdateTest {
         DataSet ds = importOsmFile(new File("test/data/import_strategy/current_building.osm"), "");
         MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, "test", null));
 
-        int replaceCounter = new BuildingsImportStats().getImportWithTagsUpdateCounter();
+        int replaceCounter = BuildingsImportStats.getInstance().getImportWithTagsUpdateCounter();
 
         Assertions.assertNotNull(ds);
 
@@ -93,6 +102,6 @@ public class TagsUpdateTest {
         Assertions.assertNotEquals(buildingToImport.getNodesCount(), buildingToReplace.getNodesCount());
         Assertions.assertNotEquals(buildingToImport.get("building"), buildingToReplace.get("building"));
 
-        Assertions.assertEquals(replaceCounter, new BuildingsImportStats().getImportWithTagsUpdateCounter());
+        Assertions.assertEquals(replaceCounter, BuildingsImportStats.getInstance().getImportWithTagsUpdateCounter());
     }
 }
