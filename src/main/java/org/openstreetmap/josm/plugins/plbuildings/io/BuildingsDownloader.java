@@ -58,7 +58,7 @@ public class BuildingsDownloader {
         }
 
         return String.format(
-            "%s%s?lat=%f&lon=%f&data_sources=%s",
+            "%s%s/?lat=%f&lon=%f&data_sources=%s",
             serverBaseApiUrl, DownloaderConstants.API_BUILDING_AT, latLon.lat(), latLon.lon(), dataSourceQueryParam
         );
     }
