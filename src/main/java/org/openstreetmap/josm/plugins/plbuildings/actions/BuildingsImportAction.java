@@ -138,7 +138,6 @@ public class BuildingsImportAction extends JosmAction {
         try {
             Way resultBuilding = importStrategy.performImport();
             manager.setResultBuilding(resultBuilding);
-            importStats.save();
 
             boolean hasUncommonTags = BuildingsSettings.UNCOMMON_TAGS_CHECK.get()
                 && showDialogIfFoundUncommonTags(resultBuilding, manager);
@@ -150,6 +149,7 @@ public class BuildingsImportAction extends JosmAction {
         }
         finally {
             manager.getEditLayer().clearSelection();
+            importStats.save();
         }
     }
 
