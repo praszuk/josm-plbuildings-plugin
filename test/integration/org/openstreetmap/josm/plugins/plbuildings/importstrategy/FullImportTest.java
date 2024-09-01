@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.testProfile
 import static org.openstreetmap.josm.plugins.plbuildings.validators.BuildingsWayValidator.isBuildingWayValid;
 
 import java.io.File;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -28,6 +30,12 @@ class FullImportTest {
     @BeforeEach
     public void setUp() {
         ExpertToggleAction.getInstance().setExpert(true);
+        BuildingsSettings.IMPORT_STATS.put(BuildingsSettings.IMPORT_STATS.getDefaultValue());
+    }
+
+    @AfterEach
+    public void teardown() {
+        BuildingsSettings.IMPORT_STATS.put(BuildingsSettings.IMPORT_STATS.getDefaultValue());
     }
 
     @Test
@@ -42,7 +50,7 @@ class FullImportTest {
 
         Assertions.assertNotNull(ds);
 
-        BuildingsImportStats stats = new BuildingsImportStats();
+        BuildingsImportStats stats = BuildingsImportStats.getInstance();
         int replaceCounter = stats.getImportWithReplaceCounter();
         int tagsUpdateCounter = stats.getImportWithTagsUpdateCounter();
 

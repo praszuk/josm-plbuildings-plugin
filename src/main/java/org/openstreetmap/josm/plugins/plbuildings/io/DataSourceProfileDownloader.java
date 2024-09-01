@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.plugins.plbuildings.io;
 
-import jakarta.json.Json;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.JsonUtil.provider;
+
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
@@ -33,7 +34,7 @@ public class DataSourceProfileDownloader {
             httpClient.connect();
             HttpClient.Response response = httpClient.getResponse();
 
-            reader = Json.createReader(response.getContent());
+            reader = provider.createReader(response.getContent());
             JsonArray objects = reader.readArray();
             for (int i = 0; i < objects.size(); i++) {
                 JsonObject ds = objects.getJsonObject(i);

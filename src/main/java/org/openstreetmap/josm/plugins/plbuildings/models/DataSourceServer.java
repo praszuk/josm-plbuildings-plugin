@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.plugins.plbuildings.models;
 
-import jakarta.json.Json;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.JsonUtil.provider;
+
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
@@ -37,9 +38,9 @@ public class DataSourceServer {
     }
 
     public static JsonArray toJson(Collection<DataSourceServer> collection) {
-        JsonArrayBuilder builder = Json.createArrayBuilder();
+        JsonArrayBuilder builder = provider.createArrayBuilder();
         collection.forEach(obj -> builder.add(
-            Json.createObjectBuilder()
+            provider.createObjectBuilder()
                 .add(FIELD_NAME, obj.name)
                 .add(FIELD_URL, obj.url)
                 .build()
@@ -48,7 +49,7 @@ public class DataSourceServer {
     }
 
     public static Collection<DataSourceServer> fromStringJson(String jsonString) {
-        JsonReader jsonReader = Json.createReader(new StringReader(jsonString));
+        JsonReader jsonReader = provider.createReader(new StringReader(jsonString));
         JsonArray jsonArray = jsonReader.readArray();
 
         Collection<DataSourceServer> collection = new ArrayList<>();

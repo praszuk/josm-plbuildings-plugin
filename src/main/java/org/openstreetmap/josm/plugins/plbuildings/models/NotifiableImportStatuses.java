@@ -4,8 +4,9 @@ import static org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus.CONN
 import static org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus.IMPORT_ERROR;
 import static org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus.NO_DATA;
 import static org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus.NO_UPDATE;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.JsonUtil.jsonFactory;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.JsonUtil.provider;
 
-import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonReader;
@@ -47,7 +48,7 @@ public class NotifiableImportStatuses {
 
     private void load() {
         String rawNotifiableImportStatuses = BuildingsSettings.NOTIFIABLE_IMPORT_STATUSES.get();
-        JsonReader jsonReader = Json.createReader(new StringReader(rawNotifiableImportStatuses));
+        JsonReader jsonReader = provider.createReader(new StringReader(rawNotifiableImportStatuses));
         JsonObject jsonStatuses = jsonReader.readObject();
         jsonReader.close();
 
@@ -61,7 +62,7 @@ public class NotifiableImportStatuses {
     }
 
     private void save() {
-        JsonObjectBuilder jsonNotifiableStatusBuilder = Json.createObjectBuilder();
+        JsonObjectBuilder jsonNotifiableStatusBuilder = jsonFactory.createObjectBuilder();
         enabledNotifications.forEach(
             ((importStatus, isEnabled) -> jsonNotifiableStatusBuilder.add(importStatus.name(), isEnabled)));
         BuildingsSettings.NOTIFIABLE_IMPORT_STATUSES.put(jsonNotifiableStatusBuilder.build().toString());

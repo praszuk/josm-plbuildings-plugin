@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.plugins.plbuildings.io;
 
-import jakarta.json.Json;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.JsonUtil.provider;
+
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
@@ -82,7 +83,7 @@ public class BuildingsDownloader {
     static BuildingsImportData parseData(InputStream responseStream) throws IllegalDataException {
         BuildingsImportData dataSourceBuildingsData = new BuildingsImportData();
 
-        JsonReader reader = Json.createReader(responseStream);
+        JsonReader reader = provider.createReader(responseStream);
         JsonArray dataSourcesObjectsData = reader.readArray();
         for (JsonValue jsonValue : dataSourcesObjectsData) {
             JsonObject dataSourceObject = jsonValue.asJsonObject();
