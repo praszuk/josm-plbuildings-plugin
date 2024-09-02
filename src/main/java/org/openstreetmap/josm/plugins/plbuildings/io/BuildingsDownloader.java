@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Locale;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.io.GeoJSONReader;
@@ -50,7 +51,7 @@ public class BuildingsDownloader {
     /**
      * @param latLon location of searching building (EPSG 4326)
      */
-    static String buildUrl(DataSourceConfig dataSourceConfig, LatLon latLon, DataSourceProfile currentProfile) {
+    public static String buildUrl(DataSourceConfig dataSourceConfig, LatLon latLon, DataSourceProfile currentProfile) {
         String serverBaseApiUrl = dataSourceConfig.getServerByName(currentProfile.getDataSourceServerName()).getUrl();
 
         String dataSourceQueryParam = currentProfile.getGeometry();
@@ -59,6 +60,7 @@ public class BuildingsDownloader {
         }
 
         return String.format(
+            Locale.US,
             "%s%s/?lat=%f&lon=%f&data_sources=%s",
             serverBaseApiUrl, DownloaderConstants.API_BUILDING_AT, latLon.lat(), latLon.lon(), dataSourceQueryParam
         );
