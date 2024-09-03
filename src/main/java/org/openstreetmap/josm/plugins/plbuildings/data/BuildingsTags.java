@@ -41,6 +41,7 @@ public class BuildingsTags {
                 "retail",
                 "service",
                 "warehouse",
+                "shed",
                 "yes",
 
                 "construction"
