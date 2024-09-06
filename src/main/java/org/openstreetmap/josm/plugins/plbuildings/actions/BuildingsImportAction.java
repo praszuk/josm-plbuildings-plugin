@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class BuildingsImportAction extends JosmAction {
     static final String DESCRIPTION = tr("Import building at cursor position or replace/update selected.");
-    static final String TITLE = tr("Download building");
+    static final String TITLE = "PlBuildings: " + tr("Download building");
     static final BuildingsImportStats importStats = BuildingsImportStats.getInstance();
 
     public BuildingsImportAction() {

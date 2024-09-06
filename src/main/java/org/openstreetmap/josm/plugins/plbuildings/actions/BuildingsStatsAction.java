@@ -3,6 +3,7 @@ package org.openstreetmap.josm.plugins.plbuildings.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.LinkedHashMap;
 import javax.swing.JOptionPane;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -10,18 +11,24 @@ import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
 import org.openstreetmap.josm.plugins.plbuildings.gui.BuildingsImportStatsPanel;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public class BuildingsStatsAction extends JosmAction {
 
     public static final String DESCRIPTION = tr("Show buildings import stats");
-    public static final String TITLE = tr("Buildings import stats");
+    public static final String TITLE = "PlBuildings: " + tr("Buildings import stats");
 
     public BuildingsStatsAction() {
         super(
             TITLE,
             (ImageProvider) null,
             DESCRIPTION,
-            null,
+            Shortcut.registerShortcut(
+                BuildingsPlugin.info.name + ":import_stats",
+                TITLE,
+                KeyEvent.CHAR_UNDEFINED,
+                Shortcut.NONE
+            ),
             true,
             BuildingsPlugin.info.name + ":buildings_stats",
             false
