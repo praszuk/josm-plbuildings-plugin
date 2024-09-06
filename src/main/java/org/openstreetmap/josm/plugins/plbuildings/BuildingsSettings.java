@@ -30,7 +30,7 @@ public class BuildingsSettings {
      */
     public static final DoubleProperty OVERLAP_DETECT_FREQ_DEGREE_STEP = new DoubleProperty(
         SETTING_PREFIX + "overlap_detect_freq_degree_step",
-        0.000001
+        0.000005
     );
 
     public static final DoubleProperty OVERLAP_DETECT_DUPLICATED_BUILDING_THRESHOLD = new DoubleProperty(
