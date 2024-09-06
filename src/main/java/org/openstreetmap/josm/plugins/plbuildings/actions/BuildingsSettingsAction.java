@@ -11,8 +11,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class BuildingsSettingsAction extends JosmAction {
-    public static final String DESCRIPTION = tr("Show PlBuildings settings");
-    public static final String TITLE = tr("PlBuildings settings");
+    public static final String DESCRIPTION = tr("Show settings");
+    public static final String TITLE = "PlBuildings: " + tr("Settings");
 
     private final SettingsController settingsController;
 
@@ -23,7 +23,7 @@ public class BuildingsSettingsAction extends JosmAction {
             DESCRIPTION,
             Shortcut.registerShortcut(
                 BuildingsPlugin.info.name + ":settings",
-                tr("Open") + " " + TITLE,
+                TITLE,
                 KeyEvent.CHAR_UNDEFINED,
                 Shortcut.NONE
             ),
