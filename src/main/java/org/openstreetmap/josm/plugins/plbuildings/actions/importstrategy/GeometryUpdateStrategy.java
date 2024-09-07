@@ -65,6 +65,7 @@ public class GeometryUpdateStrategy extends ImportStrategy {
         }
         UndoRedoHandler.getInstance().add(mergedGeometryBuildingSequence, false);
         importStats.addImportWithReplaceCounter(1);
+        importStats.addImportWithGeometryUpdateCounter(1);
         Logging.debug("Updated building {0} with new geometry", selectedBuilding.getId());
 
         return selectedBuilding;

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: josm-plugin_plbuildings 1.4.2-2-gdebafc4-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-06 02:30+0200\n"
-"PO-Revision-Date: 2024-09-06 02:31+0200\n"
+"POT-Creation-Date: 2024-09-07 21:29+0200\n"
+"PO-Revision-Date: 2024-09-07 21:31+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -62,14 +62,6 @@ msgstr "Budynki z różnych źródeł danych nie pokrywają się wystarczająco"
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:19
 msgid "Buildings import stats"
 msgstr "Statystyki importowania budynków"
-
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:47
-msgid "Buildings with full replace"
-msgstr "Budynki z pełną podmianą"
-
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:51
-msgid "Buildings with tags update"
-msgstr "Budynki z aktualizacją tagów"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlapOptionDialog.java:20
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:17
@@ -161,7 +153,7 @@ msgstr "Pobierz budynek"
 msgid "Downloading"
 msgstr "Pobieranie"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/FullImportStrategy.java:132
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/FullImportStrategy.java:134
 msgid "Duplicated building geometry, but not selected any building. Canceling!"
 msgstr "Powielona geometria budynku bez zaznaczonego budynku. Anulowanie!"
 
@@ -209,9 +201,21 @@ msgstr "Błąd importowania"
 msgid "Import mode"
 msgstr "Tryb importu"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/FullImportStrategy.java:64
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/FullImportStrategy.java:65
 msgid "Imported a new building"
 msgstr "Zaimportowano nowy budynek"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:47
+msgid "Imports with building replace"
+msgstr "Importy z podmianą budynku"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:55
+msgid "Imports with geometry update"
+msgstr "Importy z aktualizacją geometrii"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:51
+msgid "Imports with tags update"
+msgstr "Importy z aktualizacją tagów"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:21
 msgid ""
@@ -325,9 +329,9 @@ msgstr "Status"
 msgid "Tags"
 msgstr "Tagi"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:55
-msgid "Total number of import actions"
-msgstr "Całkowita liczba akcji importów"
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:59
+msgid "Total import actions"
+msgstr "Całkowita liczba akcji"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:96
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/controllers/SettingsUncommonTagsController.java:65
@@ -355,7 +359,7 @@ msgstr "Zaktualizowano geometrię budynku"
 msgid "Updated building tags"
 msgstr "Zaktualizowano tagi budynku"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/FullImportStrategy.java:103
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/FullImportStrategy.java:104
 msgid "Updated building tags and geometry"
 msgstr "Zaktualizowano tagi i geometrię budynku"
 
@@ -403,6 +407,9 @@ msgstr "Importuj budynki z polskich publicznych zbiorów danych."
 #. Translator credits (translators who want to be credited for their contributions can add their names here as the translation)
 msgid "translator-credits"
 msgstr "NieWnen"
+
+#~ msgid "Buildings with full replace"
+#~ msgstr "Budynki z pełną podmianą"
 
 #~ msgid "Open"
 #~ msgstr "Otwórz"

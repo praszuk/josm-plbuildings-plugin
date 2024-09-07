@@ -25,6 +25,7 @@ public class BuildingsImportStats {
     private int importWithReplaceCounter;
 
     private int importWithTagsUpdateCounter;
+    private int importWithGeometryUpdateCounter;
 
     private int totalImportActionCounter;
 
@@ -32,6 +33,7 @@ public class BuildingsImportStats {
     private static final String FIELD_IMPORT_NEW_BUILDING_COUNTER = "importNewBuilding";
     private static final String FIELD_IMPORT_WITH_REPLACE_COUNTER = "importWithReplace";
     private static final String FIELD_IMPORT_WITH_TAGS_UPDATE_COUNTER = "importWithTagsUpdate";
+    private static final String FIELD_IMPORT_WITH_GEOMETRY_UPDATE_COUNTER = "importWithGeometryUpdate";
     private static final String FIELD_TOTAL_IMPORT_ACTION = "totalImportAction";
 
     private BuildingsImportStats() {
@@ -55,6 +57,10 @@ public class BuildingsImportStats {
         return importWithTagsUpdateCounter;
     }
 
+    public int getImportWithGeometryUpdateCounter() {
+        return importWithGeometryUpdateCounter;
+    }
+
     public int getTotalImportActionCounter() {
         return totalImportActionCounter;
     }
@@ -71,6 +77,13 @@ public class BuildingsImportStats {
             throw new IllegalArgumentException("Number must be greater than 0");
         }
         importWithReplaceCounter += value;
+    }
+
+    public void addImportWithGeometryUpdateCounter(int value) {
+        if (value < 1) {
+            throw new IllegalArgumentException("Number must be greater than 0");
+        }
+        importWithGeometryUpdateCounter += value;
     }
 
     public void addImportWithTagsUpdateCounter(int value) {
@@ -92,6 +105,7 @@ public class BuildingsImportStats {
         stats.put(FIELD_IMPORT_NEW_BUILDING_COUNTER, importNewBuildingCounter);
         stats.put(FIELD_IMPORT_WITH_REPLACE_COUNTER, importWithReplaceCounter);
         stats.put(FIELD_IMPORT_WITH_TAGS_UPDATE_COUNTER, importWithTagsUpdateCounter);
+        stats.put(FIELD_IMPORT_WITH_GEOMETRY_UPDATE_COUNTER, importWithGeometryUpdateCounter);
         stats.put(FIELD_TOTAL_IMPORT_ACTION, totalImportActionCounter);
 
         return stats;
@@ -112,6 +126,7 @@ public class BuildingsImportStats {
             .add(FIELD_IMPORT_NEW_BUILDING_COUNTER, importNewBuildingCounter)
             .add(FIELD_IMPORT_WITH_REPLACE_COUNTER, importWithReplaceCounter)
             .add(FIELD_IMPORT_WITH_TAGS_UPDATE_COUNTER, importWithTagsUpdateCounter)
+            .add(FIELD_IMPORT_WITH_GEOMETRY_UPDATE_COUNTER, importWithGeometryUpdateCounter)
             .add(FIELD_TOTAL_IMPORT_ACTION, totalImportActionCounter)
             .build();
 
@@ -135,6 +150,7 @@ public class BuildingsImportStats {
         importNewBuildingCounter = jsonStats.getInt(FIELD_IMPORT_NEW_BUILDING_COUNTER, 0);
         importWithReplaceCounter = jsonStats.getInt(FIELD_IMPORT_WITH_REPLACE_COUNTER, 0);
         importWithTagsUpdateCounter = jsonStats.getInt(FIELD_IMPORT_WITH_TAGS_UPDATE_COUNTER, 0);
+        importWithGeometryUpdateCounter = jsonStats.getInt(FIELD_IMPORT_WITH_GEOMETRY_UPDATE_COUNTER, 0);
         totalImportActionCounter = jsonStats.getInt(FIELD_TOTAL_IMPORT_ACTION, 0);
         Logging.debug("Loaded import stats: {0}", toString());
     }

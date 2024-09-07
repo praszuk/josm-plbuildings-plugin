@@ -44,15 +44,19 @@ public class BuildingsStatsAction extends JosmAction {
             Integer.toString(buildingsStats.getImportNewBuildingCounter())
         );
         statsPanelData.put(
-            tr("Buildings with full replace"),
+            tr("Imports with building replace"),
             Integer.toString(buildingsStats.getImportWithReplaceCounter())
         );
         statsPanelData.put(
-            tr("Buildings with tags update"),
+            tr("Imports with tags update"),
             Integer.toString(buildingsStats.getImportWithTagsUpdateCounter())
         );
         statsPanelData.put(
-            tr("Total number of import actions"),
+            tr("Imports with geometry update"),
+            Integer.toString(buildingsStats.getImportWithGeometryUpdateCounter())
+        );
+        statsPanelData.put(
+            tr("Total import actions"),
             Integer.toString(buildingsStats.getTotalImportActionCounter())
         );
 

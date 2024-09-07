@@ -38,6 +38,7 @@ public class FullImportStrategy extends ImportStrategy {
             );
         }
         UndoRedoHandler.getInstance().add(updateBuildingTagsCommand, false);
+        importStats.addImportWithReplaceCounter(1);
         importStats.addImportWithTagsUpdateCounter(1);
         Logging.info("Updated selected building tags (without geometry replacing)!");
 
@@ -110,6 +111,7 @@ public class FullImportStrategy extends ImportStrategy {
         }
         UndoRedoHandler.getInstance().add(mergedGeometryAndUpdatedTagsBuildingSequence, false);
         importStats.addImportWithReplaceCounter(1);
+        importStats.addImportWithGeometryUpdateCounter(1);
         importStats.addImportWithTagsUpdateCounter(1);
         Logging.debug("Updated building {0} with new data", selectedBuilding.getId());
         return selectedBuilding;

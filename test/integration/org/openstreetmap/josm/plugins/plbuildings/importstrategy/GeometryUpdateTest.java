@@ -49,7 +49,10 @@ public class GeometryUpdateTest {
         DataSet ds = importOsmFile(new File("test/data/import_strategy/current_building.osm"), "");
         MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, "test", null));
 
-        int replaceCounter = BuildingsImportStats.getInstance().getImportWithReplaceCounter();
+        BuildingsImportStats stats = BuildingsImportStats.getInstance();
+        int replaceCounter = stats.getImportWithReplaceCounter();
+        int tagsUpdateCounter = stats.getImportWithTagsUpdateCounter();
+        int geometryUpdateCounter = stats.getImportWithGeometryUpdateCounter();
 
         Assertions.assertNotNull(ds);
 
@@ -71,7 +74,9 @@ public class GeometryUpdateTest {
         Assertions.assertNotEquals(buildingToImport.get("building"), buildingToReplace.get("building"));
         Assertions.assertEquals(numberOfTags, buildingToReplace.getKeys().size());
 
-        Assertions.assertEquals(replaceCounter + 1, BuildingsImportStats.getInstance().getImportWithReplaceCounter());
+        Assertions.assertEquals(replaceCounter + 1, stats.getImportWithReplaceCounter());
+        Assertions.assertEquals(geometryUpdateCounter + 1, stats.getImportWithGeometryUpdateCounter());
+        Assertions.assertEquals(tagsUpdateCounter, stats.getImportWithTagsUpdateCounter());
     }
 
     @Test
@@ -84,7 +89,10 @@ public class GeometryUpdateTest {
         DataSet ds = importOsmFile(new File("test/data/import_strategy/current_building.osm"), "");
         MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, "test", null));
 
-        int replaceCounter = BuildingsImportStats.getInstance().getImportWithReplaceCounter();
+        BuildingsImportStats stats = BuildingsImportStats.getInstance();
+        int replaceCounter = stats.getImportWithReplaceCounter();
+        int tagsUpdateCounter = stats.getImportWithTagsUpdateCounter();
+        int geometryUpdateCounter = stats.getImportWithGeometryUpdateCounter();
 
         Assertions.assertNotNull(ds);
 
@@ -102,6 +110,8 @@ public class GeometryUpdateTest {
         Assertions.assertNotEquals(buildingToImport.getNodesCount(), buildingToReplace.getNodesCount());
         Assertions.assertNotEquals(buildingToImport.get("building"), buildingToReplace.get("building"));
 
-        Assertions.assertEquals(replaceCounter, BuildingsImportStats.getInstance().getImportWithReplaceCounter());
+        Assertions.assertEquals(replaceCounter, stats.getImportWithReplaceCounter());
+        Assertions.assertEquals(geometryUpdateCounter, stats.getImportWithGeometryUpdateCounter());
+        Assertions.assertEquals(tagsUpdateCounter, stats.getImportWithTagsUpdateCounter());
     }
 }
