@@ -31,8 +31,14 @@ public class PreCheckUtils {
         if (newValue == null) {
             return true;
         }
+        if (newValue.equals(currentValue)) {
+            return false;
+        }
 
-        if (newValue.equals("house") && HOUSE_DETAILS.contains(currentValue)) {
+        if (newValue.equals("yes") && !currentValue.equals("construction")) {
+            return true;
+        }
+        else if (newValue.equals("house") && HOUSE_DETAILS.contains(currentValue)) {
             return true;
         }
         else if (newValue.equals("residential") && LIVING_BUILDINGS.contains(currentValue)) {
