@@ -49,7 +49,10 @@ public class TagsUpdateTest {
         DataSet ds = importOsmFile(new File("test/data/import_strategy/current_building.osm"), "");
         MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, "test", null));
 
-        int tagsUpdateCounter = BuildingsImportStats.getInstance().getImportWithTagsUpdateCounter();
+        BuildingsImportStats stats = BuildingsImportStats.getInstance();
+        int replaceCounter = stats.getImportWithReplaceCounter();
+        int tagsUpdateCounter = stats.getImportWithTagsUpdateCounter();
+        int geometryUpdateCounter = stats.getImportWithGeometryUpdateCounter();
 
         Assertions.assertNotNull(ds);
 
@@ -72,6 +75,8 @@ public class TagsUpdateTest {
         Assertions.assertEquals(
             tagsUpdateCounter + 1, BuildingsImportStats.getInstance().getImportWithTagsUpdateCounter()
         );
+        Assertions.assertEquals(replaceCounter + 1, stats.getImportWithReplaceCounter());
+        Assertions.assertEquals(geometryUpdateCounter, stats.getImportWithGeometryUpdateCounter());
     }
 
     @Test
@@ -84,7 +89,10 @@ public class TagsUpdateTest {
         DataSet ds = importOsmFile(new File("test/data/import_strategy/current_building.osm"), "");
         MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, "test", null));
 
-        int replaceCounter = BuildingsImportStats.getInstance().getImportWithTagsUpdateCounter();
+        BuildingsImportStats stats = BuildingsImportStats.getInstance();
+        int replaceCounter = stats.getImportWithReplaceCounter();
+        int tagsUpdateCounter = stats.getImportWithTagsUpdateCounter();
+        int geometryUpdateCounter = stats.getImportWithGeometryUpdateCounter();
 
         Assertions.assertNotNull(ds);
 
@@ -103,5 +111,7 @@ public class TagsUpdateTest {
         Assertions.assertNotEquals(buildingToImport.get("building"), buildingToReplace.get("building"));
 
         Assertions.assertEquals(replaceCounter, BuildingsImportStats.getInstance().getImportWithTagsUpdateCounter());
+        Assertions.assertEquals(tagsUpdateCounter, stats.getImportWithTagsUpdateCounter());
+        Assertions.assertEquals(geometryUpdateCounter, stats.getImportWithGeometryUpdateCounter());
     }
 }
