@@ -1,50 +1,69 @@
 # PLBuildings plugin
+[Read in English](README.en.md).
 
-## Description
-PLBuildings is a [JOSM](https://josm.openstreetmap.de/) plugin 
-which allows to easily import buildings from Polish public datasets to add it to the OpenStreetMap.
-It communicates with the [PLBuildings server](https://github.com/praszuk/josm-plbuildings-server) that obtains this data.
+## Opis
+PLBuildings to wtyczka do [JOSMa](https://josm.openstreetmap.de/), która umożliwia użytkownikom łatwe importowanie budyków z publicznych polskich zbiorów danych w celu dodania ich do OpenStreetMap.
 
-## Features
-- Easy import of building at cursor position.
-- Replacing geometry if old building is selected.
-- Updating tags with the possibility of skipping most common replacement conflicts like from `building=yes` to `building=house` without conflict tag dialog.
-- Joining building other existing buildings. Adjacent nodes will be shared between 2 buildings. It means no overlapping duplicated nodes.
-- Avoiding duplicated imports.
-- Simple statistics (counting imported buildings).
-- Multilingual with i18n (English and Polish).
-- Pre-checking buildings before replacing:
-  - Looking for "survey" value.
-  - Preventing house details simplification (e.g. detached->house)
-  - Avoiding breaking `building:levels` if selected `building:levels` + `roof:levels` are equal to a new `building:levels`.
-- Post-checking imported building (looking for uncommon tags).
-- Statuses (current state of import action).
-- GUI Sidebar (Toggle Dialog) with (current: status, data source, section with the latest tags and uncommon tag indicator).
+Wtyczka komunikuje się z [serwerem PLBuildings](https://github.com/praszuk/josm-plbuildings-server) w celu pozyskiwania danych.
 
-## How to use it
-Move the cursor to a building and press `CTRL + SHIFT + 1`.
-If you select other building before pressing shortcut combination, then it will use _Replace Geometry_ feature (from [utilsplugin2](https://wiki.openstreetmap.org/wiki/JOSM/Plugins/utilsplugin2))
-to replace old shape and tags with the new one. It can show the conflict window.
+## Funkcjonalności
+- Prosty import budynku w miejscu kursora myszy.
+- Zastępowanie geometrii jeśli stary budynek jest zaznaczony.
+- Aktualizacja tagów z możliwością pominięcia konfliktów _częstych tagów_ np. takich jak z `building=yes` na `building=house` bez wyświetlania okna dialogowego z konfliktem tagów.
+- Łączenie budynku z istniejącym budynkiem. Sąsiadujące węzły będą współdzielone między budynkami – zapobiega to nakładającym/duplikującym się węzłom.
+- Zapobieganie zduplikowanych importów.
+- Proste statystyki (zliczanie zaimportowanych/podmienionych budynków).
+- Wielojęzyczność z użyciem i18n (polski i angielski).
+- Wstępne sprawdzanie budynków przed zastąpieniem:
+    - Szukanie wartości "survey".
+    - Zapobieganie zubożeniu tagów (np. `detached` -/> `house`)
+    - Unikanie błędów związanych z `building:levels` w zależności od tego, czy zaznaczony budynek ma tag `roof:levels`.
+- Sprawdzanie zaimportowanych budynków pod względem nietypowych tagów.
+- Statusy (aktualny stan akcji importu).
+- Tryby importu:
+    - Pełny – domyślny (pełny import nowego budynku lub pełna zamiana)
+    - Geometria – aktualizacja tylko geometrii dla zaznaczonego budynku
+    - Tagi – aktualizacja tylko tagów dla zaznaczonego budynku
+- Ustawienia:
+    - Konfiguracje wielu serwerów
+    - Wiele źródeł danych, w tym złączone źródła danych (np. 1 dla geometrii, 2 dla tagów) – zawiera to również mechanizm, który obsługuje braki w wybranym źródle.
+    - Powiadomienia
+    - Nietypowe tagi
+    - ...więcej ustawień można znaleźć w ustawieniach zaawansowanych JOSMa, szukając po kluczu `plbuildings.`
+- Boczny panel GUI (tzw. Toggle Dialog), który zawiera:
+    - Aktualny status
+    - Tryb importu
+    - Źródło danych
+    - Ostatnie tagi (wraz ze wskaźnikiem nietypowych tagów)
+- Automatyczne dodawanie tagów `source:building` i `source:geometry`.
+- Automatyczne usuwanie tagu `source=geoportal.gov.pl`
 
-Simple building import:
-![Simple building import](media/simple_import.gif)
+## Jak z niej korzystać
+1. Zainstaluj wtyczkę w JOSMie (tak jak jak każdy inną – przez ustawienia JOSMa).
+2. Otwórz boczny panel (Toggle Dialog): Po lewej stronie powinna być widoczna ikonka z budynkami (logiem tej wtyczki) – klknij na nią. Po prawej stornie powinien otworzyć się boczny panel wtyczki taki jak na GIFie poniżej.
+3. Wybierz tryb importu i źródło danych – zostanie to zapamiętane, ale rekomenduję aby zawsze mieć otwarty ten boczny panel dla łatwiejszej zmiany trybu/źródła i aby mieć uwagę na ostatni import.
+4. Nakieruj kursor myszy na widoczny budynek i naciśnij `CTRL + SHIFT + 1`.
+5. Jeśli przed wciśnięciem skrótu został zaznaczony inny budynek, zostanie użyta funkcja zamiany geometrii z pluginu [utilsplugin2](https://wiki.openstreetmap.org/wiki/JOSM/Plugins/utilsplugin2) w celu aktualizacji starego kształtu. Może to wyświetlić okno dialogowe konfliktów tagów.
 
-Import with replacing old building geometry:
-![Import with replacing old building geometry](media/import_with_replace.gif)
-
-To show statistics, go to:`Menu->Data->Buildings import stats`
-
-Example stats:
-
-![Buildings import statistics](media/import_stats.jpg)
-
-GUI with status changing at import:
-
-![Toggle dialog at import action](media/toggledialog.gif)
+Uwaga: Jeśli skrót nie działa (może się tak zdarzyć) lub po prostu chcesz go zmienić na inny, wejdź w ustawienia skrótów w JOSMie i wpisz: `plbuildings`, następnie zmień skrót dla `Pobierz budynek`.
 
 
-### Simplified buildings import action flow
-![Simplified buildings import action flow](media/simple_import_activity_diagram.jpg)
+Prosty import budynku:
+![Prosty import budynku](media/simple_import.gif)
 
-## License
+Import z zamianą starej geometrii budynku:
+![Import z zamianą starej geometrii budynku](media/import_with_replace.gif)
+
+W celu wyświetlenia statystyk, otwórz: `Menu->Dane->Statystyki importowania budynków`
+
+Przykładowe statystyki:
+
+![Statystyki importowania budynków](media/import_stats2.jpg)
+
+Boczny panel ze statusem zmieniającym się podczas importu:
+
+![Boczny panel podczas importu](media/toggledialog2.gif)
+
+
+## Licencja
 [GPLv3](LICENSE)
