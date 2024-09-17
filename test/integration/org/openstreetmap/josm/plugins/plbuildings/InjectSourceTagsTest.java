@@ -66,9 +66,7 @@ public class InjectSourceTagsTest {
         Assertions.assertFalse(importDataSet.getWays().stream().findFirst().orElseThrow().hasTag("source:building"));
         Assertions.assertFalse(importDataSet.getWays().stream().findFirst().orElseThrow().hasTag("source:geometry"));
 
-        BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.put(
-            CombineNearestStrategy.ACCEPT_GEOMETRY.toString()
-        );
+        BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.put(CombineNearestStrategy.ACCEPT.toString());
 
         DataSet currentDataSet = new DataSet();
 
