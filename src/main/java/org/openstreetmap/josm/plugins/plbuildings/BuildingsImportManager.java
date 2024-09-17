@@ -1,9 +1,9 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
 import static org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction.performBuildingImport;
-import static org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestStrategy.ACCEPT;
-import static org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestStrategy.ASK_USER;
-import static org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestStrategy.CANCEL;
+import static org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOneDsStrategy.ACCEPT;
+import static org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOneDsStrategy.ASK_USER;
+import static org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOneDsStrategy.CANCEL;
 import static org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus.DOWNLOADING;
 import static org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus.IDLE;
 import static org.openstreetmap.josm.plugins.plbuildings.gui.NotificationPopup.showNotification;
@@ -13,10 +13,11 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestStrategy;
+import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOneDsStrategy;
+import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOverlappingStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDsOptionDialog;
-import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOverlapOptionDialog;
+import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOverlappingOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
@@ -152,8 +153,8 @@ public class BuildingsImportManager {
         BuildingsPlugin.toggleDialogController.updateTags(buildingText, buildingLevelsText, hasUncommonTags);
     }
 
-    static CombineNearestStrategy getImportBuildingDataOneDsStrategy(String availableDataSource) {
-        CombineNearestStrategy strategy = CombineNearestStrategy.fromString(
+    static CombineNearestOneDsStrategy getImportBuildingDataOneDsStrategy(String availableDataSource) {
+        CombineNearestOneDsStrategy strategy = CombineNearestOneDsStrategy.fromString(
             BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.get()
         );
         if (strategy == ASK_USER) {
@@ -162,16 +163,16 @@ public class BuildingsImportManager {
         return strategy;
     }
 
-    static CombineNearestStrategy getImportBuildingOverlapStrategy(
+    static CombineNearestOverlappingStrategy getImportBuildingOverlappingStrategy(
         String geomDs,
         String tagsDs,
         double overlapPercentage
     ) {
-        CombineNearestStrategy strategy = CombineNearestStrategy.fromString(
-            BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_STRATEGY.get()
+        CombineNearestOverlappingStrategy strategy = CombineNearestOverlappingStrategy.fromString(
+            BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAPPING_STRATEGY.get()
         );
-        if (strategy == CombineNearestStrategy.ASK_USER) {
-            strategy = ImportedBuildingOverlapOptionDialog.show(geomDs, tagsDs, overlapPercentage);
+        if (strategy == CombineNearestOverlappingStrategy.ASK_USER) {
+            strategy = ImportedBuildingOverlappingOptionDialog.show(geomDs, tagsDs, overlapPercentage);
         }
         return strategy;
     }
@@ -272,21 +273,21 @@ public class BuildingsImportManager {
                     >= BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD.get()) {
                     importedBuilding = combineBuildings(geometryBuilding, tagsBuilding);
                 } else {
-                    CombineNearestStrategy strategy = getImportBuildingOverlapStrategy(
+                    CombineNearestOverlappingStrategy strategy = getImportBuildingOverlappingStrategy(
                         profile.getGeometry(),
                         profile.getTags(),
                         overlapPercentage
                     );
                     switch (strategy) {
-                        case ACCEPT:
+                        case MERGE_BOTH:
                             importedBuilding = combineBuildings(geometryBuilding, tagsBuilding);
                             break;
-                        case ACCEPT_GEOMETRY:
+                        case ACCEPT_GEOMETRY_SOURCE:
                             importedBuilding = geometryBuilding;
                             importedBuildingGeometrySource = profile.getGeometry();
                             importedBuildingTagsSource = profile.getGeometry();
                             break;
-                        case ACCEPT_TAGS:
+                        case ACCEPT_TAGS_SOURCE:
                             importedBuilding = tagsBuilding;
                             importedBuildingGeometrySource = profile.getTags();
                             importedBuildingTagsSource = profile.getTags();
