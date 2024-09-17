@@ -176,6 +176,13 @@ public class BuildingsImportManager {
         return strategy;
     }
 
+    public static void injectSourceTags(OsmPrimitive importedBuilding, String geometrySource, String tagsSource) {
+        if (!geometrySource.equals(tagsSource)) {
+            importedBuilding.put("source:geometry", geometrySource);
+        }
+        importedBuilding.put("source:building", tagsSource);
+    }
+
     /**
      * Create a new building based on provided parameters. It's cloned with new id/nodes.
      *
@@ -225,9 +232,14 @@ public class BuildingsImportManager {
     ) {
         OsmPrimitive importedBuilding;
 
+        String importedBuildingGeometrySource = profile.getGeometry();
+        String importedBuildingTagsSource = profile.getTags();
+
         // One data source
         if (profile.isOneDataSource()) {
             importedBuilding = getNearestBuilding(importedData.get(profile.getGeometry()), latLon);
+            importedBuildingGeometrySource = profile.getGeometry();
+            importedBuildingTagsSource = profile.getGeometry();
         }
         // Multiple data source
         else {
@@ -243,8 +255,9 @@ public class BuildingsImportManager {
                 String availableDsName = geometryDs.isEmpty() ? profile.getTags() : profile.getGeometry();
 
                 if (getImportBuildingDataOneDsStrategy(availableDsName) == ACCEPT) {
-                    importedBuilding =
-                        NearestBuilding.getNearestBuilding(importedData.get(availableDsName), latLon);
+                    importedBuilding = NearestBuilding.getNearestBuilding(importedData.get(availableDsName), latLon);
+                    importedBuildingTagsSource = availableDsName;
+                    importedBuildingGeometrySource = availableDsName;
                 } else {
                     importedBuilding = null;
                 }
@@ -270,15 +283,22 @@ public class BuildingsImportManager {
                             break;
                         case ACCEPT_GEOMETRY:
                             importedBuilding = geometryBuilding;
+                            importedBuildingGeometrySource = profile.getGeometry();
+                            importedBuildingTagsSource = profile.getGeometry();
                             break;
                         case ACCEPT_TAGS:
                             importedBuilding = tagsBuilding;
+                            importedBuildingGeometrySource = profile.getTags();
+                            importedBuildingTagsSource = profile.getTags();
                             break;
                         default:
                             importedBuilding = null;
                     }
                 }
             }
+        }
+        if (importedBuilding != null) {
+            injectSourceTags(importedBuilding, importedBuildingGeometrySource, importedBuildingTagsSource);
         }
         return CloneBuilding.cloneBuilding(importedBuilding);
     }

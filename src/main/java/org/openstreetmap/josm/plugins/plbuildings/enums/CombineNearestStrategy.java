@@ -7,7 +7,7 @@ package org.openstreetmap.josm.plugins.plbuildings.enums;
 public enum CombineNearestStrategy {
     ASK_USER("ask_user"),
     CANCEL("cancel"),
-    ACCEPT("accept_geometry"),
+    ACCEPT("accept"),
     ACCEPT_GEOMETRY("accept_geometry"),
     ACCEPT_TAGS("accept_tags");
 
