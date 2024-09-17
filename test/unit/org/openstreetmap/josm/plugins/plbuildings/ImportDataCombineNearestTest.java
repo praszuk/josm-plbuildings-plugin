@@ -79,7 +79,10 @@ public class ImportDataCombineNearestTest {
             new File("test/data/import_data_combine_nearest_both_ds_overlap_lt_60/one_building_tags.osm"),
             ""
         );
-
+        new MockUp<BuildingsImportManager>() {
+            @Mock
+            public void injectSourceTags(OsmPrimitive importedBuilding, String geometrySource, String tagsSource) {}
+        };
     }
 
     @Test
