@@ -102,4 +102,78 @@ public class InjectSourceTagsTest {
         Assertions.assertEquals(resultBuilding.get("source:building"), profile.getTags());
         Assertions.assertFalse(resultBuilding.hasTag("source:geometry"));
     }
+
+    @Test
+    void testTwoDsImportButNotOverlappingEnoughUserSelectMergeBoth() {
+        DataSourceServer server = new DataSourceServer("server", "127.0.0.1");
+        DataSourceProfile profile = new DataSourceProfile(server.getName(), "ds_geom", "ds_tags", "profile");
+
+        DataSet importDataSet = importOsmFile(new File("test/data/simple_building.osm"), "");
+        Assertions.assertFalse(importDataSet.getWays().stream().findFirst().orElseThrow().hasTag("source:building"));
+        Assertions.assertFalse(importDataSet.getWays().stream().findFirst().orElseThrow().hasTag("source:geometry"));
+
+        BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD.put(120.);
+        BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_STRATEGY.put(CombineNearestStrategy.ACCEPT.toString());
+
+        DataSet currentDataSet = new DataSet();
+
+        BuildingsImportManager manager = new BuildingsImportManager(currentDataSet, null, null);
+        manager.setImportedData(new BuildingsImportData("ds_geom", importDataSet, "ds_tags", importDataSet));
+        manager.setCurrentProfile(profile);
+        manager.processDownloadedData();
+
+        Way resultBuilding = currentDataSet.getWays().stream().findFirst().orElseThrow();
+        Assertions.assertEquals(resultBuilding.get("source:building"), profile.getTags());
+        Assertions.assertEquals(resultBuilding.get("source:geometry"), profile.getGeometry());
+    }
+
+    @Test
+    void testTwoDsImportButNotOverlappingEnoughUserSelectAcceptTagsSource() {
+        DataSourceServer server = new DataSourceServer("server", "127.0.0.1");
+        DataSourceProfile profile = new DataSourceProfile(server.getName(), "ds_geom", "ds_tags", "profile");
+
+        DataSet importDataSet = importOsmFile(new File("test/data/simple_building.osm"), "");
+        Assertions.assertFalse(importDataSet.getWays().stream().findFirst().orElseThrow().hasTag("source:building"));
+        Assertions.assertFalse(importDataSet.getWays().stream().findFirst().orElseThrow().hasTag("source:geometry"));
+
+        BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD.put(120.);
+        BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_STRATEGY.put(CombineNearestStrategy.ACCEPT_TAGS.toString());
+
+        DataSet currentDataSet = new DataSet();
+
+        BuildingsImportManager manager = new BuildingsImportManager(currentDataSet, null, null);
+        manager.setImportedData(new BuildingsImportData("ds_geom", importDataSet, "ds_tags", importDataSet));
+        manager.setCurrentProfile(profile);
+        manager.processDownloadedData();
+
+        Way resultBuilding = currentDataSet.getWays().stream().findFirst().orElseThrow();
+        Assertions.assertEquals(resultBuilding.get("source:building"), profile.getTags());
+        Assertions.assertFalse(resultBuilding.hasTag("source:geometry"));
+    }
+
+    @Test
+    void testTwoDsImportButNotOverlappingEnoughUserSelectAcceptGeometrySource() {
+        DataSourceServer server = new DataSourceServer("server", "127.0.0.1");
+        DataSourceProfile profile = new DataSourceProfile(server.getName(), "ds_geom", "ds_tags", "profile");
+
+        DataSet importDataSet = importOsmFile(new File("test/data/simple_building.osm"), "");
+        Assertions.assertFalse(importDataSet.getWays().stream().findFirst().orElseThrow().hasTag("source:building"));
+        Assertions.assertFalse(importDataSet.getWays().stream().findFirst().orElseThrow().hasTag("source:geometry"));
+
+        BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD.put(120.);
+        BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_STRATEGY.put(
+            CombineNearestStrategy.ACCEPT_GEOMETRY.toString()
+        );
+
+        DataSet currentDataSet = new DataSet();
+
+        BuildingsImportManager manager = new BuildingsImportManager(currentDataSet, null, null);
+        manager.setImportedData(new BuildingsImportData("ds_geom", importDataSet, "ds_tags", importDataSet));
+        manager.setCurrentProfile(profile);
+        manager.processDownloadedData();
+
+        Way resultBuilding = currentDataSet.getWays().stream().findFirst().orElseThrow();
+        Assertions.assertEquals(resultBuilding.get("source:building"), profile.getGeometry());
+        Assertions.assertFalse(resultBuilding.hasTag("source:geometry"));
+    }
 }
