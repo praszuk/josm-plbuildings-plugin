@@ -15,14 +15,8 @@ public class ImportedBuildingOverlappingOptionDialog {
     public static CombineNearestOverlappingStrategy show(String geomDs, String tagsDs, double overlapPercentage) {
         ArrayList<Pair<CombineNearestOverlappingStrategy, Object>> choicesPairs = new ArrayList<>(Arrays.asList(
             Pair.create(CombineNearestOverlappingStrategy.MERGE_BOTH, tr("Merge both")),
-            Pair.create(
-                CombineNearestOverlappingStrategy.ACCEPT_GEOMETRY_SOURCE,
-                String.format(tr("Use %s (geometry)"), geomDs)
-            ),
-            Pair.create(
-                CombineNearestOverlappingStrategy.ACCEPT_TAGS_SOURCE,
-                String.format(tr("Use %s (tags)"), tagsDs)
-            ),
+            Pair.create(CombineNearestOverlappingStrategy.ACCEPT_GEOMETRY_SOURCE, String.format(tr("Use %s"), geomDs)),
+            Pair.create(CombineNearestOverlappingStrategy.ACCEPT_TAGS_SOURCE, String.format(tr("Use %s"), tagsDs)),
             Pair.create(CombineNearestOverlappingStrategy.CANCEL, tr("Cancel"))
         ));
         Object[] choices = choicesPairs.stream().map(pair -> pair.b).toArray();
