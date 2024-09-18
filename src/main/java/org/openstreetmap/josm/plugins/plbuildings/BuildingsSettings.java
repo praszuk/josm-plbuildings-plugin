@@ -10,7 +10,8 @@ import org.openstreetmap.josm.data.preferences.EnumProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
-import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestStrategy;
+import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOneDsStrategy;
+import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOverlappingStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.enums.ImportMode;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 
@@ -39,12 +40,12 @@ public class BuildingsSettings {
 
     public static final StringProperty COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY = new StringProperty(
         SETTING_PREFIX + "combine_nearest_building_one_ds_strategy",
-        CombineNearestStrategy.ASK_USER.toString()
+        CombineNearestOneDsStrategy.ASK_USER.toString()
     );
 
-    public static final StringProperty COMBINE_NEAREST_BUILDING_OVERLAP_STRATEGY = new StringProperty(
+    public static final StringProperty COMBINE_NEAREST_BUILDING_OVERLAPPING_STRATEGY = new StringProperty(
         SETTING_PREFIX + "combine_nearest_building_both_ds_strategy",
-        CombineNearestStrategy.ASK_USER.toString()
+        CombineNearestOverlappingStrategy.ASK_USER.toString()
     );
     /**
      * Percentage value. It is used when both datasets are available and plugin try to

@@ -91,24 +91,6 @@ public class BuildingsImportAction extends JosmAction {
         return true;
     }
 
-    public static void injectSourceTags(Way importedBuilding, BuildingsImportManager manager) {
-        String tagsDs = manager.getCurrentProfile().getTags();
-        String geomDs = manager.getCurrentProfile().getGeometry();
-        String sourceBuilding;
-
-        if (manager.getCurrentProfile().isOneDataSource()) {
-            sourceBuilding = tagsDs;
-        } else if (manager.getImportedData().get(tagsDs).isEmpty()) {
-            sourceBuilding = geomDs;
-        } else if (manager.getImportedData().get(geomDs).isEmpty()) {
-            sourceBuilding = tagsDs;
-        } else {
-            sourceBuilding = tagsDs;
-            importedBuilding.put("source:geometry", geomDs);
-        }
-        importedBuilding.put("source:building", sourceBuilding);
-    }
-
     public static void performBuildingImport(BuildingsImportManager manager) {
         importStats.addTotalImportActionCounter(1);
 
@@ -129,8 +111,6 @@ public class BuildingsImportAction extends JosmAction {
         }
         // Add importedBuilding to DataSet to prevent DataIntegrityError (primitives without osm metadata)
         new DataSet().addPrimitiveRecursive(importedBuilding);
-
-        injectSourceTags(importedBuilding, manager);
 
         ImportStrategy importStrategy;
         switch (BuildingsSettings.IMPORT_MODE.get()) {
