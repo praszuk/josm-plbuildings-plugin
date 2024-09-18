@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: josm-plugin_plbuildings 1.4.2-2-gdebafc4-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-07 21:29+0200\n"
-"PO-Revision-Date: 2024-09-07 21:31+0200\n"
+"POT-Creation-Date: 2024-09-18 02:46+0200\n"
+"PO-Revision-Date: 2024-09-18 02:47+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -45,17 +45,17 @@ msgstr "Dodano zaimportowany budynek"
 msgid "Are you sure to remove server"
 msgstr "Czy chcesz usunąć serwer"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlapOptionDialog.java:28
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SurveyConfirmationDialog.java:22
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:22
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:28
 msgid "Building import confirmation"
 msgstr "Potwierdzenie importu budynku"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:127
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:109
 msgid "Building not found."
 msgstr "Nie znaleziono budynku."
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlapOptionDialog.java:26
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:26
 msgid "Buildings from different data sources are not overlapping enough"
 msgstr "Budynki z różnych źródeł danych nie pokrywają się wystarczająco"
 
@@ -63,8 +63,8 @@ msgstr "Budynki z różnych źródeł danych nie pokrywają się wystarczająco"
 msgid "Buildings import stats"
 msgstr "Statystyki importowania budynków"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlapOptionDialog.java:20
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:17
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:20
 msgid "Cancel"
 msgstr "Anuluj"
 
@@ -224,7 +224,7 @@ msgstr ""
 "Niepełne dane. Czy chcesz użyć tylko jednego źródła danych do importu "
 "budynku?"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:148
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:128
 msgid "Incorrect import mode."
 msgstr "Niepoprawny tryb importu."
 
@@ -232,7 +232,7 @@ msgstr "Niepoprawny tryb importu."
 msgid "Latest tags"
 msgstr "Ostatnie tagi"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlapOptionDialog.java:17
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:17
 msgid "Merge both"
 msgstr "Złącz oba"
 
@@ -367,15 +367,11 @@ msgstr "Zaktualizowano tagi i geometrię budynku"
 msgid "Use"
 msgstr "Użyj"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlapOptionDialog.java:18
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:18
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:19
 #, java-printf-format
-msgid "Use %s (geometry)"
-msgstr "Użyj %s (geometria)"
-
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlapOptionDialog.java:19
-#, java-printf-format
-msgid "Use %s (tags)"
-msgstr "Użyj %s (tagi)"
+msgid "Use %s"
+msgstr "Użyj %s"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/models/ui/SettingsDataSourcesProfilesTableModel.java:14
 msgid "Visible"
@@ -407,6 +403,10 @@ msgstr "Importuj budynki z polskich publicznych zbiorów danych."
 #. Translator credits (translators who want to be credited for their contributions can add their names here as the translation)
 msgid "translator-credits"
 msgstr "NieWnen"
+
+#, java-printf-format
+#~ msgid "Use %s (geometry)"
+#~ msgstr "Użyj %s (geometria)"
 
 #~ msgid "Buildings with full replace"
 #~ msgstr "Budynki z pełną podmianą"
