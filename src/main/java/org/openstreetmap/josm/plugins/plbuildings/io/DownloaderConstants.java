@@ -7,7 +7,7 @@ public final class DownloaderConstants {
     public static final String USER_AGENT = String.format(
         "%s/%s %s",
         BuildingsPlugin.info.name,
-        BuildingsPlugin.info.version,
+        BuildingsPlugin.info.localversion,
         Version.getInstance().getFullAgentString()
     );
 
