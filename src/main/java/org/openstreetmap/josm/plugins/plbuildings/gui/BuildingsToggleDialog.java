@@ -1,34 +1,41 @@
 package org.openstreetmap.josm.plugins.plbuildings.gui;
 
-import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
-import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
-import org.openstreetmap.josm.plugins.plbuildings.data.ImportStatus;
-import org.openstreetmap.josm.plugins.plbuildings.models.ImportDataSourceConfig;
-import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Shortcut;
-
-import jakarta.annotation.Nonnull;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-
 import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.util.function.Function;
+import javax.swing.BorderFactory;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Create sidebar window which contains the latest status of import action and allows to change some cfg.
  */
 public class BuildingsToggleDialog extends ToggleDialog {
-    private static final Color COLOR_DEFAULT = Color.BLACK;
-    private static final Color COLOR_ORANGE = Color.decode("#ff781f"); // hex orange better than Color.ORANGE
+    private static final int DATA_SOURCE_PROFILE_MAX_CHARS = 20;
 
     private final JLabel status;
-    private final JLabel dataSource;
 
-    private final JLabel building;
-    private final JLabel bLevels;
-    private final JLabel uncommonTags;
+    private final JComboBox<Object> importModeComboBox;
+    private final JComboBox<Object> dataSourceProfilesComboBox;
+
+    private final JLabel buildingType;
+
+    private final JLabel buildingLevels;
+    private final JLabel hasUncommonTag;
 
     public BuildingsToggleDialog() {
         super(
@@ -36,7 +43,7 @@ public class BuildingsToggleDialog extends ToggleDialog {
             "plbuildings",
             tr("Open the {0} window", BuildingsPlugin.info.name),
             Shortcut.registerShortcut(
-                "plbuildings:window",
+                BuildingsPlugin.info.name + ":window",
                 tr("PlBuildings window"),
                 KeyEvent.CHAR_UNDEFINED, Shortcut.NONE
             ),
@@ -44,115 +51,127 @@ public class BuildingsToggleDialog extends ToggleDialog {
         );
 
         this.status = new JLabel("");
-        this.dataSource = new JLabel(ImportDataSourceConfig.getInstance().toString());
+        this.importModeComboBox = new JComboBox<>();
+        this.dataSourceProfilesComboBox = new JComboBox<>();
 
-        this.building = new JLabel("");
-        this.bLevels = new JLabel("");
-        this.uncommonTags = new JLabel("");
+        this.buildingType = new JLabel("");
+        this.buildingLevels = new JLabel("");
+        this.hasUncommonTag = new JLabel("");
 
-        JPanel rootPanel = new JPanel(new GridLayout(0, 1));
+        final JPanel rootPanel = new JPanel(new GridLayout(0, 1));
 
-        JPanel configPanel = new JPanel(new GridLayout(2,2));
-        JLabel statusLabel = new JLabel(tr("Status") + ": ");
-        statusLabel.setBorder(new EmptyBorder(0,5,0,0));
-
-        configPanel.add(statusLabel);
-        configPanel.add(status);
-
-        JLabel dataSourceLabel = new JLabel(tr("Data source") + ": ");
-        dataSourceLabel.setBorder(new EmptyBorder(0,5,0,0));
-
-        configPanel.add(dataSourceLabel);
-        configPanel.add(dataSource);
-
-        JPanel lastImportTagsPanel = new JPanel(new GridLayout(0, 2));
-
-        lastImportTagsPanel.add(new JLabel("building: "));
-        lastImportTagsPanel.add(building);
-
-        lastImportTagsPanel.add(new JLabel("building:levels: "));
-        lastImportTagsPanel.add(bLevels);
-
-        lastImportTagsPanel.add(new JLabel(tr("Uncommon tags") +": "));
-        lastImportTagsPanel.add(uncommonTags);
-
-        lastImportTagsPanel.setBorder(BorderFactory.createTitledBorder(tr("Latest tags")));
-        rootPanel.add(configPanel);
-
-        rootPanel.add(lastImportTagsPanel);
+        rootPanel.add(createConfigPanel());
+        rootPanel.add(createLatestTagsPanel());
 
         rootPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
         createLayout(rootPanel, true, null);
-
-        setDefaultStatus();
-        updateTags("", "", false);
     }
 
-    /**
-     * Select color for the JLabel status text depends on the ImportStatus.
-     */
-    private Color getStatusTextColor(ImportStatus status){
-        Color statusColor;
-        switch(status) {
-            case ACTION_REQUIRED:
-                statusColor = COLOR_ORANGE;
-                break;
-            case CANCELED:
-            case NO_DATA:
-            case NO_UPDATE:
-                statusColor = Color.GRAY;
-                break;
-            case CONNECTION_ERROR:
-            case IMPORT_ERROR:
-                statusColor = Color.RED;
-                break;
-            default: // IDLE, DOWNLOADING, DONE
-                statusColor = COLOR_DEFAULT;
-        }
-        return statusColor;
+    private JPanel createConfigPanel() {
+        final JPanel configPanel = new JPanel(new GridLayout(3, 2));
+
+        configPanel.add(new JLabel(tr("Status") + ": "));
+        configPanel.add(status);
+
+        configPanel.add(new JLabel(tr("Import mode") + ": "));
+        configPanel.add(importModeComboBox);
+
+        configPanel.add(new JLabel(tr("Data source") + ": "));
+        configPanel.add(dataSourceProfilesComboBox);
+
+        configPanel.setBorder(new EmptyBorder(0, 5, 0, 0));
+
+        return configPanel;
     }
 
-    private void setDefaultStatus(){
-        Logging.debug("Changing status to default");
-        GuiHelper.scheduleTimer(
-            1500,
-            actionEvent -> setStatus(ImportStatus.IDLE, false),
-            false
-        );
+    private JPanel createLatestTagsPanel() {
+        final JPanel lastImportTagsPanel = new JPanel(new GridLayout(0, 2));
+
+        lastImportTagsPanel.add(new JLabel("building: "));
+        lastImportTagsPanel.add(buildingType);
+
+        lastImportTagsPanel.add(new JLabel("building:levels: "));
+        lastImportTagsPanel.add(buildingLevels);
+
+        lastImportTagsPanel.add(new JLabel(tr("Uncommon tags") + ": "));
+        lastImportTagsPanel.add(hasUncommonTag);
+
+        lastImportTagsPanel.setBorder(BorderFactory.createTitledBorder(tr("Latest tags")));
+
+        return lastImportTagsPanel;
     }
 
-    public void setStatus(@Nonnull ImportStatus status, boolean autoChangeToDefault) {
-        GuiHelper.runInEDT(() ->{
-            Logging.info("Changing status to: {0}", status);
-            this.status.setText(status.toString());
-            this.status.setForeground(getStatusTextColor(status));
+    public int getDataSourceProfilesComboBoxSelectedIndex() {
+        return dataSourceProfilesComboBox.getSelectedIndex();
+    }
+
+    public int getImportModeComboBoxSelectedIndex() {
+        return importModeComboBox.getSelectedIndex();
+    }
+
+    public void addDataSourceProfilesComboBoxItemListener(ItemListener listener) {
+        dataSourceProfilesComboBox.addItemListener(listener);
+    }
+
+    public void addImportModeComboBoxItemListener(ItemListener listener) {
+        importModeComboBox.addItemListener(listener);
+    }
+
+    public void setBuildingTypeText(String buildingTypeText) {
+        buildingType.setText(buildingTypeText);
+    }
+
+    public void setBuildingLevelsText(String buildingLevelsText) {
+        buildingLevels.setText(buildingLevelsText);
+    }
+
+    public void setHasUncommonTagText(String hasUncommonTagText) {
+        hasUncommonTag.setText(hasUncommonTagText);
+    }
+
+    public void setStatusText(String statusText) {
+        status.setText(statusText);
+    }
+
+    public void setBuildingTypeForeground(Color color) {
+        buildingType.setForeground(color);
+    }
+
+    public void setHasUncommonTagForeground(Color color) {
+        hasUncommonTag.setForeground(color);
+    }
+
+    public void setStatusForeground(Color color) {
+        status.setForeground(color);
+    }
+
+    public void setDataSourceProfilesComboBoxModel(ComboBoxModel<Object> model) {
+        dataSourceProfilesComboBox.setModel(model);
+    }
+
+    public void setImportModeComboBoxModel(ComboBoxModel<Object> model) {
+        importModeComboBox.setModel(model);
+    }
+
+    public void setDataSourceProfilesComboBoxSelectedIndex(int index) {
+        dataSourceProfilesComboBox.setSelectedIndex(index);
+    }
+
+    public void setDataSourceProfilesComboBoxRenderer(Function<Object, String> getValueFromModelObject) {
+        dataSourceProfilesComboBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                          boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value == null) {
+                    return this;
+                }
+                String profileName = getValueFromModelObject.apply(value);
+                setText(profileName.substring(0,
+                    Math.min(DATA_SOURCE_PROFILE_MAX_CHARS, profileName.length())));
+                return this;
+            }
         });
-
-        if (autoChangeToDefault){
-            setDefaultStatus();
-        }
-
-    }
-
-    public void updateTags(String buildingVal, String bLevelsVal, boolean hasUncommonTags){
-        GuiHelper.runInEDT(() -> {
-            Logging.info(
-                "Updating tags: building: {0}, building:levels: {1}, uncommonTags: {2}",
-                buildingVal,
-                bLevelsVal,
-                hasUncommonTags
-            );
-            this.building.setText(buildingVal.isEmpty() ? "--":buildingVal);
-            this.bLevels.setText(bLevelsVal.isEmpty() ? "--":bLevelsVal);
-            this.uncommonTags.setText(hasUncommonTags ? tr("Yes"):tr("No"));
-
-            this.building.setForeground(hasUncommonTags ? COLOR_ORANGE:COLOR_DEFAULT);
-            this.uncommonTags.setForeground(hasUncommonTags ? COLOR_ORANGE:COLOR_DEFAULT);
-        });
-    }
-
-    public void setDataSource(String newDataSource){
-        this.dataSource.setText(newDataSource);
     }
 
 }

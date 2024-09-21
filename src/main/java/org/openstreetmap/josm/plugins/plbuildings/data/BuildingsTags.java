@@ -9,13 +9,11 @@ import java.util.stream.Stream;
 
 public class BuildingsTags {
 
-    public static final Set<String> LIVING_BUILDINGS = Collections.unmodifiableSet(Stream.of(
-        "house", "apartments", "detached", "semidetached_house", "terrace"
-    ).collect(Collectors.toSet()));
+    public static final Set<String> LIVING_BUILDINGS = Set.of(
+        "house", "apartments", "detached", "semidetached_house", "terrace", "residential"
+    );
 
-    public static final Set<String> HOUSE_DETAILS = Collections.unmodifiableSet(Stream.of(
-        "detached", "semidetached_house", "terrace"
-    ).collect(Collectors.toSet()));
+    public static final Set<String> HOUSE_DETAILS = Set.of("detached", "semidetached_house", "terrace");
 
     /*
     Tags extracted from
@@ -28,10 +26,9 @@ public class BuildingsTags {
     2022-07-30
     They not need to be checked by mapper
      */
-    public final static Set<String> COMMON_BUILDING_VALUES = Collections.unmodifiableSet(
-        Stream.of(
-            Stream.of(
-                "apartments",
+    public static final Set<String> DEFAULT_COMMON_BUILDING_VALUES = Collections.unmodifiableSet(
+        Stream.concat(
+            Set.of(
                 "bungalow",
                 "cabin",
                 "commercial",
@@ -44,16 +41,17 @@ public class BuildingsTags {
                 "retail",
                 "service",
                 "warehouse",
+                "shed",
                 "yes",
 
                 "construction"
-            ).collect(Collectors.toSet()),
-            LIVING_BUILDINGS
-        ).flatMap(Set::stream).collect(Collectors.toSet())
+            ).stream(),
+            LIVING_BUILDINGS.stream()
+        ).collect(Collectors.toSet())
     );
 
     // Some imported data can contain other tags than building, it should be checked by mapper
-    public final static List<String> UNCOMMON_NO_BUILDING_TAGS = Arrays.asList(
+    public static final List<String> UNCOMMON_NO_BUILDING_TAGS = Arrays.asList(
         "amenity",
         "leisure",
         "historic",

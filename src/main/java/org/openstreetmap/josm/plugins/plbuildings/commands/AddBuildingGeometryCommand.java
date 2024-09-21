@@ -1,29 +1,38 @@
 package org.openstreetmap.josm.plugins.plbuildings.commands;
 
+import static org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils.getBbox;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils.isCloseNode;
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.data.osm.*;
+import org.openstreetmap.josm.data.osm.BBox;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils;
 import org.openstreetmap.josm.tools.Logging;
 
-import java.util.*;
-import java.util.stream.Collectors;
 
-import static org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils.getBBox;
-import static org.openstreetmap.josm.plugins.plbuildings.utils.SharedNodesUtils.isCloseNode;
-import static org.openstreetmap.josm.tools.I18n.tr;
-
-
-public class AddBuildingGeometryCommand extends Command implements CommandResultBuilding  {
-    /**
-     * Add building geometry to dataset and merge with existing nodes.
-     * It could not copy all new nodes. It will create only the new which cannot be reused.
-     */
+/**
+ * Add building geometry to dataset and merge with existing nodes.
+ * It could not copy all new nodes. It will create only the new which cannot be reused.
+ */
+public class AddBuildingGeometryCommand extends Command implements CommandResultBuilding {
 
     private final Way importedBuilding; // raw new building with duplicated nodes etc.
     private final DataSet dataSet;
 
-    private List<Node> createdNodes; // only missing nodes (without existing nodes – not all of created building nodes)
+    /**
+     * Only missing nodes (without existing nodes – not all of created building nodes).
+     */
+    private List<Node> createdNodes;
     private Way createdBuilding;
 
     public AddBuildingGeometryCommand(DataSet dataSet, Way importedBuilding) {
@@ -34,9 +43,9 @@ public class AddBuildingGeometryCommand extends Command implements CommandResult
 
     @Override
     public void fillModifiedData(
-            Collection<OsmPrimitive> modified,
-            Collection<OsmPrimitive> deleted,
-            Collection<OsmPrimitive> added
+        Collection<OsmPrimitive> modified,
+        Collection<OsmPrimitive> deleted,
+        Collection<OsmPrimitive> added
     ) {
         added.add((OsmPrimitive) createdNodes);
         added.add(createdBuilding);
@@ -58,7 +67,7 @@ public class AddBuildingGeometryCommand extends Command implements CommandResult
 
     @Override
     public boolean executeCommand() {
-        if (createdBuilding == null){ // It's necessary for redo handling
+        if (createdBuilding == null) { // It's necessary for redo handling
             prepareBuilding();
         }
         addBuilding();
@@ -89,7 +98,7 @@ public class AddBuildingGeometryCommand extends Command implements CommandResult
         Way newBuilding = new Way();
 
         // Check if any building's node is very close to existing node – almost/same lat lon and replace it
-        BBox bbox = getBBox(newNodes, BuildingsSettings.BBOX_OFFSET.get());
+        BBox bbox = getBbox(newNodes, BuildingsSettings.BBOX_OFFSET.get());
 
         List<Node> closeNodes = dataSet.searchNodes(bbox).stream()
             .filter(n -> !n.isDeleted())
@@ -118,7 +127,7 @@ public class AddBuildingGeometryCommand extends Command implements CommandResult
         createdNodes = new ArrayList<>(nodesToAddToDataSet);
     }
 
-    public void addBuilding(){
+    public void addBuilding() {
         createdNodes.forEach(dataSet::addPrimitive);
         dataSet.addPrimitive(createdBuilding);
         Logging.debug("Added new building {0}", createdBuilding.getId());

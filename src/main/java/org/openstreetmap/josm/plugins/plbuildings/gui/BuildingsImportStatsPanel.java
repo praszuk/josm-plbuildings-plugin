@@ -1,12 +1,13 @@
 package org.openstreetmap.josm.plugins.plbuildings.gui;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.GridLayout;
 import java.util.HashMap;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class BuildingsImportStatsPanel extends JPanel {
 
-    public BuildingsImportStatsPanel(HashMap<String, String> stats){
+    public BuildingsImportStatsPanel(HashMap<String, String> stats) {
         super();
         setLayout(new GridLayout(stats.size(), 2));
         stats.forEach((key, value) -> {

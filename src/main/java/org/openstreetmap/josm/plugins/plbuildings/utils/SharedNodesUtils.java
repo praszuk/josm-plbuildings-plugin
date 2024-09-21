@@ -3,7 +3,6 @@ package org.openstreetmap.josm.plugins.plbuildings.utils;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
-
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.Node;
@@ -16,7 +15,7 @@ public class SharedNodesUtils {
      * It will produce bbox expanded by offset to e.g. match all very close nodes when importing
      * semidetached_house/terrace buildings
      */
-    public static BBox getBBox(List<Node> nodes, double bboxOffset) {
+    public static BBox getBbox(List<Node> nodes, double bboxOffset) {
         BBox bbox = new BBox();
         nodes.forEach(bbox::add);
 
@@ -41,10 +40,11 @@ public class SharedNodesUtils {
 
     /**
      * Check if node can be shared with importing building. Check membership of node and parent object's tags.
+     *
      * @return true if node can be shared (reused) with importing building else false
      */
-    public static boolean isShareableNode(Node node){
-        if (!node.isReferredByWays(1)){ // not member of any way
+    public static boolean isShareableNode(Node node) {
+        if (!node.isReferredByWays(1)) { // not member of any way
             return false;
         }
         return SharedNodesUtils.isNodeStickToWayWithTag(node, new AbstractMap.SimpleEntry<>("building", "*"));
@@ -52,21 +52,22 @@ public class SharedNodesUtils {
 
 
     /**
-     *
      * @param node which is element of ways to check theirs tags
      * @param entryRequired key-value pair as OSM tag which is checked if exists in any shared (referred) way.
-     * To check only key, use "*" or empty string as value.
+     *     To check only key, use "*" or empty string as value.
      * @return true if at least 1 way has given tag (entryRequired) else false
      */
-    public static boolean isNodeStickToWayWithTag(Node node, Map.Entry<String, String> entryRequired){
+    public static boolean isNodeStickToWayWithTag(Node node,
+                                                  Map.Entry<String, String> entryRequired) {
         return node.isReferredByWays(1) && node.getParentWays().stream().anyMatch(parentWay -> {
             TagMap wayTags = parentWay.getKeys();
 
-            if (wayTags.containsKey(entryRequired.getKey())){
-                if (entryRequired.getValue().equals("*") || entryRequired.getValue().isEmpty()){
+            if (wayTags.containsKey(entryRequired.getKey())) {
+                if (entryRequired.getValue().equals("*") || entryRequired.getValue().isEmpty()) {
                     return true;
+                } else {
+                    return wayTags.get(entryRequired.getKey()).equals(entryRequired.getValue());
                 }
-                else return wayTags.get(entryRequired.getKey()).equals(entryRequired.getValue());
             }
             return false;
         });

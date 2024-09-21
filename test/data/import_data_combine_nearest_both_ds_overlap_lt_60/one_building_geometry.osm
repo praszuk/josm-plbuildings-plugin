@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <bounds minlat='50.3389967' minlon='19.4891453' maxlat='50.3400923' maxlon='19.4917202' origin='CGImap 0.8.6 (1354445 spike-07.openstreetmap.org)' />
+  <bounds minlat='50.3389967' minlon='19.4891453' maxlat='50.3400923' maxlon='19.4917202' origin='OpenStreetMap server' />
+  <node id='-138454' action='modify' visible='true' lat='50.33953615269' lon='19.48982099687' />
+  <node id='-138455' action='modify' visible='true' lat='50.33914403622' lon='19.48980991867' />
+  <node id='-138456' action='modify' visible='true' lat='50.33913598851' lon='19.49050519625' />
+  <node id='-138457' action='modify' visible='true' lat='50.3395281049' lon='19.49051628017' />
+  <way id='-105445' action='modify' visible='true'>
+    <nd ref='-138454' />
+    <nd ref='-138455' />
+    <nd ref='-138456' />
+    <nd ref='-138457' />
+    <nd ref='-138454' />
+    <tag k='test' v='test' />
+  </way>
+</osm>

@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='-101990' action='modify' visible='true' lat='50.33932396759' lon='19.48808802057' />
+  <node id='-101991' action='modify' visible='true' lat='50.33909027427' lon='19.48809162544' />
+  <node id='-101992' action='modify' visible='true' lat='50.33909138896' lon='19.48826901883' />
+  <node id='-101993' action='modify' visible='true' lat='50.33902485998' lon='19.48827004508' />
+  <node id='-101994' action='modify' visible='true' lat='50.33902673874' lon='19.48856903525' />
+  <node id='-101995' action='modify' visible='true' lat='50.3392561362' lon='19.48856549665' />
+  <node id='-101996' action='modify' visible='true' lat='50.33925424605' lon='19.48826469399' />
+  <node id='-101997' action='modify' visible='true' lat='50.33932507088' lon='19.48826360147' />
+  <way id='-102542' action='modify' visible='true'>
+    <nd ref='-101990' />
+    <nd ref='-101991' />
+    <nd ref='-101992' />
+    <nd ref='-101993' />
+    <nd ref='-101994' />
+    <nd ref='-101995' />
+    <nd ref='-101996' />
+    <nd ref='-101997' />
+    <nd ref='-101990' />
+    <tag k='building' v='house' />
+    <tag k='building:levels' v='2' />
+  </way>
+</osm>
