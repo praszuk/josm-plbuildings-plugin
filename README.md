@@ -39,7 +39,7 @@ Wtyczka komunikuje się z [serwerem PLBuildings](https://github.com/praszuk/josm
 - Automatyczne usuwanie tagu `source=geoportal.gov.pl`
 
 ## Jak z niej korzystać
-1. Zainstaluj wtyczkę w JOSMie (tak jak jak każdy inną – przez ustawienia JOSMa).
+1. Zainstaluj wtyczkę w JOSMie (tak jak każdą inną – przez ustawienia JOSMa).
 2. Otwórz boczny panel (Toggle Dialog): Po lewej stronie powinna być widoczna ikonka z budynkami (logiem tej wtyczki) – klknij na nią. Po prawej stornie powinien otworzyć się boczny panel wtyczki taki jak na GIFie poniżej.
 3. Wybierz tryb importu i źródło danych – zostanie to zapamiętane, ale rekomenduję aby zawsze mieć otwarty ten boczny panel dla łatwiejszej zmiany trybu/źródła i aby mieć uwagę na ostatni import.
 4. Nakieruj kursor myszy na widoczny budynek i naciśnij `CTRL + SHIFT + 1`.
