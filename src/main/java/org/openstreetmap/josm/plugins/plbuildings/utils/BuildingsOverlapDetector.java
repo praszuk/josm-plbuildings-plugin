@@ -2,7 +2,7 @@ package org.openstreetmap.josm.plugins.plbuildings.utils;
 
 import static org.openstreetmap.josm.tools.Geometry.nodeInsidePolygon;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.DoubleStream;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -64,22 +64,24 @@ public class BuildingsOverlapDetector {
         AtomicInteger b1Counter = new AtomicInteger(); // only nodes in the first building without in both
         AtomicInteger b2Counter = new AtomicInteger(); // similar as up, but second building
 
-        ArrayList<Node> nodesToCheck = new ArrayList<>();
-        DoubleStream.iterate(minLat, lat -> lat + freqDegreeStep).limit(latPointCount + 1).forEach(
-            lat -> DoubleStream.iterate(minLon, lon -> lon + freqDegreeStep).limit(lonPointCount + 1)
-                .forEach(lon -> nodesToCheck.add(new Node(new LatLon(lat, lon)))));
-
-        nodesToCheck.forEach(node -> {
-            boolean isB1 = nodeInsidePolygon(node, b1.getNodes());
-            boolean isB2 = nodeInsidePolygon(node, b2.getNodes());
-            if (isB1 && isB2) {
-                bothCounter.getAndIncrement();
-            } else if (isB1) {
-                b1Counter.getAndIncrement();
-            } else if (isB2) {
-                b2Counter.getAndIncrement();
-            }
-        });
+        List<Node> b1Nodes = b1.getNodes();
+        List<Node> b2Nodes = b2.getNodes();
+        DoubleStream.iterate(minLat, lat -> lat + freqDegreeStep)
+            .limit(latPointCount + 1)
+            .forEach(
+                lat -> DoubleStream.iterate(minLon, lon -> lon + freqDegreeStep).limit(lonPointCount + 1)
+                    .forEach(lon -> {
+                        Node node = new Node(new LatLon(lat, lon));
+                        boolean isB1 = nodeInsidePolygon(node, b1Nodes);
+                        boolean isB2 = nodeInsidePolygon(node, b2Nodes);
+                        if (isB1 && isB2) {
+                            bothCounter.getAndIncrement();
+                        } else if (isB1) {
+                            b1Counter.getAndIncrement();
+                        } else if (isB2) {
+                            b2Counter.getAndIncrement();
+                        }
+                    }));
 
         // 5 types of intersection
 
