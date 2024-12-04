@@ -45,8 +45,13 @@ public class BuildingsOverlapDetector {
         }
 
         BBox bbox = new BBox(b1);
-        bbox.add(new BBox(b2));
+        BBox bbox2 = new BBox(b2);
 
+        if (!bbox.intersects(bbox2) && !bbox.bounds(bbox2) && !bbox2.bounds(bbox)) {
+            return 0.0;
+        }
+
+        bbox.add(new BBox(b2));
         double minLat = bbox.getMinLat();
         double maxLat = bbox.getMaxLat();
         double minLon = bbox.getMinLon();
@@ -78,12 +83,8 @@ public class BuildingsOverlapDetector {
 
         // 5 types of intersection
 
-        // No intersection
-        if (bothCounter.get() == 0) {
-            return 0.0;
-        }
         // Crossing
-        else if (b1Counter.get() != 0 && b2Counter.get() != 0) {
+        if (b1Counter.get() != 0 && b2Counter.get() != 0) {
             double b1Overlapping = bothCounter.get() * 100. / (b1Counter.get() + bothCounter.get());
             double b2Overlapping = bothCounter.get() * 100. / (b2Counter.get() + bothCounter.get());
             return Math.min(b1Overlapping, b2Overlapping);
