@@ -2,7 +2,7 @@ package org.openstreetmap.josm.plugins.plbuildings.utils;
 
 import static org.openstreetmap.josm.tools.Geometry.nodeInsidePolygon;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.DoubleStream;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -45,8 +45,13 @@ public class BuildingsOverlapDetector {
         }
 
         BBox bbox = new BBox(b1);
-        bbox.add(new BBox(b2));
+        BBox bbox2 = new BBox(b2);
 
+        if (!bbox.intersects(bbox2) && !bbox.bounds(bbox2) && !bbox2.bounds(bbox)) {
+            return 0.0;
+        }
+
+        bbox.add(new BBox(b2));
         double minLat = bbox.getMinLat();
         double maxLat = bbox.getMaxLat();
         double minLon = bbox.getMinLon();
@@ -59,31 +64,29 @@ public class BuildingsOverlapDetector {
         AtomicInteger b1Counter = new AtomicInteger(); // only nodes in the first building without in both
         AtomicInteger b2Counter = new AtomicInteger(); // similar as up, but second building
 
-        ArrayList<Node> nodesToCheck = new ArrayList<>();
-        DoubleStream.iterate(minLat, lat -> lat + freqDegreeStep).limit(latPointCount + 1).forEach(
-            lat -> DoubleStream.iterate(minLon, lon -> lon + freqDegreeStep).limit(lonPointCount + 1)
-                .forEach(lon -> nodesToCheck.add(new Node(new LatLon(lat, lon)))));
-
-        nodesToCheck.forEach(node -> {
-            boolean isB1 = nodeInsidePolygon(node, b1.getNodes());
-            boolean isB2 = nodeInsidePolygon(node, b2.getNodes());
-            if (isB1 && isB2) {
-                bothCounter.getAndIncrement();
-            } else if (isB1) {
-                b1Counter.getAndIncrement();
-            } else if (isB2) {
-                b2Counter.getAndIncrement();
-            }
-        });
+        List<Node> b1Nodes = b1.getNodes();
+        List<Node> b2Nodes = b2.getNodes();
+        DoubleStream.iterate(minLat, lat -> lat + freqDegreeStep)
+            .limit(latPointCount + 1)
+            .forEach(
+                lat -> DoubleStream.iterate(minLon, lon -> lon + freqDegreeStep).limit(lonPointCount + 1)
+                    .forEach(lon -> {
+                        Node node = new Node(new LatLon(lat, lon));
+                        boolean isB1 = nodeInsidePolygon(node, b1Nodes);
+                        boolean isB2 = nodeInsidePolygon(node, b2Nodes);
+                        if (isB1 && isB2) {
+                            bothCounter.getAndIncrement();
+                        } else if (isB1) {
+                            b1Counter.getAndIncrement();
+                        } else if (isB2) {
+                            b2Counter.getAndIncrement();
+                        }
+                    }));
 
         // 5 types of intersection
 
-        // No intersection
-        if (bothCounter.get() == 0) {
-            return 0.0;
-        }
         // Crossing
-        else if (b1Counter.get() != 0 && b2Counter.get() != 0) {
+        if (b1Counter.get() != 0 && b2Counter.get() != 0) {
             double b1Overlapping = bothCounter.get() * 100. / (b1Counter.get() + bothCounter.get());
             double b2Overlapping = bothCounter.get() * 100. / (b2Counter.get() + bothCounter.get());
             return Math.min(b1Overlapping, b2Overlapping);
