@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -15,6 +16,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MainFrame;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
@@ -75,6 +78,15 @@ public class BuildingsImportAction extends JosmAction {
         return selected.size() == 1 ? (Way) selected.toArray()[0] : null;
     }
 
+    public static Bounds getUserFrameViewBounds() {
+        MapFrame mapFrame = MainApplication.getMap();
+        if (mapFrame == null) { // tests
+            return null;
+
+        }
+        return mapFrame.mapView.getState().getViewArea().getLatLonBoundsBox();
+    }
+
     public static boolean showDialogIfFoundUncommonTags(Way resultBuilding, BuildingsImportManager manager) {
         if (resultBuilding == null) {
             return false;
@@ -96,6 +108,12 @@ public class BuildingsImportAction extends JosmAction {
 
         BuildingsImportData buildingsImportData = manager.getImportedData();
         if (buildingsImportData == null) {  // Some error at importing data
+            return;
+        }
+
+        if (buildingsImportData.isOutOfUserFrameView(getUserFrameViewBounds())) {
+            Logging.warn("Imported building data out of the user view.");
+            manager.setStatus(ImportStatus.IMPORT_ERROR, tr("Imported building data out of the user view."));
             return;
         }
 

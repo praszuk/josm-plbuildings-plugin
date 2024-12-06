@@ -2,7 +2,12 @@ package org.openstreetmap.josm.plugins.plbuildings.models;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MainFrame;
+import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.MapView;
 
 /**
  * Class responsible for keeping import buildings data (as datasets) from multiple data sources.
@@ -34,4 +39,18 @@ public class BuildingsImportData {
         return this.data.getOrDefault(source, new DataSet());
     }
 
+    /**
+     *
+     * @return true if in each dataset (imported datasource) there is no at least one node lat lon,
+     *      which is in frame user bbox
+     */
+    public boolean isOutOfUserFrameView(Bounds userView) {
+        if (userView == null) {
+            return false;
+        }
+        return data.values().stream()
+            .anyMatch(
+                dataSet -> dataSet.getNodes().stream().noneMatch(node -> userView.contains(node.getCoor()))
+            );
+    }
 }
