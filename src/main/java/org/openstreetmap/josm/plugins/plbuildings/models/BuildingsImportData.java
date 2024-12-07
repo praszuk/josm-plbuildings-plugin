@@ -1,7 +1,9 @@
 package org.openstreetmap.josm.plugins.plbuildings.models;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -49,6 +51,7 @@ public class BuildingsImportData {
             return false;
         }
         return data.values().stream()
+            .filter(dataSet -> !dataSet.isEmpty())
             .anyMatch(
                 dataSet -> dataSet.getNodes().stream().noneMatch(node -> userView.contains(node.getCoor()))
             );

@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction;
+import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOneDsStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -128,5 +129,36 @@ public class OutOfUserFrameViewTest {
         manager.processDownloadedData();
 
         assertTrue(ds.getWays().isEmpty());
+    }
+
+    @Test
+    public void testImportBuildingOneDsCorrectSecondDsEmpty() {
+        BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.put(CombineNearestOneDsStrategy.ACCEPT.toString());
+
+        DataSet correctDataSet = importOsmFile(new File("test/data/simple_building.osm"), "");
+        assertNotNull(correctDataSet);
+
+        new MockUp<BuildingsImportAction>() {
+            @Mock
+            public Bounds getUserFrameViewBounds() {
+                BBox bbox = new BBox();
+                correctDataSet.getNodes().forEach(node -> bbox.addPrimitive(node, 0.001));
+                return new Bounds(bbox.getMinLat(), bbox.getMinLon(), bbox.getMaxLat(), bbox.getMaxLon());
+            }
+        };
+
+        DataSet ds = new DataSet();
+        BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
+        DataSourceProfile testProfile = new DataSourceProfile(
+            testServer.getName(), "geometry_source", "tags_source", "profile1"
+        );
+        DataSet emptydataSet = new DataSet();
+        manager.setImportedData(new BuildingsImportData(
+            testProfile.getGeometry(), correctDataSet, testProfile.getTags(), emptydataSet)
+        );
+        manager.setCurrentProfile(testProfile);
+        manager.processDownloadedData();
+
+        assertEquals(1, ds.getWays().size());
     }
 }
