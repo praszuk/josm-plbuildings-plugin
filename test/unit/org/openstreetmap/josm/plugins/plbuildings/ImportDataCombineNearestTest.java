@@ -1,5 +1,6 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -8,8 +9,11 @@ import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFi
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.isSameButClonedBuilding;
 
 import java.io.File;
+import mockit.Expectations;
 import mockit.Mock;
 import mockit.MockUp;
+import mockit.Mocked;
+import mockit.Verifications;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,6 +26,7 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOneDsStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOverlappingStrategy;
+import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDsOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
@@ -141,6 +146,33 @@ public class ImportDataCombineNearestTest {
         assertNull(nearestBuilding);
     }
 
+    @SuppressWarnings({"ResultOfMethodCallIgnored"})
+    @Test
+    public void testOneDsBuildingSaveChoiceForSession(@Mocked ImportedBuildingOneDsOptionDialog dialogMock) {
+        new Expectations() {{
+            dialogMock.isUserConfirmedOneDs();
+            result = true;
+            dialogMock.isDoNotShowAgainThisSession();
+            result = true;
+        }};
+
+        CombineNearestOneDsStrategy firstResult = BuildingsImportManager.getImportBuildingDataOneDsStrategy(dialogMock);
+
+        new Verifications() {{
+            dialogMock.show();
+            times = 1;
+        }};
+
+        CombineNearestOneDsStrategy secondResult = BuildingsImportManager.getImportBuildingDataOneDsStrategy(dialogMock);
+        new Verifications() {{
+            dialogMock.show();
+            times = 1;
+        }};
+
+        assertEquals(CombineNearestOneDsStrategy.ACCEPT, firstResult);
+        assertEquals(CombineNearestOneDsStrategy.ACCEPT, secondResult);
+    }
+
     @Test
     public void testTwoDsEmptyOneDsStrategyAcceptOneDs() {
         Way expectedBuilding = oneBuildingDs.getWays().iterator().next();
@@ -214,7 +246,7 @@ public class ImportDataCombineNearestTest {
 
         new MockUp<BuildingsImportManager>() {
             @Mock
-            CombineNearestOneDsStrategy getImportBuildingDataOneDsStrategy(String availableDataSource) {
+            CombineNearestOneDsStrategy getImportBuildingDataOneDsStrategy(ImportedBuildingOneDsOptionDialog dialog) {
                 return CombineNearestOneDsStrategy.ACCEPT;
             }
         };
@@ -237,7 +269,7 @@ public class ImportDataCombineNearestTest {
 
         new MockUp<BuildingsImportManager>() {
             @Mock
-            CombineNearestOneDsStrategy getImportBuildingDataOneDsStrategy(String availableDataSource) {
+            CombineNearestOneDsStrategy getImportBuildingDataOneDsStrategy(ImportedBuildingOneDsOptionDialog dialog) {
                 return CombineNearestOneDsStrategy.CANCEL;
             }
         };
