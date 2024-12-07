@@ -15,11 +15,13 @@ public class ImportedBuildingOneDsOptionDialog {
     private boolean doNotShowAgainThisSession;
     private boolean userConfirmedOneDs;
 
+    private final String availableDatasource;
+
     public ImportedBuildingOneDsOptionDialog(String availableDatasource) {
-        show(availableDatasource);
+        this.availableDatasource = availableDatasource;
     }
 
-    public void show(String availableDatasource) {
+    public void show() {
         final Object[] choices = {tr("Use") + " " + availableDatasource, tr("Cancel")};
         // TODO You can change it permamently in the settings.
         JCheckBox doNotShowAgainThisSessionCheckBox = new JCheckBox(tr("Do not show again (this session)."));

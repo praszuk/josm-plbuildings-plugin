@@ -155,7 +155,7 @@ public class BuildingsImportManager {
         BuildingsPlugin.toggleDialogController.updateTags(buildingText, buildingLevelsText, hasUncommonTags);
     }
 
-    static CombineNearestOneDsStrategy getImportBuildingDataOneDsStrategy(String availableDataSource) {
+    static CombineNearestOneDsStrategy getImportBuildingDataOneDsStrategy(ImportedBuildingOneDsOptionDialog dialog) {
         CombineNearestOneDsStrategy strategy = CombineNearestOneDsStrategy.fromString(
             BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.get()
         );
@@ -163,9 +163,9 @@ public class BuildingsImportManager {
             return oneDsConfirmationSessionStrategy;
         }
         if (strategy == ASK_USER) {
-            ImportedBuildingOneDsOptionDialog oneDsDialog = new ImportedBuildingOneDsOptionDialog(availableDataSource);
-            strategy = oneDsDialog.isUserConfirmedOneDs() ? ACCEPT : CANCEL;
-            if (oneDsDialog.isDoNotShowAgainThisSession()) {
+            dialog.show();
+            strategy = dialog.isUserConfirmedOneDs() ? ACCEPT : CANCEL;
+            if (dialog.isDoNotShowAgainThisSession()) {
                 oneDsConfirmationSessionStrategy = strategy;
             }
         }
@@ -264,7 +264,8 @@ public class BuildingsImportManager {
             else if (geometryDs.isEmpty() != tagsDs.isEmpty()) {
                 String availableDsName = geometryDs.isEmpty() ? profile.getTags() : profile.getGeometry();
 
-                if (getImportBuildingDataOneDsStrategy(availableDsName) == ACCEPT) {
+                ImportedBuildingOneDsOptionDialog oneDsDialog = new ImportedBuildingOneDsOptionDialog(availableDsName);
+                if (getImportBuildingDataOneDsStrategy(oneDsDialog) == ACCEPT) {
                     importedBuilding = NearestBuilding.getNearestBuilding(importedData.get(availableDsName), latLon);
                     importedBuildingTagsSource = availableDsName;
                     importedBuildingGeometrySource = availableDsName;
