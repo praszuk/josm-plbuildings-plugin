@@ -31,6 +31,8 @@ import org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding;
  * Responsible for managing all import action workers, data sources, data, actions, GUI.
  */
 public class BuildingsImportManager {
+    private static CombineNearestOneDsStrategy oneDsConfirmationSessionStrategy = null;
+
     private final LatLon cursorLatLon;
     private final Way selectedBuilding;
     private final DataSet editLayer;
@@ -157,8 +159,15 @@ public class BuildingsImportManager {
         CombineNearestOneDsStrategy strategy = CombineNearestOneDsStrategy.fromString(
             BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.get()
         );
+        if (oneDsConfirmationSessionStrategy != null) {
+            return oneDsConfirmationSessionStrategy;
+        }
         if (strategy == ASK_USER) {
-            strategy = ImportedBuildingOneDsOptionDialog.show(availableDataSource) ? ACCEPT : CANCEL;
+            ImportedBuildingOneDsOptionDialog oneDsDialog = new ImportedBuildingOneDsOptionDialog(availableDataSource);
+            strategy = oneDsDialog.isUserConfirmedOneDs() ? ACCEPT : CANCEL;
+            if (oneDsDialog.isDoNotShowAgainThisSession()) {
+                oneDsConfirmationSessionStrategy = strategy;
+            }
         }
         return strategy;
     }
