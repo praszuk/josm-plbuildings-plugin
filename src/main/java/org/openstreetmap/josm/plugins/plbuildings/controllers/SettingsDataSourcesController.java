@@ -7,12 +7,18 @@ import static org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataS
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.List;
+import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
+import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOneDsStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsDataSourcesPanel;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesProfilesTableModel;
 import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsDataSourcesServersListModel;
+import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsImportOneDsStrategyComboBoxModel;
 import org.openstreetmap.josm.tools.Logging;
 
 public class SettingsDataSourcesController implements SettingsTabController {
@@ -22,6 +28,7 @@ public class SettingsDataSourcesController implements SettingsTabController {
 
     private final SettingsDataSourcesProfilesTableModel profilesTableModel;
     private final SettingsDataSourcesServersListModel serversListModel;
+    private final SettingsImportOneDsStrategyComboBoxModel importOneDsStrategyComboBoxModel;
 
     public SettingsDataSourcesController(DataSourceConfig dataSourceConfig,
                                          SettingsDataSourcesPanel settingsDataSourcesPanelView) {
@@ -29,15 +36,18 @@ public class SettingsDataSourcesController implements SettingsTabController {
         this.settingsDataSourcesPanelView = settingsDataSourcesPanelView;
         this.profilesTableModel = new SettingsDataSourcesProfilesTableModel();
         this.serversListModel = new SettingsDataSourcesServersListModel();
+        this.importOneDsStrategyComboBoxModel = new SettingsImportOneDsStrategyComboBoxModel();
 
         settingsDataSourcesPanelView.setProfilesTableModel(profilesTableModel);
         settingsDataSourcesPanelView.setServersListModel(serversListModel);
+        settingsDataSourcesPanelView.setImportOneDsStrategyComboBoxModel(importOneDsStrategyComboBoxModel);
 
         initViewListeners();
         initModelListeners();
 
         updateServerList();
         updateProfilesTable();
+        updateImportOneDsStrategyComboBox();
     }
 
     private void initModelListeners() {
@@ -104,6 +114,9 @@ public class SettingsDataSourcesController implements SettingsTabController {
 
         settingsDataSourcesPanelView.addServerBtnAddActionListener(actionEvent -> addServerAction());
         settingsDataSourcesPanelView.removeServerBtnAddActionListener(actionEvent -> removeServerAction());
+        settingsDataSourcesPanelView.addImportOneDsStrategyComboBoxItemListener(
+            new ImportOneDsStrategyComboBoxItemChanged()
+        );
     }
 
     private void updateServerList() {
@@ -123,6 +136,14 @@ public class SettingsDataSourcesController implements SettingsTabController {
             profile.getGeometry(),
             profile.isVisible()
         }));
+    }
+
+    private void updateImportOneDsStrategyComboBox() {
+        importOneDsStrategyComboBoxModel.removeAllElements();
+        importOneDsStrategyComboBoxModel.addAll(List.of(CombineNearestOneDsStrategy.values()));
+        importOneDsStrategyComboBoxModel.setSelectedItem(
+            CombineNearestOneDsStrategy.fromString(BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.get())
+        );
     }
 
     private void moveProfile(int srcRowIndex, int dstRowIndex) {
@@ -194,4 +215,17 @@ public class SettingsDataSourcesController implements SettingsTabController {
     public Component getTabView() {
         return settingsDataSourcesPanelView;
     }
+
+    private class ImportOneDsStrategyComboBoxItemChanged implements ItemListener {
+        @Override
+        public void itemStateChanged(ItemEvent itemEvent) {
+            if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+                int selectedIndex = settingsDataSourcesPanelView.getImportOneDsStrategyComboBoxSelectedIndex();
+                CombineNearestOneDsStrategy strategy =
+                    (CombineNearestOneDsStrategy) importOneDsStrategyComboBoxModel.getElementAt(selectedIndex);
+                BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.put(strategy.toString());
+            }
+        }
+    }
+
 }

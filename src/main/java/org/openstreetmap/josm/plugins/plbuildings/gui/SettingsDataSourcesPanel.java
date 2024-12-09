@@ -6,9 +6,12 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -29,6 +32,7 @@ public class SettingsDataSourcesPanel extends JPanel {
 
     private static final String SERVERS = tr("Servers");
     private static final String PROFILES = tr("Profiles");
+    private static final String IMPORT_STRATEGY = tr("Import strategy");
     private static final String ADD_SERVER_TITLE = tr("Add new server");
     private static final String REMOVE_SERVER_TITLE = tr("Remove server");
 
@@ -42,14 +46,16 @@ public class SettingsDataSourcesPanel extends JPanel {
 
     private JList<Object> serverList;
     private JTable profileTable;
+    private JComboBox<Object> importOneDsStrategyComboBox;
 
 
     public SettingsDataSourcesPanel() {
         super();
 
-        JPanel rootPanel = new JPanel(new GridLayout(2, 1));
-        rootPanel.add(createServerListPanel());
-        rootPanel.add(createProfileTablePanel());
+        JPanel rootPanel = new JPanel(new BorderLayout());
+        rootPanel.add(createServerListPanel(), BorderLayout.NORTH);
+        rootPanel.add(createProfileTablePanel(), BorderLayout.CENTER);
+        rootPanel.add(createImportStrategyPanel(), BorderLayout.SOUTH);
 
         setLayout(new BorderLayout());
         add(rootPanel, BorderLayout.CENTER);
@@ -125,6 +131,28 @@ public class SettingsDataSourcesPanel extends JPanel {
         );
         groupLayout.setVerticalGroup(verticalGroup);
         return dialogPanel;
+    }
+
+    private JPanel createImportStrategyPanel() {
+        JPanel strategyPanel = new JPanel(new BorderLayout());
+        strategyPanel.setBorder(BorderFactory.createCompoundBorder(
+            new EmptyBorder(10, 10, 10, 10),
+            BorderFactory.createTitledBorder(IMPORT_STRATEGY)
+        ));
+
+        importOneDsStrategyComboBox = new JComboBox<>();
+
+        strategyPanel.add(
+            new JLabel(tr("Default executed strategy at importing building, when") + ":"), BorderLayout.NORTH
+        );
+
+        JPanel comboBoxesPanel = new JPanel(new GridLayout(1, 2));
+        comboBoxesPanel.add(new JLabel("– " + tr("One data source is missing") + ":"));
+        comboBoxesPanel.add(importOneDsStrategyComboBox);
+        comboBoxesPanel.setBorder(new EmptyBorder(5, 0, 0, 0));
+        strategyPanel.add(comboBoxesPanel, BorderLayout.CENTER);
+
+        return strategyPanel;
     }
 
     public boolean promptNewServerNameUrl() {
@@ -204,6 +232,10 @@ public class SettingsDataSourcesPanel extends JPanel {
         refreshBtn.addActionListener(listener);
     }
 
+    public void addImportOneDsStrategyComboBoxItemListener(ItemListener listener) {
+        importOneDsStrategyComboBox.addItemListener(listener);
+    }
+
     public void upBtnSetEnabled(Boolean enabled) {
         upBtn.setEnabled(enabled);
     }
@@ -237,6 +269,10 @@ public class SettingsDataSourcesPanel extends JPanel {
         return profileTable.getSelectedRow();
     }
 
+    public int getImportOneDsStrategyComboBoxSelectedIndex() {
+        return importOneDsStrategyComboBox.getSelectedIndex();
+    }
+
     public int getProfilesTableRowCount() {
         return profileTable.getRowCount();
     }
@@ -263,6 +299,10 @@ public class SettingsDataSourcesPanel extends JPanel {
 
     public void setServersListModel(ListModel<Object> serversListModel) {
         serverList.setModel(serversListModel);
+    }
+
+    public void setImportOneDsStrategyComboBoxModel(DefaultComboBoxModel<Object> importOneDsStrategyComboBoxModel) {
+        importOneDsStrategyComboBox.setModel(importOneDsStrategyComboBoxModel);
     }
 
     public void serversListAddListSelectionListener(ListSelectionListener listener) {
