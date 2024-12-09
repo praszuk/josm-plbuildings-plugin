@@ -23,8 +23,9 @@ public class ImportedBuildingOneDsOptionDialog {
 
     public void show() {
         final Object[] choices = {tr("Use") + " " + availableDatasource, tr("Cancel")};
-        // TODO You can change it permamently in the settings.
-        JCheckBox doNotShowAgainThisSessionCheckBox = new JCheckBox(tr("Do not show again (this session)."));
+        JCheckBox doNotShowAgainThisSessionCheckBox = new JCheckBox(
+            tr("Do not show again (this session). You can change it permamently in the settings.")
+        );
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(
