@@ -20,7 +20,7 @@ import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsDataSourcesPanel;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsNotificationsPanel;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsUncommonTagsPanel;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
-import org.openstreetmap.josm.plugins.plbuildings.models.NotifiableImportStatuses;
+import org.openstreetmap.josm.plugins.plbuildings.models.NotificationConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.UncommonTags;
 
 public class BuildingsPlugin extends Plugin {
@@ -38,7 +38,7 @@ public class BuildingsPlugin extends Plugin {
 
         List<SettingsTabController> settingsTabControllers = List.of(
             new SettingsDataSourcesController(dataSourceConfig, new SettingsDataSourcesPanel()),
-            new SettingsNotificationsController(new NotifiableImportStatuses(), new SettingsNotificationsPanel()),
+            new SettingsNotificationsController(new NotificationConfig(), new SettingsNotificationsPanel()),
             new SettingsUncommonTagsController(new UncommonTags(), new SettingsUncommonTagsPanel())
         );
 

@@ -87,9 +87,10 @@ public class BuildingsSettings {
         true
     );
 
-    public static final StringProperty NOTIFIABLE_IMPORT_STATUSES = new StringProperty(
-        SETTING_PREFIX + "notifiable_import_statuses",
-        "{}"
+    /** keeps the state if notification should appear or not */
+    public static final StringProperty NOTIFICATION_STATES = new StringProperty(
+        SETTING_PREFIX + "notification_states",
+        "[]"
     );
 
     public static final BooleanProperty UNCOMMON_TAGS_CHECK = new BooleanProperty(
