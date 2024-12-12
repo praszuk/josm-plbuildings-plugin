@@ -31,6 +31,8 @@ import org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding;
  * Responsible for managing all import action workers, data sources, data, actions, GUI.
  */
 public class BuildingsImportManager {
+    private static CombineNearestOneDsStrategy oneDsConfirmationSessionStrategy = null;
+
     private final LatLon cursorLatLon;
     private final Way selectedBuilding;
     private final DataSet editLayer;
@@ -153,12 +155,19 @@ public class BuildingsImportManager {
         BuildingsPlugin.toggleDialogController.updateTags(buildingText, buildingLevelsText, hasUncommonTags);
     }
 
-    static CombineNearestOneDsStrategy getImportBuildingDataOneDsStrategy(String availableDataSource) {
+    static CombineNearestOneDsStrategy getImportBuildingDataOneDsStrategy(ImportedBuildingOneDsOptionDialog dialog) {
         CombineNearestOneDsStrategy strategy = CombineNearestOneDsStrategy.fromString(
             BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.get()
         );
+        if (oneDsConfirmationSessionStrategy != null) {
+            return oneDsConfirmationSessionStrategy;
+        }
         if (strategy == ASK_USER) {
-            strategy = ImportedBuildingOneDsOptionDialog.show(availableDataSource) ? ACCEPT : CANCEL;
+            dialog.show();
+            strategy = dialog.isUserConfirmedOneDs() ? ACCEPT : CANCEL;
+            if (dialog.isDoNotShowAgainThisSession()) {
+                oneDsConfirmationSessionStrategy = strategy;
+            }
         }
         return strategy;
     }
@@ -255,7 +264,8 @@ public class BuildingsImportManager {
             else if (geometryDs.isEmpty() != tagsDs.isEmpty()) {
                 String availableDsName = geometryDs.isEmpty() ? profile.getTags() : profile.getGeometry();
 
-                if (getImportBuildingDataOneDsStrategy(availableDsName) == ACCEPT) {
+                ImportedBuildingOneDsOptionDialog oneDsDialog = new ImportedBuildingOneDsOptionDialog(availableDsName);
+                if (getImportBuildingDataOneDsStrategy(oneDsDialog) == ACCEPT) {
                     importedBuilding = NearestBuilding.getNearestBuilding(importedData.get(availableDsName), latLon);
                     importedBuildingTagsSource = availableDsName;
                     importedBuildingGeometrySource = availableDsName;
