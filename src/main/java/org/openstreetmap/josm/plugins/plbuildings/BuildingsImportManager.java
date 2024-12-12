@@ -16,12 +16,13 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOneDsStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOverlappingStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus;
+import org.openstreetmap.josm.plugins.plbuildings.enums.Notification;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDsOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOverlappingOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
-import org.openstreetmap.josm.plugins.plbuildings.models.NotifiableImportStatuses;
+import org.openstreetmap.josm.plugins.plbuildings.models.NotificationConfig;
 import org.openstreetmap.josm.plugins.plbuildings.utils.BuildingsOverlapDetector;
 import org.openstreetmap.josm.plugins.plbuildings.utils.CloneBuilding;
 import org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding;
@@ -42,7 +43,7 @@ public class BuildingsImportManager {
     private ImportStatus status;
     private Way resultBuilding;
 
-    private final NotifiableImportStatuses notifiableImportStatuses;
+    private final NotificationConfig notificationConfig;
 
     public BuildingsImportManager(DataSet editLayer, LatLon cursorLatLon, Way selectedBuilding) {
         this.editLayer = editLayer;
@@ -50,7 +51,7 @@ public class BuildingsImportManager {
         this.selectedBuilding = selectedBuilding;
         this.dataSourceConfig = new DataSourceConfig();
         this.currentProfile = dataSourceConfig.getCurrentProfile();
-        this.notifiableImportStatuses = new NotifiableImportStatuses();
+        this.notificationConfig = new NotificationConfig();
 
         this.importedData = null;
         this.resultBuilding = null;
@@ -77,7 +78,6 @@ public class BuildingsImportManager {
         return this.currentProfile;
     }
 
-
     public DataSourceConfig getDataSourceConfig() {
         return dataSourceConfig;
     }
@@ -97,7 +97,8 @@ public class BuildingsImportManager {
     public void setStatus(ImportStatus status, String reason) {
         this.status = status;
         updateGuiStatus();
-        if (notifiableImportStatuses.isNotifiable(status)) {
+        Notification notification = Notification.fromImportStatus(status);
+        if (notification != null && notificationConfig.isNotificationEnabled(notification)) {
             showNotification(status + ": " + reason);
         }
     }
