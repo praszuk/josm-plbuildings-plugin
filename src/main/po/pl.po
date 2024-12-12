@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: josm-plugin_plbuildings 1.4.2-2-gdebafc4-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-06 03:26+0100\n"
-"PO-Revision-Date: 2024-12-06 03:28+0100\n"
+"POT-Creation-Date: 2024-12-12 02:03+0100\n"
+"PO-Revision-Date: 2024-12-12 02:07+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -25,7 +25,7 @@ msgid "Action required"
 msgstr "Wymagane działanie"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsUncommonTagsPanel.java:66
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:72
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:78
 msgid "Add"
 msgstr "Dodaj"
 
@@ -33,7 +33,7 @@ msgstr "Dodaj"
 msgid "Add new common building value"
 msgstr "Dodaj nową częstą wartość budynku"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:32
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:36
 msgid "Add new server"
 msgstr "Dodaj nowy serwer"
 
@@ -41,12 +41,12 @@ msgstr "Dodaj nowy serwer"
 msgid "Added building geometry"
 msgstr "Dodano zaimportowany budynek"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:152
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:180
 msgid "Are you sure to remove server"
 msgstr "Czy chcesz usunąć serwer"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SurveyConfirmationDialog.java:22
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:22
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:40
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:28
 msgid "Building import confirmation"
 msgstr "Potwierdzenie importu budynku"
@@ -63,7 +63,7 @@ msgstr "Budynki z różnych źródeł danych nie pokrywają się wystarczająco"
 msgid "Buildings import stats"
 msgstr "Statystyki importowania budynków"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:17
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:25
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:20
 msgid "Cancel"
 msgstr "Anuluj"
@@ -127,9 +127,13 @@ msgstr "Błąd połączenia"
 msgid "Data source"
 msgstr "Źródło danych"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/controllers/SettingsDataSourcesController.java:190
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/controllers/SettingsDataSourcesController.java:211
 msgid "Data sources"
 msgstr "Źródła danych"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:146
+msgid "Default executed strategy at importing building, when"
+msgstr "Domyślna strategia w trakcie import, gdy"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SurveyConfirmationDialog.java:21
 msgid ""
@@ -138,6 +142,13 @@ msgid ""
 msgstr ""
 "Wykryto wartość \"survey\" w tagach.\n"
 "Czy chcesz kontynuować aktualizowanie tego obiektu?"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:27
+msgid ""
+"Do not show again (this session). You can change it permamently in the "
+"settings."
+msgstr ""
+"Nie pokazuj ponownie (w tej sesji). Możesz to zmienić trwale w ustawieniach."
 
 #. * Downloaded/import building succesfully
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/enums/ImportStatus.java:14
@@ -165,7 +176,7 @@ msgstr "Powielona geometria budynku. Anulowanie!"
 msgid "Enabled notifications"
 msgstr "Włączone powiadomienia"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:143
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:171
 msgid ""
 "Error with adding a new server. Name must be unique and URL must be valid!"
 msgstr ""
@@ -201,6 +212,10 @@ msgstr "Błąd importowania"
 msgid "Import mode"
 msgstr "Tryb importu"
 
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:35
+msgid "Import strategy"
+msgstr "Strategia importu"
+
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/FullImportStrategy.java:65
 msgid "Imported a new building"
 msgstr "Zaimportowano nowy budynek"
@@ -221,7 +236,7 @@ msgstr "Importy z aktualizacją geometrii"
 msgid "Imports with tags update"
 msgstr "Importy z aktualizacją tagów"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:21
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:32
 msgid ""
 "Incomplete data. Do you want to use only one data source to import building?"
 msgstr ""
@@ -262,6 +277,10 @@ msgstr "Brak aktualizacji"
 msgid "Notifications"
 msgstr "Powiadomienia"
 
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:150
+msgid "One data source is missing"
+msgstr "Jedno źródło danych brakuje"
+
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:44
 #, java-format
 msgid "Open the {0} window"
@@ -279,16 +298,16 @@ msgstr "Okno PlBuildings"
 msgid "Profile"
 msgstr "Profil"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:31
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:34
 msgid "Profiles"
 msgstr "Profile"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsUncommonTagsPanel.java:67
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:73
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:79
 msgid "Remove"
 msgstr "Usuń"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:33
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:37
 msgid "Remove server"
 msgstr "Usuń serwer"
 
@@ -300,15 +319,15 @@ msgstr "Podmieniono geometrię budynku"
 msgid "Server"
 msgstr "Serwer"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:93
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:99
 msgid "Server URL"
 msgstr "URL serwera"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:92
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:98
 msgid "Server name"
 msgstr "Nazwa serwera"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:30
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:33
 msgid "Servers"
 msgstr "Serwery"
 
@@ -367,7 +386,7 @@ msgstr "Zaktualizowano tagi budynku"
 msgid "Updated building tags and geometry"
 msgstr "Zaktualizowano tagi i geometrię budynku"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:17
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:25
 msgid "Use"
 msgstr "Użyj"
 
