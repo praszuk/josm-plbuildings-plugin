@@ -1,12 +1,16 @@
 package org.openstreetmap.josm.plugins.plbuildings.enums;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import jakarta.annotation.Nullable;
 
 public enum Notification {
     NO_DATA("no_data", ImportStatus.NO_DATA.toString(), NotificationType.IMPORT_STATUS),
     NO_UPDATE("no_update", ImportStatus.NO_UPDATE.toString(), NotificationType.IMPORT_STATUS),
     CONNECTION_ERROR("connection_error", ImportStatus.CONNECTION_ERROR.toString(), NotificationType.IMPORT_STATUS),
-    IMPORT_ERROR("import_error", ImportStatus.IMPORT_ERROR.toString(), NotificationType.IMPORT_STATUS);
+    IMPORT_ERROR("import_error", ImportStatus.IMPORT_ERROR.toString(), NotificationType.IMPORT_STATUS),
+
+    ONE_DS_MISSING("one_ds_missing", tr("Data source is missing"), NotificationType.DATA_SOURCES);
 
     private final String name;
     private final String label;
