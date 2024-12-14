@@ -8,6 +8,7 @@ import static org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus.DOWN
 import static org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus.IDLE;
 import static org.openstreetmap.josm.plugins.plbuildings.gui.NotificationPopup.showNotification;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding.getNearestBuilding;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -24,6 +25,7 @@ import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.models.NotificationConfig;
 import org.openstreetmap.josm.plugins.plbuildings.utils.BuildingsOverlapDetector;
+import org.openstreetmap.josm.plugins.plbuildings.utils.BuildingsSessionStateManager;
 import org.openstreetmap.josm.plugins.plbuildings.utils.CloneBuilding;
 import org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding;
 
@@ -32,8 +34,6 @@ import org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding;
  * Responsible for managing all import action workers, data sources, data, actions, GUI.
  */
 public class BuildingsImportManager {
-    private static CombineNearestOneDsStrategy oneDsConfirmationSessionStrategy = null;
-
     private final LatLon cursorLatLon;
     private final Way selectedBuilding;
     private final DataSet editLayer;
@@ -160,17 +160,27 @@ public class BuildingsImportManager {
         CombineNearestOneDsStrategy strategy = CombineNearestOneDsStrategy.fromString(
             BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.get()
         );
-        if (oneDsConfirmationSessionStrategy != null) {
-            return oneDsConfirmationSessionStrategy;
+        if (BuildingsSessionStateManager.getOneDsConfirmationSessionStrategy() != null) {
+            return BuildingsSessionStateManager.getOneDsConfirmationSessionStrategy();
         }
         if (strategy == ASK_USER) {
             dialog.show();
             strategy = dialog.isUserConfirmedOneDs() ? ACCEPT : CANCEL;
             if (dialog.isDoNotShowAgainThisSession()) {
-                oneDsConfirmationSessionStrategy = strategy;
+                BuildingsSessionStateManager.setOneDsConfirmationSessionStrategy(strategy);
             }
         }
         return strategy;
+    }
+
+    boolean shouldShowOneDsNotification() {
+        CombineNearestOneDsStrategy settingStrategy = CombineNearestOneDsStrategy.fromString(
+            BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.get()
+        );
+        if (settingStrategy == ASK_USER && BuildingsSessionStateManager.getOneDsConfirmationSessionStrategy() == null) {
+            return false;
+        }
+        return notificationConfig.isNotificationEnabled(Notification.ONE_DS_MISSING);
     }
 
     static CombineNearestOverlappingStrategy getImportBuildingOverlappingStrategy(
@@ -236,7 +246,7 @@ public class BuildingsImportManager {
      * @return building or null if it couldn't combine building or datasets empty/user decision/settings etc.
      * @throws NullPointerException if dataSourceProfile is not set
      */
-    public static OsmPrimitive getNearestImportedBuilding(
+    public OsmPrimitive getNearestImportedBuilding(
         BuildingsImportData importedData,
         DataSourceProfile profile,
         LatLon latLon
@@ -265,13 +275,19 @@ public class BuildingsImportManager {
             else if (geometryDs.isEmpty() != tagsDs.isEmpty()) {
                 String availableDsName = geometryDs.isEmpty() ? profile.getTags() : profile.getGeometry();
 
+                String notificationText;
                 ImportedBuildingOneDsOptionDialog oneDsDialog = new ImportedBuildingOneDsOptionDialog(availableDsName);
                 if (getImportBuildingDataOneDsStrategy(oneDsDialog) == ACCEPT) {
                     importedBuilding = NearestBuilding.getNearestBuilding(importedData.get(availableDsName), latLon);
                     importedBuildingTagsSource = availableDsName;
                     importedBuildingGeometrySource = availableDsName;
+                    notificationText = tr("One data source is missing. Using: " + availableDsName);
                 } else {
                     importedBuilding = null;
+                    notificationText = tr("One data source is missing. Canceling.");
+                }
+                if (shouldShowOneDsNotification()) {
+                    showNotification(notificationText);
                 }
             }
             // Both available
