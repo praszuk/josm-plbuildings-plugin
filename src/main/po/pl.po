@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: josm-plugin_plbuildings 1.4.2-2-gdebafc4-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-12 02:03+0100\n"
-"PO-Revision-Date: 2024-12-12 02:07+0100\n"
+"POT-Creation-Date: 2024-12-14 03:35+0100\n"
+"PO-Revision-Date: 2024-12-14 03:38+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -51,7 +51,7 @@ msgstr "Czy chcesz usunąć serwer"
 msgid "Building import confirmation"
 msgstr "Potwierdzenie importu budynku"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:127
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:126
 msgid "Building not found."
 msgstr "Nie znaleziono budynku."
 
@@ -127,6 +127,11 @@ msgstr "Błąd połączenia"
 msgid "Data source"
 msgstr "Źródło danych"
 
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/enums/Notification.java:13
+msgid "Data source is missing"
+msgstr "Brakuje źródła danych"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsNotificationsPanel.java:69
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/controllers/SettingsDataSourcesController.java:211
 msgid "Data sources"
 msgstr "Źródła danych"
@@ -155,7 +160,7 @@ msgstr ""
 msgid "Done"
 msgstr "Gotowe"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:39
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:38
 msgid "Download building"
 msgstr "Pobierz budynek"
 
@@ -171,10 +176,6 @@ msgstr "Powielona geometria budynku bez zaznaczonego budynku. Anulowanie!"
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/GeometryUpdateStrategy.java:41
 msgid "Duplicated building geometry. Canceling!"
 msgstr "Powielona geometria budynku. Anulowanie!"
-
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsNotificationsPanel.java:16
-msgid "Enabled notifications"
-msgstr "Włączone powiadomienia"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:171
 msgid ""
@@ -197,7 +198,7 @@ msgstr "Geometria"
 msgid "Idle"
 msgstr "Bezczynny"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:38
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:37
 msgid "Import building at cursor position or replace/update selected."
 msgstr ""
 "Importuj budynek w miejscu wskazywanym przez kursor lub/i wymień/aktualizuj "
@@ -212,6 +213,10 @@ msgstr "Błąd importowania"
 msgid "Import mode"
 msgstr "Tryb importu"
 
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsNotificationsPanel.java:64
+msgid "Import status change"
+msgstr "Zmiana stanu importu"
+
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:35
 msgid "Import strategy"
 msgstr "Strategia importu"
@@ -220,7 +225,7 @@ msgstr "Strategia importu"
 msgid "Imported a new building"
 msgstr "Zaimportowano nowy budynek"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:116
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:115
 msgid "Imported building data out of the user view."
 msgstr "Zaimportowane dane budynku poza widokiem użytkownika."
 
@@ -243,7 +248,7 @@ msgstr ""
 "Niepełne dane. Czy chcesz użyć tylko jednego źródła danych do importu "
 "budynku?"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:146
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:145
 msgid "Incorrect import mode."
 msgstr "Niepoprawny tryb importu."
 
@@ -280,6 +285,14 @@ msgstr "Powiadomienia"
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:150
 msgid "One data source is missing"
 msgstr "Jedno źródło danych brakuje"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:287
+msgid "One data source is missing. Canceling."
+msgstr "Brakuje jednego źródła danych. Anulowanie."
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:284
+msgid "One data source is missing. Used"
+msgstr "Jednego źródła danych brakuje. Użyto"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:44
 #, java-format
@@ -426,6 +439,12 @@ msgstr "Importuj budynki z polskich publicznych zbiorów danych."
 #. Translator credits (translators who want to be credited for their contributions can add their names here as the translation)
 msgid "translator-credits"
 msgstr "NieWnen"
+
+#~ msgid "One data source is missing. Using: "
+#~ msgstr "Brakuje jedno źródła danych. Użyto: "
+
+#~ msgid "Enabled notifications"
+#~ msgstr "Włączone powiadomienia"
 
 #, java-printf-format
 #~ msgid "Use %s (geometry)"
