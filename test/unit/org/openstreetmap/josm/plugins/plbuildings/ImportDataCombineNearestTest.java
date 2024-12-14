@@ -26,10 +26,13 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOneDsStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOverlappingStrategy;
+import org.openstreetmap.josm.plugins.plbuildings.enums.Notification;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDsOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
+import org.openstreetmap.josm.plugins.plbuildings.models.NotificationConfig;
+import org.openstreetmap.josm.plugins.plbuildings.utils.BuildingsSessionStateManager;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class ImportDataCombineNearestTest {
@@ -48,6 +51,8 @@ public class ImportDataCombineNearestTest {
     public DataSet bothOverlapLt60oneBuildingGeometryDs;
     public DataSet bothOverlapLt60oneBuildingTagsDs;
 
+    public BuildingsImportManager manager;
+
     @Before
     public void setUp() {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:4326"));
@@ -62,6 +67,7 @@ public class ImportDataCombineNearestTest {
             new File("test/data/import_data_combine_nearest_one_ds/one_building.osm"),
             ""
         );
+        this.manager = new BuildingsImportManager(null, null, null);
         this.multipleBuildingDs = importOsmFile(
             new File("test/data/import_data_combine_nearest_one_ds/multiple_buildings.osm"),
             ""
@@ -92,7 +98,7 @@ public class ImportDataCombineNearestTest {
 
     @Test
     public void testOneDsEmptyDs() {
-        OsmPrimitive nearestBuilding = BuildingsImportManager.getNearestImportedBuilding(
+        OsmPrimitive nearestBuilding = manager.getNearestImportedBuilding(
             new BuildingsImportData(profileOneDs.getGeometry(), emptyDs),
             profileOneDs,
             null
@@ -106,7 +112,7 @@ public class ImportDataCombineNearestTest {
         Node buildingNode = expectedBuilding.getNodes().iterator().next();
         LatLon latLon = new LatLon(buildingNode.lat(), buildingNode.lon());
 
-        Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
+        Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(profileOneDs.getGeometry(), oneBuildingDs),
             profileOneDs,
             latLon
@@ -124,7 +130,7 @@ public class ImportDataCombineNearestTest {
         Node buildingNode = expectedBuilding.getNodes().iterator().next();
         LatLon latLon = new LatLon(buildingNode.lat(), buildingNode.lon());
 
-        Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
+        Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(profileOneDs.getGeometry(), multipleBuildingDs),
             profileOneDs,
             latLon
@@ -137,7 +143,7 @@ public class ImportDataCombineNearestTest {
 
     @Test
     public void testTwoDsEmptyBothDs() {
-        Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
+        Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(profileTwoDs.getGeometry(), emptyDs),
             profileTwoDs,
             null
@@ -163,7 +169,9 @@ public class ImportDataCombineNearestTest {
             times = 1;
         }};
 
-        CombineNearestOneDsStrategy secondResult = BuildingsImportManager.getImportBuildingDataOneDsStrategy(dialogMock);
+        CombineNearestOneDsStrategy secondResult = BuildingsImportManager.getImportBuildingDataOneDsStrategy(
+            dialogMock
+        );
         new Verifications() {{
             dialogMock.show();
             times = 1;
@@ -182,7 +190,7 @@ public class ImportDataCombineNearestTest {
 
         BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.put(CombineNearestOneDsStrategy.ACCEPT.toString());
 
-        Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
+        Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(
                 profileTwoDs.getGeometry(), emptyDs,
                 profileTwoDs.getTags(), oneBuildingDs
@@ -205,7 +213,7 @@ public class ImportDataCombineNearestTest {
 
         BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.put(CombineNearestOneDsStrategy.ACCEPT.toString());
 
-        Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
+        Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(
                 profileTwoDs.getGeometry(), emptyDs,
                 profileTwoDs.getTags(), multipleBuildingDs
@@ -223,7 +231,7 @@ public class ImportDataCombineNearestTest {
     public void testTwoDsEmptyOneDsStrategyCancelOneDs() {
         BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.put(CombineNearestOneDsStrategy.CANCEL.toString());
 
-        Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
+        Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(
                 profileTwoDs.getGeometry(), emptyDs,
                 profileTwoDs.getTags(), oneBuildingDs
@@ -250,7 +258,7 @@ public class ImportDataCombineNearestTest {
                 return CombineNearestOneDsStrategy.ACCEPT;
             }
         };
-        Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
+        Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(
                 profileTwoDs.getGeometry(), emptyDs,
                 profileTwoDs.getTags(), oneBuildingDs
@@ -273,7 +281,7 @@ public class ImportDataCombineNearestTest {
                 return CombineNearestOneDsStrategy.CANCEL;
             }
         };
-        Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
+        Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(
                 profileTwoDs.getGeometry(), emptyDs,
                 profileTwoDs.getTags(), oneBuildingDs
@@ -297,7 +305,7 @@ public class ImportDataCombineNearestTest {
         expectedGeometryBuilding.getNodes().forEach(expectedBuilding::addNode);
         expectedTagsBuilding.getKeys().forEach(expectedBuilding::put);
 
-        Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
+        Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(
                 profileTwoDs.getGeometry(), bothOverlapOver60oneBuildingGeometryDs,
                 profileTwoDs.getTags(), bothOverlapOver60oneBuildingTagsDs
@@ -330,7 +338,7 @@ public class ImportDataCombineNearestTest {
             }
         };
 
-        Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
+        Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(
                 profileTwoDs.getGeometry(), bothOverlapLt60oneBuildingGeometryDs,
                 profileTwoDs.getTags(), bothOverlapLt60oneBuildingTagsDs
@@ -360,7 +368,7 @@ public class ImportDataCombineNearestTest {
             }
         };
 
-        Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
+        Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(
                 profileTwoDs.getGeometry(), bothOverlapLt60oneBuildingGeometryDs,
                 profileTwoDs.getTags(), bothOverlapLt60oneBuildingTagsDs
@@ -392,7 +400,7 @@ public class ImportDataCombineNearestTest {
             }
         };
 
-        Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
+        Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(
                 profileTwoDs.getGeometry(), bothOverlapLt60oneBuildingGeometryDs,
                 profileTwoDs.getTags(), bothOverlapLt60oneBuildingTagsDs
@@ -416,7 +424,7 @@ public class ImportDataCombineNearestTest {
             }
         };
 
-        Way nearestBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
+        Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(
                 profileTwoDs.getGeometry(), bothOverlapLt60oneBuildingGeometryDs,
                 profileTwoDs.getTags(), bothOverlapLt60oneBuildingTagsDs
@@ -428,4 +436,30 @@ public class ImportDataCombineNearestTest {
         assertNull(nearestBuilding);
     }
 
+    @Test
+    public void testShouldShowOneDsMissingNotification() {
+        Object[][] testCombinations = {
+            {CombineNearestOneDsStrategy.ACCEPT, null, true, true},
+            {CombineNearestOneDsStrategy.CANCEL, null, true, true},
+            {CombineNearestOneDsStrategy.ASK_USER, CombineNearestOneDsStrategy.ACCEPT, true, true},
+            {CombineNearestOneDsStrategy.ASK_USER, CombineNearestOneDsStrategy.CANCEL, true, true},
+
+            {CombineNearestOneDsStrategy.ASK_USER, null, true, false},
+            {CombineNearestOneDsStrategy.ASK_USER, CombineNearestOneDsStrategy.ACCEPT, false, false},
+        };
+
+        NotificationConfig notificationConfig = new NotificationConfig();
+        for (Object[] combination : testCombinations) {
+            CombineNearestOneDsStrategy settingStrategy = (CombineNearestOneDsStrategy) combination[0];
+            CombineNearestOneDsStrategy sessionStateStrategy = (CombineNearestOneDsStrategy) combination[1];
+            boolean notificationEnabled = (boolean) combination[2];
+            boolean expectedResult = (boolean) combination[3];
+
+            BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.put(settingStrategy.toString());
+            BuildingsSessionStateManager.setOneDsConfirmationSessionStrategy(sessionStateStrategy);
+            notificationConfig.setNotificationEnabled(Notification.ONE_DS_MISSING, notificationEnabled);
+
+            assertEquals(manager.shouldShowOneDsNotification(), expectedResult);
+        }
+    }
 }

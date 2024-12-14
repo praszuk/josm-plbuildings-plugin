@@ -16,7 +16,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MainFrame;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsImportManager;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsPlugin;
@@ -117,7 +116,7 @@ public class BuildingsImportAction extends JosmAction {
             return;
         }
 
-        Way importedBuilding = (Way) BuildingsImportManager.getNearestImportedBuilding(
+        Way importedBuilding = (Way) manager.getNearestImportedBuilding(
             buildingsImportData,
             manager.getCurrentProfile(),
             manager.getCursorLatLon()
