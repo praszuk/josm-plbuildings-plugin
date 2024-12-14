@@ -281,7 +281,7 @@ public class BuildingsImportManager {
                     importedBuilding = NearestBuilding.getNearestBuilding(importedData.get(availableDsName), latLon);
                     importedBuildingTagsSource = availableDsName;
                     importedBuildingGeometrySource = availableDsName;
-                    notificationText = tr("One data source is missing. Using: " + availableDsName);
+                    notificationText = tr("One data source is missing. Used") + ": " + availableDsName;
                 } else {
                     importedBuilding = null;
                     notificationText = tr("One data source is missing. Canceling.");

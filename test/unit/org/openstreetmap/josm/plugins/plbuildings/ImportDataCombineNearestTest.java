@@ -26,10 +26,13 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOneDsStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOverlappingStrategy;
+import org.openstreetmap.josm.plugins.plbuildings.enums.Notification;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDsOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
+import org.openstreetmap.josm.plugins.plbuildings.models.NotificationConfig;
+import org.openstreetmap.josm.plugins.plbuildings.utils.BuildingsSessionStateManager;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class ImportDataCombineNearestTest {
@@ -89,8 +92,7 @@ public class ImportDataCombineNearestTest {
         );
         new MockUp<BuildingsImportManager>() {
             @Mock
-            public void injectSourceTags(OsmPrimitive importedBuilding, String geometrySource, String tagsSource) {
-            }
+            public void injectSourceTags(OsmPrimitive importedBuilding, String geometrySource, String tagsSource) {}
         };
     }
 
@@ -433,5 +435,31 @@ public class ImportDataCombineNearestTest {
 
         assertNull(nearestBuilding);
     }
-    
+
+    @Test
+    public void testShouldShowOneDsMissingNotification() {
+        Object[][] testCombinations = {
+            {CombineNearestOneDsStrategy.ACCEPT, null, true, true},
+            {CombineNearestOneDsStrategy.CANCEL, null, true, true},
+            {CombineNearestOneDsStrategy.ASK_USER, CombineNearestOneDsStrategy.ACCEPT, true, true},
+            {CombineNearestOneDsStrategy.ASK_USER, CombineNearestOneDsStrategy.CANCEL, true, true},
+
+            {CombineNearestOneDsStrategy.ASK_USER, null, true, false},
+            {CombineNearestOneDsStrategy.ASK_USER, CombineNearestOneDsStrategy.ACCEPT, false, false},
+        };
+
+        NotificationConfig notificationConfig = new NotificationConfig();
+        for (Object[] combination : testCombinations) {
+            CombineNearestOneDsStrategy settingStrategy = (CombineNearestOneDsStrategy) combination[0];
+            CombineNearestOneDsStrategy sessionStateStrategy = (CombineNearestOneDsStrategy) combination[1];
+            boolean notificationEnabled = (boolean) combination[2];
+            boolean expectedResult = (boolean) combination[3];
+
+            BuildingsSettings.COMBINE_NEAREST_BUILDING_ONE_DS_STRATEGY.put(settingStrategy.toString());
+            BuildingsSessionStateManager.setOneDsConfirmationSessionStrategy(sessionStateStrategy);
+            notificationConfig.setNotificationEnabled(Notification.ONE_DS_MISSING, notificationEnabled);
+
+            assertEquals(manager.shouldShowOneDsNotification(), expectedResult);
+        }
+    }
 }
