@@ -2,10 +2,16 @@ package org.openstreetmap.josm.plugins.plbuildings.utils;
 
 import static org.openstreetmap.josm.plugins.plbuildings.data.BuildingsTags.HOUSE_DETAILS;
 import static org.openstreetmap.josm.plugins.plbuildings.data.BuildingsTags.LIVING_BUILDINGS;
+import static org.openstreetmap.josm.plugins.plbuildings.data.UnallowedTags.UNALLOWED_SELECTED_OBJECT_KEYS;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import jakarta.annotation.Nonnull;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus;
+import org.openstreetmap.josm.plugins.plbuildings.exceptions.ImportActionCanceledException;
 import org.openstreetmap.josm.tools.Logging;
 
 public class PreCheckUtils {
@@ -37,15 +43,11 @@ public class PreCheckUtils {
 
         if (newValue.equals("yes") && !currentValue.equals("construction")) {
             return true;
-        }
-        else if (newValue.equals("house") && HOUSE_DETAILS.contains(currentValue)) {
+        } else if (newValue.equals("house") && HOUSE_DETAILS.contains(currentValue)) {
             return true;
-        }
-        else if (newValue.equals("residential") && LIVING_BUILDINGS.contains(currentValue)) {
+        } else if (newValue.equals("residential") && LIVING_BUILDINGS.contains(currentValue)) {
             return true;
-        }
-
-        else if (newValue.equals("outbuilding") && List.of("garage", "barn", "shed", "sty").contains(currentValue)) {
+        } else if (newValue.equals("outbuilding") && List.of("garage", "barn", "shed", "sty").contains(currentValue)) {
             return true;
         }
 
@@ -86,5 +88,32 @@ public class PreCheckUtils {
         }
 
         return false;
+    }
+
+    /**
+     * @param selectedWay – way object (building) which is going to be checked if it can be updated at import
+     */
+    public static void validateSelectedWay(Way selectedWay) throws ImportActionCanceledException {
+        if (selectedWay == null) {
+            return;
+        }
+
+        if (!selectedWay.isClosed()) {
+            throw new ImportActionCanceledException(
+                tr("Selected object is not a closed line!"),
+                ImportStatus.IMPORT_ERROR
+            );
+        }
+
+        List<String> unallowedKeys = selectedWay.keys()
+            .filter(UNALLOWED_SELECTED_OBJECT_KEYS::contains)
+            .sorted(String::compareTo)
+            .collect(Collectors.toList());
+        if (!unallowedKeys.isEmpty()) {
+            throw new ImportActionCanceledException(
+                tr("Selected object contains unallowed keys:") + " " + String.join(", ", unallowedKeys) + "!",
+                ImportStatus.IMPORT_ERROR
+            );
+        }
     }
 }

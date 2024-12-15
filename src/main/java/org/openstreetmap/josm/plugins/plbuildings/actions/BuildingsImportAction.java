@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.plugins.plbuildings.actions;
 
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.findUncommonTags;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.validateSelectedWay;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -67,9 +68,9 @@ public class BuildingsImportAction extends JosmAction {
     }
 
     /**
-     * @return – selected building in give dataset or null
+     * @return – selected way in give dataset or null
      */
-    public static Way getSelectedBuilding(DataSet ds) {
+    public static Way getSelectedWay(DataSet ds) {
         Collection<OsmPrimitive> selected = ds.getSelected()
             .stream()
             .filter(osmPrimitive -> osmPrimitive.getType() == OsmPrimitiveType.WAY)
@@ -171,7 +172,7 @@ public class BuildingsImportAction extends JosmAction {
         // Get selection first – it must be got before starting downloading
         // to avoid changing incorrect building in future – which is possible if user importing so fast and
         // downloading takes longer then selecting next building to update
-        Way selectedBuilding = getSelectedBuilding(currentDataSet);
+        Way selectedBuilding = getSelectedWay(currentDataSet);
         LatLon cursorLatLon = getCurrentCursorLocation();
 
         BuildingsImportManager buildingsImportManager = new BuildingsImportManager(
@@ -183,6 +184,15 @@ public class BuildingsImportAction extends JosmAction {
             Logging.info("BuildingsImportAction canceled! No DataSourceProfile selected!");
             return;
         }
+
+        try {
+            validateSelectedWay(selectedBuilding);
+        } catch (ImportActionCanceledException exception) {
+            Logging.info("{0} {1}", exception.getStatus(), exception.getMessage());
+            buildingsImportManager.setStatus(exception.getStatus(), exception.getMessage());
+            return;
+        }
+
         buildingsImportManager.run();
     }
 }
