@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: josm-plugin_plbuildings 1.4.2-2-gdebafc4-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-14 03:35+0100\n"
-"PO-Revision-Date: 2024-12-14 03:38+0100\n"
+"POT-Creation-Date: 2024-12-15 03:21+0100\n"
+"PO-Revision-Date: 2024-12-15 03:25+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -51,7 +51,7 @@ msgstr "Czy chcesz usunąć serwer"
 msgid "Building import confirmation"
 msgstr "Potwierdzenie importu budynku"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:126
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:127
 msgid "Building not found."
 msgstr "Nie znaleziono budynku."
 
@@ -160,7 +160,7 @@ msgstr ""
 msgid "Done"
 msgstr "Gotowe"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:38
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:39
 msgid "Download building"
 msgstr "Pobierz budynek"
 
@@ -198,7 +198,7 @@ msgstr "Geometria"
 msgid "Idle"
 msgstr "Bezczynny"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:37
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:38
 msgid "Import building at cursor position or replace/update selected."
 msgstr ""
 "Importuj budynek w miejscu wskazywanym przez kursor lub/i wymień/aktualizuj "
@@ -225,7 +225,7 @@ msgstr "Strategia importu"
 msgid "Imported a new building"
 msgstr "Zaimportowano nowy budynek"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:115
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:116
 msgid "Imported building data out of the user view."
 msgstr "Zaimportowane dane budynku poza widokiem użytkownika."
 
@@ -248,7 +248,7 @@ msgstr ""
 "Niepełne dane. Czy chcesz użyć tylko jednego źródła danych do importu "
 "budynku?"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:145
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:146
 msgid "Incorrect import mode."
 msgstr "Niepoprawny tryb importu."
 
@@ -327,6 +327,14 @@ msgstr "Usuń serwer"
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/ReplaceBuildingGeometryCommand.java:146
 msgid "Replaced building geometry"
 msgstr "Podmieniono geometrię budynku"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/utils/PreCheckUtils.java:114
+msgid "Selected object contains unallowed keys:"
+msgstr "Zaznaczony obiekt zawiera niedozwolone klucze:"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/utils/PreCheckUtils.java:103
+msgid "Selected object is not a closed line!"
+msgstr "Zaznaczony obiekt nie jest zamkniętą linią!"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/models/ui/SettingsDataSourcesProfilesTableModel.java:11
 msgid "Server"
