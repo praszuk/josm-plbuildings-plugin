@@ -109,7 +109,11 @@ public class BuildingsSettings {
         SETTING_PREFIX + "import_mode", ImportMode.class, ImportMode.FULL
     );
 
-    public static final BooleanProperty AUTOREMOVE_SOURCE_GEOPORTAL_GOV_PL = new BooleanProperty(
-        SETTING_PREFIX + "autoremove_source_geoportal_gov_pl", true
+    public static final ListProperty UNWANTED_SOURCE_VALUES = new ListProperty(
+        SETTING_PREFIX + "unwanted_source_values", new ArrayList<>(List.of("geoportal.gov.pl", "bing"))
+    );
+
+    public static final BooleanProperty AUTOREMOVE_UNWANTED_SOURCE = new BooleanProperty(
+        SETTING_PREFIX + "autoremove_unwanted_source", true
     );
 }
