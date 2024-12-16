@@ -36,7 +36,7 @@ Wtyczka komunikuje się z [serwerem PLBuildings](https://github.com/praszuk/josm
     - Źródło danych
     - Ostatnie tagi (wraz ze wskaźnikiem nietypowych tagów)
 - Automatyczne dodawanie tagów `source:building` i `source:geometry`.
-- Automatyczne usuwanie tagu `source=geoportal.gov.pl`
+- Automatyczne usuwanie tagów `source=geoportal.gov.pl` i `source=bing`.
 
 ## Jak z niej korzystać
 1. Zainstaluj wtyczkę w JOSMie (tak jak każdą inną – przez ustawienia JOSMa).
