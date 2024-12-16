@@ -36,7 +36,7 @@ It communicates with the [PLBuildings server](https://github.com/praszuk/josm-pl
   - Data source
   - Latest tags (with Uncommon tags indicator)
 - Auto-inject `source:building` and `source:geometry` tags
-- Autoremove `source=geoportal.gov.pl` tag
+- Autoremove `source=geoportal.gov.pl` or `source=bing` tags
 
 ## How to use it
 1. Install plugin in JOSM (same as other plugins via JOSM plugin settings).

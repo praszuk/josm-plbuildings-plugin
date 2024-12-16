@@ -69,11 +69,20 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
     }
 
 
-    private Command removeSourceGeoportal() {
-        if (!BuildingsSettings.AUTOREMOVE_SOURCE_GEOPORTAL_GOV_PL.get()) {
+    private Command removeUnwantedSource() {
+        if (!BuildingsSettings.AUTOREMOVE_UNWANTED_SOURCE.get()) {
             return null;
         }
-        if (!selectedBuilding.hasTag("source") || !selectedBuilding.get("source").contains("geoportal.gov.pl")) {
+        String source = selectedBuilding.get("source");
+        if (source == null) {
+            return null;
+        }
+        boolean isSourceContainUnwantedValue = BuildingsSettings.UNWANTED_SOURCE_VALUES.get()
+            .stream()
+            .map(String::toLowerCase)
+            .anyMatch(val -> source.toLowerCase().contains(val));
+
+        if (!isSourceContainUnwantedValue) {
             return null;
         }
         return new ChangePropertyCommand(selectedBuilding, "source", null);
@@ -95,9 +104,9 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
                 return false;
             }
 
-            Command removeSourceGeoportal = removeSourceGeoportal();
-            if (removeSourceGeoportal != null) {
-                commands.add(removeSourceGeoportal);
+            Command removeUnwantedSource = removeUnwantedSource();
+            if (removeUnwantedSource != null) {
+                commands.add(removeUnwantedSource);
             }
 
             if (commands.isEmpty()) {
