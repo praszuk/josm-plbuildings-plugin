@@ -19,15 +19,17 @@ public class UpdateBuildingTagsCommandTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"geoportal.gov.pl", "www.geoportal.gov.pl", "https://geoportal.gov.pl", "https://www.geoportal.gov.pl/"})
-    void testAutoRemoveSourceGeoportalValue(String geoportalValue) {
-        BuildingsSettings.AUTOREMOVE_SOURCE_GEOPORTAL_GOV_PL.put(true);
+    @CsvSource({
+        "geoportal.gov.pl", "www.geoportal.gov.pl", "https://geoportal.gov.pl", "https://www.geoportal.gov.pl/", "Bing"
+    })
+    void testAutoRemoveUnwantedSourceValue(String unwantedValue) {
+        BuildingsSettings.AUTOREMOVE_UNWANTED_SOURCE.put(true);
 
         DataSet ds = new DataSet();
 
         Way selectedBuilding = new Way();
         selectedBuilding.put("building", "yes");
-        selectedBuilding.put("source", geoportalValue);
+        selectedBuilding.put("source", unwantedValue.toUpperCase());
         ds.addPrimitiveRecursive(selectedBuilding);
 
         DataSet newDs = new DataSet();
@@ -43,14 +45,14 @@ public class UpdateBuildingTagsCommandTest {
     }
 
     @Test
-    void testDoNotAutoRemoveSourceWithoutGeoportalValue() {
-        BuildingsSettings.AUTOREMOVE_SOURCE_GEOPORTAL_GOV_PL.put(true);
+    void testDoNotAutoRemoveSourceWithoutUnwantedValue() {
+        BuildingsSettings.AUTOREMOVE_UNWANTED_SOURCE.put(true);
 
         DataSet ds = new DataSet();
 
         Way selectedBuilding = new Way();
         selectedBuilding.put("building", "yes");
-        selectedBuilding.put("source", "notgeoportalvalue");
+        selectedBuilding.put("source", "not_unwanted_value");
         ds.addPrimitiveRecursive(selectedBuilding);
 
         DataSet newDs = new DataSet();
@@ -67,14 +69,16 @@ public class UpdateBuildingTagsCommandTest {
 
 
     @Test
-    void testDoNotAutoRemoveSourceGeoportalValueWithDisabledSetting() {
-        BuildingsSettings.AUTOREMOVE_SOURCE_GEOPORTAL_GOV_PL.put(false);
+    void testDoNotAutoRemoveUnwantedSourceValueWithDisabledSetting() {
+        BuildingsSettings.AUTOREMOVE_UNWANTED_SOURCE.put(false);
 
         DataSet ds = new DataSet();
 
         Way selectedBuilding = new Way();
         selectedBuilding.put("building", "yes");
-        selectedBuilding.put("source", "geoportal.gov.pl");
+        selectedBuilding.put(
+            "source", BuildingsSettings.UNWANTED_SOURCE_VALUES.get().stream().findFirst().orElseThrow()
+        );
         ds.addPrimitiveRecursive(selectedBuilding);
 
         DataSet newDs = new DataSet();
