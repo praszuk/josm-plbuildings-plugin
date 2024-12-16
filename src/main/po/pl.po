@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: josm-plugin_plbuildings 1.4.2-2-gdebafc4-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-15 03:21+0100\n"
-"PO-Revision-Date: 2024-12-15 03:25+0100\n"
+"POT-Creation-Date: 2024-12-16 03:11+0100\n"
+"PO-Revision-Date: 2024-12-16 03:12+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -114,7 +114,7 @@ msgstr "Nie można zaktualizować tagów budynku bez zaznaczonego budynku."
 msgid "Common building values:"
 msgstr "Częste wartości budynków:"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/UpdateBuildingTagsCommand.java:94
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/UpdateBuildingTagsCommand.java:103
 msgid "Conflict tag dialog canceled by user"
 msgstr "Okno konfliktów tagów anulowane przez użytkownika"
 
@@ -272,6 +272,10 @@ msgstr "Nie"
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/enums/ImportStatus.java:16
 msgid "No data"
 msgstr "Brak danych"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:186
+msgid "No data source profile selected!"
+msgstr "Nie wybrano profilu źródła danych!"
 
 #. * Import canceled by same/duplicated data
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/enums/ImportStatus.java:18

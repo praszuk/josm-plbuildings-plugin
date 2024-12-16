@@ -180,12 +180,12 @@ public class BuildingsImportAction extends JosmAction {
             cursorLatLon,
             selectedBuilding
         );
-        if (buildingsImportManager.getCurrentProfile() == null) {
-            Logging.info("BuildingsImportAction canceled! No DataSourceProfile selected!");
-            return;
-        }
-
         try {
+            if (buildingsImportManager.getCurrentProfile() == null) {
+                throw new ImportActionCanceledException(
+                    tr("No data source profile selected!"), ImportStatus.IMPORT_ERROR
+                );
+            }
             validateSelectedWay(selectedBuilding);
         } catch (ImportActionCanceledException exception) {
             Logging.info("{0} {1}", exception.getStatus(), exception.getMessage());
