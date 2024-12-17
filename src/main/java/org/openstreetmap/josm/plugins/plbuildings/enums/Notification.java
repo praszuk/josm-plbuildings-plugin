@@ -10,7 +10,10 @@ public enum Notification {
     CONNECTION_ERROR("connection_error", ImportStatus.CONNECTION_ERROR.toString(), NotificationType.IMPORT_STATUS),
     IMPORT_ERROR("import_error", ImportStatus.IMPORT_ERROR.toString(), NotificationType.IMPORT_STATUS),
 
-    ONE_DS_MISSING("one_ds_missing", tr("Data source is missing"), NotificationType.DATA_SOURCES);
+    ONE_DS_MISSING("one_ds_missing", tr("Data source is missing"), NotificationType.DATA_SOURCES),
+    NOT_ENOUGH_OVERLAPPING(
+        "not_enough_overlapping", tr("Imported buildings data not overlapping enough"), NotificationType.DATA_SOURCES
+    );
 
     private final String name;
     private final String label;

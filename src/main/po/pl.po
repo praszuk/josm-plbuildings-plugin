@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: josm-plugin_plbuildings 1.4.2-2-gdebafc4-SNAPSHOT\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-16 03:11+0100\n"
-"PO-Revision-Date: 2024-12-16 03:12+0100\n"
+"POT-Creation-Date: 2024-12-17 03:55+0100\n"
+"PO-Revision-Date: 2024-12-17 03:57+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -47,7 +47,7 @@ msgstr "Czy chcesz usunąć serwer"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SurveyConfirmationDialog.java:22
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:40
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:28
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:61
 msgid "Building import confirmation"
 msgstr "Potwierdzenie importu budynku"
 
@@ -55,7 +55,7 @@ msgstr "Potwierdzenie importu budynku"
 msgid "Building not found."
 msgstr "Nie znaleziono budynku."
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:26
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:52
 msgid "Buildings from different data sources are not overlapping enough"
 msgstr "Budynki z różnych źródeł danych nie pokrywają się wystarczająco"
 
@@ -64,7 +64,7 @@ msgid "Buildings import stats"
 msgstr "Statystyki importowania budynków"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:25
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:20
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:45
 msgid "Cancel"
 msgstr "Anuluj"
 
@@ -110,6 +110,10 @@ msgstr "Nie można zaktualizować geometrii budynku bez zaznaczonego budynku."
 msgid "Cannot perform building update tags without selected building."
 msgstr "Nie można zaktualizować tagów budynku bez zaznaczonego budynku."
 
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsNotificationsPanel.java:69
+msgid "Combining data sources"
+msgstr "Złączanie źródeł danych"
+
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsUncommonTagsPanel.java:21
 msgid "Common building values:"
 msgstr "Częste wartości budynków:"
@@ -131,7 +135,6 @@ msgstr "Źródło danych"
 msgid "Data source is missing"
 msgstr "Brakuje źródła danych"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsNotificationsPanel.java:69
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/controllers/SettingsDataSourcesController.java:211
 msgid "Data sources"
 msgstr "Źródła danych"
@@ -147,6 +150,10 @@ msgid ""
 msgstr ""
 "Wykryto wartość \"survey\" w tagach.\n"
 "Czy chcesz kontynuować aktualizowanie tego obiektu?"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:50
+msgid "Do not show again (this session)."
+msgstr "Nie pokazuj ponownie (w tej sesji)."
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:27
 msgid ""
@@ -229,6 +236,20 @@ msgstr "Zaimportowano nowy budynek"
 msgid "Imported building data out of the user view."
 msgstr "Zaimportowane dane budynku poza widokiem użytkownika."
 
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/enums/Notification.java:15
+msgid "Imported buildings data not overlapping enough"
+msgstr "Zaimportowane dane budynków nie pokrywają się wystarczająco"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:343
+msgid "Imported buildings data not overlapping enough. Canceling."
+msgstr ""
+"Zaimportowane dane budynków nie pokrywają się wystarczająco. Anulowanie."
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:312
+msgid "Imported buildings data not overlapping enough. Used strategy"
+msgstr ""
+"Zaimportowane dane budynków nie pokrywają się wystarczająco. Użyto strategii"
+
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:47
 msgid "Imports with building replace"
 msgstr "Importy z podmianą budynku"
@@ -256,9 +277,13 @@ msgstr "Niepoprawny tryb importu."
 msgid "Latest tags"
 msgstr "Ostatnie tagi"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:17
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:36
 msgid "Merge both"
 msgstr "Złącz oba"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:327
+msgid "Merged both"
+msgstr "Złączono oba"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:43
 msgid "New buildings"
@@ -290,11 +315,11 @@ msgstr "Powiadomienia"
 msgid "One data source is missing"
 msgstr "Jedno źródło danych brakuje"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:287
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:295
 msgid "One data source is missing. Canceling."
 msgstr "Brakuje jednego źródła danych. Anulowanie."
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:284
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:292
 msgid "One data source is missing. Used"
 msgstr "Jednego źródła danych brakuje. Użyto"
 
@@ -415,11 +440,17 @@ msgstr "Zaktualizowano tagi i geometrię budynku"
 msgid "Use"
 msgstr "Użyj"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:18
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:19
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:39
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:43
 #, java-printf-format
 msgid "Use %s"
 msgstr "Użyj %s"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:333
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:339
+#, java-printf-format
+msgid "Used %s"
+msgstr "Użyto %s"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/models/ui/SettingsDataSourcesProfilesTableModel.java:14
 msgid "Visible"

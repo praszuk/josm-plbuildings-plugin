@@ -9,11 +9,13 @@ import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFi
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.isSameButClonedBuilding;
 
 import java.io.File;
+import java.util.Arrays;
 import mockit.Expectations;
 import mockit.Mock;
 import mockit.MockUp;
 import mockit.Mocked;
 import mockit.Verifications;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,6 +30,7 @@ import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOneDsStrat
 import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOverlappingStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.enums.Notification;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDsOptionDialog;
+import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOverlappingOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
@@ -94,6 +97,10 @@ public class ImportDataCombineNearestTest {
             @Mock
             public void injectSourceTags(OsmPrimitive importedBuilding, String geometrySource, String tagsSource) {}
         };
+
+        // Reset to avoid random failing tests
+        BuildingsSessionStateManager.setOneDsConfirmationSessionStrategy(null);
+        BuildingsSessionStateManager.setOverlappingConfirmationSessionStrategy(null);
     }
 
     @Test
@@ -318,8 +325,11 @@ public class ImportDataCombineNearestTest {
         assertTrue(isSameButClonedBuilding(expectedBuilding, nearestBuilding));
     }
 
+    @SuppressWarnings({"ResultOfMethodCallIgnored"})
     @Test
-    public void testTwoDsBothDsOverlapLt60AskUserMergeBoth() {
+    public void testTwoDsBothDsOverlapLt60AskUserMergeBoth(
+        @Mocked ImportedBuildingOverlappingOptionDialog dialog
+    ) {
         Way expectedGeometryBuilding = bothOverlapLt60oneBuildingGeometryDs.getWays().iterator().next();
         Way expectedTagsBuilding = bothOverlapLt60oneBuildingTagsDs.getWays().iterator().next();
 
@@ -330,13 +340,10 @@ public class ImportDataCombineNearestTest {
         Node buildingNode = expectedGeometryBuilding.getNodes().iterator().next();
         LatLon latLon = new LatLon(buildingNode.lat(), buildingNode.lon());
 
-        new MockUp<BuildingsImportManager>() {
-            @Mock
-            CombineNearestOverlappingStrategy getImportBuildingOverlappingStrategy(
-                String geomDs, String tagsDs, double overlapPercentage) {
-                return CombineNearestOverlappingStrategy.MERGE_BOTH;
-            }
-        };
+        new Expectations() {{
+            dialog.getUserConfirmedStrategy();
+            result = CombineNearestOverlappingStrategy.MERGE_BOTH;
+        }};
 
         Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(
@@ -351,22 +358,21 @@ public class ImportDataCombineNearestTest {
         assertTrue(isSameButClonedBuilding(expectedBuilding, nearestBuilding));
     }
 
+    @SuppressWarnings({"ResultOfMethodCallIgnored"})
     @Test
-    public void testTwoDsBothDsOverlapLt60AskUserAcceptGeometrySource() {
+    public void testTwoDsBothDsOverlapLt60AskUserAcceptGeometrySource(
+        @Mocked ImportedBuildingOverlappingOptionDialog dialog
+    ) {
         Way expectedGeometryBuilding = bothOverlapLt60oneBuildingGeometryDs.getWays().iterator().next();
         Way expectedTagsBuilding = bothOverlapLt60oneBuildingTagsDs.getWays().iterator().next();
 
         Node buildingNode = expectedGeometryBuilding.getNodes().iterator().next();
         LatLon latLon = new LatLon(buildingNode.lat(), buildingNode.lon());
 
-        new MockUp<BuildingsImportManager>() {
-            @Mock
-            CombineNearestOverlappingStrategy getImportBuildingOverlappingStrategy(
-                String geomDs, String tagsDs, double overlapPercentage
-            ) {
-                return CombineNearestOverlappingStrategy.ACCEPT_GEOMETRY_SOURCE;
-            }
-        };
+        new Expectations() {{
+            dialog.getUserConfirmedStrategy();
+            result = CombineNearestOverlappingStrategy.ACCEPT_GEOMETRY_SOURCE;
+        }};
 
         Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(
@@ -383,22 +389,21 @@ public class ImportDataCombineNearestTest {
         assertTrue(isSameButClonedBuilding(nearestBuilding, expectedGeometryBuilding));
     }
 
+    @SuppressWarnings({"ResultOfMethodCallIgnored"})
     @Test
-    public void testTwoDsBothDsOverlapLt60AskUserAcceptTagsSource() {
+    public void testTwoDsBothDsOverlapLt60AskUserAcceptTagsSource(
+        @Mocked ImportedBuildingOverlappingOptionDialog dialog
+    ) {
         Way expectedGeometryBuilding = bothOverlapLt60oneBuildingGeometryDs.getWays().iterator().next();
         Way expectedTagsBuilding = bothOverlapLt60oneBuildingTagsDs.getWays().iterator().next();
 
         Node buildingNode = expectedGeometryBuilding.getNodes().iterator().next();
         LatLon latLon = new LatLon(buildingNode.lat(), buildingNode.lon());
 
-        new MockUp<BuildingsImportManager>() {
-            @Mock
-            CombineNearestOverlappingStrategy getImportBuildingOverlappingStrategy(
-                String geomDs, String tagsDs, double overlapPercentage
-            ) {
-                return CombineNearestOverlappingStrategy.ACCEPT_TAGS_SOURCE;
-            }
-        };
+        new Expectations() {{
+            dialog.getUserConfirmedStrategy();
+            result = CombineNearestOverlappingStrategy.ACCEPT_TAGS_SOURCE;
+        }};
 
         Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(
@@ -413,16 +418,15 @@ public class ImportDataCombineNearestTest {
         assertTrue(isSameButClonedBuilding(nearestBuilding, expectedTagsBuilding));
     }
 
+    @SuppressWarnings({"ResultOfMethodCallIgnored"})
     @Test
-    public void testTwoDsBothDsOverlapLt60AskUserCancel() {
-        new MockUp<BuildingsImportManager>() {
-            @Mock
-            CombineNearestOverlappingStrategy getImportBuildingOverlappingStrategy(
-                String geomDs, String tagsDs, double overlapPercentage
-            ) {
-                return CombineNearestOverlappingStrategy.CANCEL;
-            }
-        };
+    public void testTwoDsBothDsOverlapLt60AskUserCancel(
+        @Mocked ImportedBuildingOverlappingOptionDialog dialog
+    ) {
+        new Expectations() {{
+            dialog.getUserConfirmedStrategy();
+            result = CombineNearestOverlappingStrategy.CANCEL;
+        }};
 
         Way nearestBuilding = (Way) manager.getNearestImportedBuilding(
             new BuildingsImportData(
@@ -434,6 +438,39 @@ public class ImportDataCombineNearestTest {
         );
 
         assertNull(nearestBuilding);
+    }
+
+    @SuppressWarnings({"ResultOfMethodCallIgnored"})
+    @Test
+    public void testTwoDsBothDsOverlapMergeBothSaveChoiceForSession(
+        @Mocked ImportedBuildingOverlappingOptionDialog dialogMock
+    ) {
+        new Expectations() {{
+            dialogMock.getUserConfirmedStrategy();
+            result = CombineNearestOverlappingStrategy.MERGE_BOTH;
+            dialogMock.isDoNotShowAgainThisSession();
+            result = true;
+        }};
+
+        CombineNearestOverlappingStrategy firstResult = BuildingsImportManager.getImportBuildingOverlappingStrategy(
+            dialogMock
+        );
+
+        new Verifications() {{
+            dialogMock.show();
+            times = 1;
+        }};
+
+        CombineNearestOverlappingStrategy secondResult = BuildingsImportManager.getImportBuildingOverlappingStrategy(
+            dialogMock
+        );
+        new Verifications() {{
+            dialogMock.show();
+            times = 1;
+        }};
+
+        assertEquals(CombineNearestOverlappingStrategy.MERGE_BOTH, firstResult);
+        assertEquals(CombineNearestOverlappingStrategy.MERGE_BOTH, secondResult);
     }
 
     @Test
@@ -461,5 +498,27 @@ public class ImportDataCombineNearestTest {
 
             assertEquals(manager.shouldShowOneDsNotification(), expectedResult);
         }
+    }
+
+    @Test
+    public void testShouldShowNotEnoughOverlappingNotification() {
+        NotificationConfig notificationConfig = new NotificationConfig();
+
+        BuildingsSessionStateManager.setOverlappingConfirmationSessionStrategy(null);
+        notificationConfig.setNotificationEnabled(Notification.NOT_ENOUGH_OVERLAPPING, false);
+        assertFalse(manager.shouldShowNotEnoughOverlappingNotification());
+
+        notificationConfig.setNotificationEnabled(Notification.NOT_ENOUGH_OVERLAPPING, true);
+        assertFalse(manager.shouldShowNotEnoughOverlappingNotification());
+
+        Assert.assertTrue(Arrays.stream(CombineNearestOverlappingStrategy.values()).allMatch(strategy -> {
+            BuildingsSessionStateManager.setOverlappingConfirmationSessionStrategy(strategy);
+            return manager.shouldShowNotEnoughOverlappingNotification();
+        }));
+        notificationConfig.setNotificationEnabled(Notification.NOT_ENOUGH_OVERLAPPING, false);
+        Assert.assertTrue(Arrays.stream(CombineNearestOverlappingStrategy.values()).noneMatch(strategy -> {
+            BuildingsSessionStateManager.setOverlappingConfirmationSessionStrategy(strategy);
+            return manager.shouldShowNotEnoughOverlappingNotification();
+        }));
     }
 }

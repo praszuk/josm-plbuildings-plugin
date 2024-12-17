@@ -43,10 +43,6 @@ public class BuildingsSettings {
         CombineNearestOneDsStrategy.ASK_USER.toString()
     );
 
-    public static final StringProperty COMBINE_NEAREST_BUILDING_OVERLAPPING_STRATEGY = new StringProperty(
-        SETTING_PREFIX + "combine_nearest_building_both_ds_strategy",
-        CombineNearestOverlappingStrategy.ASK_USER.toString()
-    );
     /**
      * Percentage value. It is used when both datasets are available and plugin try to
      * combine buildings from both into one. It measures overlapping percentage firstly,
