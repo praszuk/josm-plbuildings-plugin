@@ -186,20 +186,14 @@ public class BuildingsImportManager {
     static CombineNearestOverlappingStrategy getImportBuildingOverlappingStrategy(
         ImportedBuildingOverlappingOptionDialog dialog
     ) {
-        CombineNearestOverlappingStrategy strategy = CombineNearestOverlappingStrategy.fromString(
-            BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAPPING_STRATEGY.get()
-        );
-
         if (BuildingsSessionStateManager.getOverlappingConfirmationSessionStrategy() != null) {
             return BuildingsSessionStateManager.getOverlappingConfirmationSessionStrategy();
         }
 
-        if (strategy == CombineNearestOverlappingStrategy.ASK_USER) {
-            dialog.show();
-            strategy = dialog.getUserConfirmedStrategy();
-            if (dialog.isDoNotShowAgainThisSession()) {
-                BuildingsSessionStateManager.setOverlappingConfirmationSessionStrategy(strategy);
-            }
+        dialog.show();
+        CombineNearestOverlappingStrategy strategy = dialog.getUserConfirmedStrategy();
+        if (dialog.isDoNotShowAgainThisSession()) {
+            BuildingsSessionStateManager.setOverlappingConfirmationSessionStrategy(strategy);
         }
         return strategy;
     }
