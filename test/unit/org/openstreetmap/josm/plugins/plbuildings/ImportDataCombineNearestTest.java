@@ -434,6 +434,39 @@ public class ImportDataCombineNearestTest {
         assertNull(nearestBuilding);
     }
 
+    @SuppressWarnings({"ResultOfMethodCallIgnored"})
+    @Test
+    public void testTwoDsBothDsOverlapMergeBothSaveChoiceForSession(
+        @Mocked ImportedBuildingOverlappingOptionDialog dialogMock
+    ) {
+        new Expectations() {{
+            dialogMock.getUserConfirmedStrategy();
+            result = CombineNearestOverlappingStrategy.MERGE_BOTH;
+            dialogMock.isDoNotShowAgainThisSession();
+            result = true;
+        }};
+
+        CombineNearestOverlappingStrategy firstResult = BuildingsImportManager.getImportBuildingOverlappingStrategy(
+            dialogMock
+        );
+
+        new Verifications() {{
+            dialogMock.show();
+            times = 1;
+        }};
+
+        CombineNearestOverlappingStrategy secondResult = BuildingsImportManager.getImportBuildingOverlappingStrategy(
+            dialogMock
+        );
+        new Verifications() {{
+            dialogMock.show();
+            times = 1;
+        }};
+
+        assertEquals(CombineNearestOverlappingStrategy.MERGE_BOTH, firstResult);
+        assertEquals(CombineNearestOverlappingStrategy.MERGE_BOTH, secondResult);
+    }
+
     @Test
     public void testShouldShowOneDsMissingNotification() {
         Object[][] testCombinations = {
