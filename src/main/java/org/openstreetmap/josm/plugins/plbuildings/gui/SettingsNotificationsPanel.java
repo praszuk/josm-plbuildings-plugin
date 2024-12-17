@@ -66,7 +66,8 @@ public class SettingsNotificationsPanel extends JPanel {
 
         gbc.gridy++;
         checkBoxPanelGroups.add(
-            createCheckBoxPanel(tr("Data sources"), groupedCheckBoxes.get(NotificationType.DATA_SOURCES)), gbc
+            createCheckBoxPanel(tr("Combining data sources"), groupedCheckBoxes.get(NotificationType.DATA_SOURCES)),
+            gbc
         );
     }
 
