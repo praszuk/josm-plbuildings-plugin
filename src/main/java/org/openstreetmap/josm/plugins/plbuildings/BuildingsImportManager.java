@@ -184,15 +184,22 @@ public class BuildingsImportManager {
     }
 
     static CombineNearestOverlappingStrategy getImportBuildingOverlappingStrategy(
-        String geomDs,
-        String tagsDs,
-        double overlapPercentage
+        ImportedBuildingOverlappingOptionDialog dialog
     ) {
         CombineNearestOverlappingStrategy strategy = CombineNearestOverlappingStrategy.fromString(
             BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAPPING_STRATEGY.get()
         );
+
+        if (BuildingsSessionStateManager.getOverlappingConfirmationSessionStrategy() != null) {
+            return BuildingsSessionStateManager.getOverlappingConfirmationSessionStrategy();
+        }
+
         if (strategy == CombineNearestOverlappingStrategy.ASK_USER) {
-            strategy = ImportedBuildingOverlappingOptionDialog.show(geomDs, tagsDs, overlapPercentage);
+            dialog.show();
+            strategy = dialog.getUserConfirmedStrategy();
+            if (dialog.isDoNotShowAgainThisSession()) {
+                BuildingsSessionStateManager.setOverlappingConfirmationSessionStrategy(strategy);
+            }
         }
         return strategy;
     }
@@ -300,11 +307,16 @@ public class BuildingsImportManager {
                     >= BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD.get()) {
                     importedBuilding = combineBuildings(geometryBuilding, tagsBuilding);
                 } else {
+                    ImportedBuildingOverlappingOptionDialog overlappingDialog =
+                        new ImportedBuildingOverlappingOptionDialog(
+                            profile.getGeometry(),
+                            profile.getTags(),
+                            overlapPercentage
+                        );
                     CombineNearestOverlappingStrategy strategy = getImportBuildingOverlappingStrategy(
-                        profile.getGeometry(),
-                        profile.getTags(),
-                        overlapPercentage
+                        overlappingDialog
                     );
+
                     switch (strategy) {
                         case MERGE_BOTH:
                             importedBuilding = combineBuildings(geometryBuilding, tagsBuilding);
