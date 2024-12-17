@@ -3,12 +3,15 @@ package org.openstreetmap.josm.plugins.plbuildings;
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
 
 import java.io.File;
+import mockit.Expectations;
+import mockit.Mocked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOneDsStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOverlappingStrategy;
+import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOverlappingOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
@@ -104,8 +107,11 @@ public class InjectSourceTagsTest {
         Assertions.assertFalse(resultBuilding.hasTag("source:geometry"));
     }
 
+    @SuppressWarnings({"ResultOfMethodCallIgnored"})
     @Test
-    void testTwoDsImportButNotOverlappingEnoughUserSelectMergeBoth() {
+    void testTwoDsImportButNotOverlappingEnoughUserSelectMergeBoth(
+        @Mocked ImportedBuildingOverlappingOptionDialog dialog
+    ) {
         DataSourceServer server = new DataSourceServer("server", "127.0.0.1");
         DataSourceProfile profile = new DataSourceProfile(server.getName(), "ds_geom", "ds_tags", "profile");
 
@@ -114,9 +120,10 @@ public class InjectSourceTagsTest {
         Assertions.assertFalse(importDataSet.getWays().stream().findFirst().orElseThrow().hasTag("source:geometry"));
 
         BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD.put(120.);
-        BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAPPING_STRATEGY.put(
-            CombineNearestOverlappingStrategy.MERGE_BOTH.toString()
-        );
+        new Expectations() {{
+            dialog.getUserConfirmedStrategy();
+            result = CombineNearestOverlappingStrategy.MERGE_BOTH;
+        }};
 
         DataSet currentDataSet = new DataSet();
 
@@ -130,8 +137,11 @@ public class InjectSourceTagsTest {
         Assertions.assertEquals(resultBuilding.get("source:geometry"), profile.getGeometry());
     }
 
+    @SuppressWarnings({"ResultOfMethodCallIgnored"})
     @Test
-    void testTwoDsImportButNotOverlappingEnoughUserSelectAcceptTagsSource() {
+    void testTwoDsImportButNotOverlappingEnoughUserSelectAcceptTagsSource(
+        @Mocked ImportedBuildingOverlappingOptionDialog dialog
+    ) {
         DataSourceServer server = new DataSourceServer("server", "127.0.0.1");
         DataSourceProfile profile = new DataSourceProfile(server.getName(), "ds_geom", "ds_tags", "profile");
 
@@ -140,9 +150,10 @@ public class InjectSourceTagsTest {
         Assertions.assertFalse(importDataSet.getWays().stream().findFirst().orElseThrow().hasTag("source:geometry"));
 
         BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD.put(120.);
-        BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAPPING_STRATEGY.put(
-            CombineNearestOverlappingStrategy.ACCEPT_TAGS_SOURCE.toString()
-        );
+        new Expectations() {{
+            dialog.getUserConfirmedStrategy();
+            result = CombineNearestOverlappingStrategy.ACCEPT_TAGS_SOURCE;
+        }};
 
         DataSet currentDataSet = new DataSet();
 
@@ -156,8 +167,11 @@ public class InjectSourceTagsTest {
         Assertions.assertFalse(resultBuilding.hasTag("source:geometry"));
     }
 
+    @SuppressWarnings({"ResultOfMethodCallIgnored"})
     @Test
-    void testTwoDsImportButNotOverlappingEnoughUserSelectAcceptGeometrySource() {
+    void testTwoDsImportButNotOverlappingEnoughUserSelectAcceptGeometrySource(
+        @Mocked ImportedBuildingOverlappingOptionDialog dialog
+    ) {
         DataSourceServer server = new DataSourceServer("server", "127.0.0.1");
         DataSourceProfile profile = new DataSourceProfile(server.getName(), "ds_geom", "ds_tags", "profile");
 
@@ -166,9 +180,10 @@ public class InjectSourceTagsTest {
         Assertions.assertFalse(importDataSet.getWays().stream().findFirst().orElseThrow().hasTag("source:geometry"));
 
         BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD.put(120.);
-        BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAPPING_STRATEGY.put(
-            CombineNearestOverlappingStrategy.ACCEPT_GEOMETRY_SOURCE.toString()
-        );
+        new Expectations() {{
+            dialog.getUserConfirmedStrategy();
+            result = CombineNearestOverlappingStrategy.ACCEPT_GEOMETRY_SOURCE;
+        }};
 
         DataSet currentDataSet = new DataSet();
 
