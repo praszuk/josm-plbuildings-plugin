@@ -198,6 +198,13 @@ public class BuildingsImportManager {
         return strategy;
     }
 
+    boolean shouldShowNotEnoughOverlappingNotification() {
+        if (BuildingsSessionStateManager.getOverlappingConfirmationSessionStrategy() == null) {
+            return false;
+        }
+        return notificationConfig.isNotificationEnabled(Notification.NOT_ENOUGH_OVERLAPPING);
+    }
+
     public static void injectSourceTags(OsmPrimitive importedBuilding, String geometrySource, String tagsSource) {
         if (!geometrySource.equals(tagsSource)) {
             importedBuilding.put("source:geometry", geometrySource);
@@ -301,6 +308,9 @@ public class BuildingsImportManager {
                     >= BuildingsSettings.COMBINE_NEAREST_BUILDING_OVERLAP_THRESHOLD.get()) {
                     importedBuilding = combineBuildings(geometryBuilding, tagsBuilding);
                 } else {
+                    String notificationText = tr(
+                        "Imported buildings data not overlapping enough. Used strategy"
+                    ) + ": ";
                     ImportedBuildingOverlappingOptionDialog overlappingDialog =
                         new ImportedBuildingOverlappingOptionDialog(
                             profile.getGeometry(),
@@ -314,19 +324,26 @@ public class BuildingsImportManager {
                     switch (strategy) {
                         case MERGE_BOTH:
                             importedBuilding = combineBuildings(geometryBuilding, tagsBuilding);
+                            notificationText += tr("Merged both");
                             break;
                         case ACCEPT_GEOMETRY_SOURCE:
                             importedBuilding = geometryBuilding;
                             importedBuildingGeometrySource = profile.getGeometry();
                             importedBuildingTagsSource = profile.getGeometry();
+                            notificationText += String.format(tr("Used %s"), profile.getGeometry());
                             break;
                         case ACCEPT_TAGS_SOURCE:
                             importedBuilding = tagsBuilding;
                             importedBuildingGeometrySource = profile.getTags();
                             importedBuildingTagsSource = profile.getTags();
+                            notificationText += String.format(tr("Used %s"), profile.getTags());
                             break;
                         default:
                             importedBuilding = null;
+                            notificationText = tr("Imported buildings data not overlapping enough. Canceling.");
+                    }
+                    if (shouldShowNotEnoughOverlappingNotification()) {
+                        showNotification(notificationText);
                     }
                 }
             }
