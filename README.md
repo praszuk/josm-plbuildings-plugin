@@ -64,6 +64,12 @@ Boczny panel ze statusem zmieniającym się podczas importu:
 
 ![Boczny panel podczas importu](media/toggledialog2.gif)
 
+Ustawienia wtyczki `Menu->Dane->PlBuildings: Ustawienia`:
+
+![Ustawienia wtyczki: źródła danych](media/settings_data_sources.png)
+![Ustawienia wtyczki: powiadomienia](media/settings_notifications.png)
+![Ustawienia wtyczki: nietypowe tagi](media/settings_uncommon_tags.png)
+
 
 ## Licencja
 [GPLv3](LICENSE)

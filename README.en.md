@@ -65,6 +65,11 @@ Toggle dialog (GUI Sidebar) with a status changing at import:
 
 ![Toggle dialog at import action](media/toggledialog2.gif)
 
+Plugin settings `Menu->Data->PlBuildings: Settings`:
+
+![Plugin settings: data sources](media/settings_data_sources.png)
+![Plugin settings: notifications](media/settings_notifications.png)
+![Plugin settings: uncommon tags](media/settings_uncommon_tags.png)
 
 ## License
 [GPLv3](LICENSE)
