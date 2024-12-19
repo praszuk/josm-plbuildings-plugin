@@ -40,8 +40,8 @@ Wtyczka komunikuje się z [serwerem PLBuildings](https://github.com/praszuk/josm
 
 ## Jak z niej korzystać
 1. Zainstaluj wtyczkę w JOSMie (tak jak każdą inną – przez ustawienia JOSMa).
-2. Otwórz boczny panel (Toggle Dialog): Po lewej stronie powinna być widoczna ikonka z budynkami (logiem tej wtyczki) – klknij na nią. Po prawej stornie powinien otworzyć się boczny panel wtyczki taki jak na GIFie poniżej.
-3. Wybierz tryb importu i źródło danych – zostanie to zapamiętane, ale rekomenduję aby zawsze mieć otwarty ten boczny panel dla łatwiejszej zmiany trybu/źródła i aby mieć uwagę na ostatni import.
+2. Otwórz boczny panel (Toggle Dialog): Po lewej stronie powinna być widoczna ikonka z budynkami (logiem tej wtyczki) – klknij na nią. Po prawej stronie powinien otworzyć się boczny panel wtyczki taki jak na GIFie poniżej.
+3. Wybierz tryb importu i źródło danych – zostanie to zapamiętane, ale rekomenduję aby zawsze mieć otwarty ten boczny panel dla łatwiejszej zmiany trybu/źródła i aby mieć na uwadze ostatni import.
 4. Nakieruj kursor myszy na widoczny budynek i naciśnij `CTRL + SHIFT + 1`.
 5. Jeśli przed wciśnięciem skrótu został zaznaczony inny budynek, zostanie użyta funkcja zamiany geometrii z pluginu [utilsplugin2](https://wiki.openstreetmap.org/wiki/JOSM/Plugins/utilsplugin2) w celu aktualizacji starego kształtu. Może to wyświetlić okno dialogowe konfliktów tagów.
 
