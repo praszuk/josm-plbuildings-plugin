@@ -8,11 +8,11 @@ Wtyczka komunikuje się z [serwerem PLBuildings](https://github.com/praszuk/josm
 
 ## Funkcjonalności
 - Prosty import budynku w miejscu kursora myszy.
-- Zastępowanie geometrii jeśli stary budynek jest zaznaczony.
+- Zastępowanie geometrii, jeśli stary budynek jest zaznaczony.
 - Aktualizacja tagów z możliwością pominięcia konfliktów _częstych tagów_ np. takich jak z `building=yes` na `building=house` bez wyświetlania okna dialogowego z konfliktem tagów.
 - Łączenie budynku z istniejącym budynkiem. Sąsiadujące węzły będą współdzielone między budynkami – zapobiega to nakładającym/duplikującym się węzłom.
 - Zapobieganie zduplikowanych importów.
-- Proste statystyki (zliczanie zaimportowanych/podmienionych budynków).
+- Proste statystyki (zliczalnie zaimportowanych i podmienionych budynków).
 - Wielojęzyczność z użyciem i18n (polski i angielski).
 - Wstępne sprawdzanie budynków przed zastąpieniem:
     - Szukanie wartości "survey".
@@ -41,12 +41,12 @@ Wtyczka komunikuje się z [serwerem PLBuildings](https://github.com/praszuk/josm
 ## Jak z niej korzystać
 1. Zainstaluj wtyczkę w JOSMie (tak jak każdą inną – przez ustawienia JOSMa).
 2. Otwórz boczny panel (Toggle Dialog): Po lewej stronie powinna być widoczna ikonka z budynkami (logiem tej wtyczki) – klknij na nią. Po prawej stronie powinien otworzyć się boczny panel wtyczki taki jak na GIFie poniżej.
-3. Wybierz tryb importu i źródło danych – zostanie to zapamiętane, ale rekomenduję aby zawsze mieć otwarty ten boczny panel dla łatwiejszej zmiany trybu/źródła i aby mieć na uwadze ostatni import.
-4. Nakieruj kursor myszy na widoczny budynek i naciśnij `CTRL + SHIFT + 1`.
-5. Jeśli przed wciśnięciem skrótu został zaznaczony inny budynek, zostanie użyta funkcja zamiany geometrii z pluginu [utilsplugin2](https://wiki.openstreetmap.org/wiki/JOSM/Plugins/utilsplugin2) w celu aktualizacji starego kształtu. Może to wyświetlić okno dialogowe konfliktów tagów.
+3. Wybierz tryb importu i źródło danych – zostanie to zapamiętane, ale rekomenduję zawsze mieć otwarty boczny panel dla łatwiejszej zmiany trybu/źródła i aby mieć na uwadze ostatni import.
+4. Nakieruj kursor myszy na widoczny budynek i naciśnij `CTRL + SHIFT + 1` – spowoduje to import budynku. Jeśli przed wciśnięciem skrótu został zaznaczony inny budynek, zostanie użyta funkcja zamiany geometrii z pluginu [utilsplugin2](https://wiki.openstreetmap.org/wiki/JOSM/Plugins/utilsplugin2) w celu aktualizacji starego kształtu. Może to wyświetlić okno dialogowe konfliktów tagów. 
 
-Uwaga: Jeśli skrót nie działa (może się tak zdarzyć) lub po prostu chcesz go zmienić na inny, wejdź w ustawienia skrótów w JOSMie i wpisz: `plbuildings`, następnie zmień skrót dla `Pobierz budynek`.
+Notka: Jeśli skrót nie działa (może się tak zdarzyć) lub po prostu chcesz go zmienić na inny, wejdź w ustawienia skrótów w JOSMie i wpisz: `plbuildings`, następnie zmień skrót dla `Pobierz budynek`.
 
+**UWAGA! Każdy import powinien zostać zweryfikowany!** Nie ma danych idealnych, stąd mogą się czasem pojawić drobne błędy związane np. z typem budynku lub liczbą pięter, ale również np. z budynkiem pełniącym inną [funkcję użytkową](https://wiki.openstreetmap.org/wiki/Pl:Key:building:use).
 
 Prosty import budynku:
 ![Prosty import budynku](media/simple_import.gif)
@@ -54,7 +54,7 @@ Prosty import budynku:
 Import z zamianą starej geometrii budynku:
 ![Import z zamianą starej geometrii budynku](media/import_with_replace.gif)
 
-W celu wyświetlenia statystyk, otwórz: `Menu->Dane->Statystyki importowania budynków`
+W celu wyświetlenia statystyk otwórz: `Menu->Dane->Statystyki importowania budynków`
 
 Przykładowe statystyki:
 

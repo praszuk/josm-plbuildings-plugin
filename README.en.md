@@ -42,12 +42,14 @@ It communicates with the [PLBuildings server](https://github.com/praszuk/josm-pl
 1. Install plugin in JOSM (same as other plugins via JOSM plugin settings).
 2. Open ToggleDialog: On the left sidebar should be visible icon with houses (logo of this plugin) – click it. On the right side should appear toggle dialog same as below on the GIF.
 3. Select Import mode and Data source – it will be remembered, but I recommend to keep dialog always open at importing to easily switching and keep looking on latest import.
-4. Move the mouse cursor on a visible building and press `CTRL + SHIFT + 1`.
-5. If you select other building before pressing shortcut combination, then it will use _Replace Geometry_ feature (from [utilsplugin2](https://wiki.openstreetmap.org/wiki/JOSM/Plugins/utilsplugin2)).
+4. Move the mouse cursor on a visible building and press `CTRL + SHIFT + 1` – it will trigger building import. If you select other building before pressing shortcut combination, then it will use _Replace Geometry_ feature (from [utilsplugin2](https://wiki.openstreetmap.org/wiki/JOSM/Plugins/utilsplugin2))
    to replace old shape and tags with the new one. It can show the tag conflict dialog window.
 
 Note: If shortcut doesn't work (it may happen) or you want to just change it, go to the JOSM Keyboard Shortcut Settings and type `plbuildings`,
-then change it for `Download building` .
+then change it for `Download building`.
+
+**Important! Every import should be verified!** There is no such thing as perfect data, so occasional minor errors may occur, such as in the building type or the number of levels. Additionally, a building might serve a different [functional purpose](https://wiki.openstreetmap.org/wiki/Key:building:use).
+
 
 Simple building import:
 ![Simple building import](media/simple_import.gif)
