@@ -45,8 +45,9 @@ Wtyczka komunikuje się z [serwerem PLBuildings](https://github.com/praszuk/josm
 4. Nakieruj kursor myszy na widoczny budynek i naciśnij `CTRL + SHIFT + 1`.
 5. Jeśli przed wciśnięciem skrótu został zaznaczony inny budynek, zostanie użyta funkcja zamiany geometrii z pluginu [utilsplugin2](https://wiki.openstreetmap.org/wiki/JOSM/Plugins/utilsplugin2) w celu aktualizacji starego kształtu. Może to wyświetlić okno dialogowe konfliktów tagów.
 
-Uwaga: Jeśli skrót nie działa (może się tak zdarzyć) lub po prostu chcesz go zmienić na inny, wejdź w ustawienia skrótów w JOSMie i wpisz: `plbuildings`, następnie zmień skrót dla `Pobierz budynek`.
+Notka: Jeśli skrót nie działa (może się tak zdarzyć) lub po prostu chcesz go zmienić na inny, wejdź w ustawienia skrótów w JOSMie i wpisz: `plbuildings`, następnie zmień skrót dla `Pobierz budynek`.
 
+**UWAGA! Każdy import powinien zostać zweryfikowany!** Nie ma danych idealnych, stąd mogą się czasem pojawić drobne błędy związane np. z typem budynku lub liczbą pięter, ale również z budynkiem pełniącym inną [funkcję użytkową](https://wiki.openstreetmap.org/wiki/Pl:Key:building:use).
 
 Prosty import budynku:
 ![Prosty import budynku](media/simple_import.gif)

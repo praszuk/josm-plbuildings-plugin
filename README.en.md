@@ -49,6 +49,9 @@ It communicates with the [PLBuildings server](https://github.com/praszuk/josm-pl
 Note: If shortcut doesn't work (it may happen) or you want to just change it, go to the JOSM Keyboard Shortcut Settings and type `plbuildings`,
 then change it for `Download building` .
 
+**Important! Every import should be verified!** There is no such thing as perfect data, so occasional minor errors may occur, such as in the building type or the number of levels. Additionally, a building might serve a different [functional purpose](https://wiki.openstreetmap.org/wiki/Key:building:use).
+
+
 Simple building import:
 ![Simple building import](media/simple_import.gif)
 
