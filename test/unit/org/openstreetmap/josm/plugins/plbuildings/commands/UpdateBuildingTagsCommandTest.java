@@ -20,7 +20,8 @@ public class UpdateBuildingTagsCommandTest {
 
     @ParameterizedTest
     @CsvSource({
-        "geoportal.gov.pl", "www.geoportal.gov.pl", "https://geoportal.gov.pl", "https://www.geoportal.gov.pl/", "Bing"
+        "geoportal.gov.pl", "www.geoportal.gov.pl", "https://geoportal.gov.pl", "https://www.geoportal.gov.pl/", "Bing",
+        "Yahoo"
     })
     void testAutoRemoveUnwantedSourceValue(String unwantedValue) {
         BuildingsSettings.AUTOREMOVE_UNWANTED_SOURCE.put(true);
@@ -38,7 +39,7 @@ public class UpdateBuildingTagsCommandTest {
         newBuilding.put("building:levels", "2");
         newDs.addPrimitiveRecursive(newBuilding);
 
-        Command c = new UpdateBuildingTagsCommand(ds,  () -> selectedBuilding, newBuilding);
+        Command c = new UpdateBuildingTagsCommand(ds, () -> selectedBuilding, newBuilding);
         c.executeCommand();
 
         Assertions.assertFalse(selectedBuilding.hasTag("source"));
@@ -61,7 +62,7 @@ public class UpdateBuildingTagsCommandTest {
         newBuilding.put("building:levels", "2");
         newDs.addPrimitiveRecursive(newBuilding);
 
-        Command c = new UpdateBuildingTagsCommand(ds,  () -> selectedBuilding, newBuilding);
+        Command c = new UpdateBuildingTagsCommand(ds, () -> selectedBuilding, newBuilding);
         c.executeCommand();
 
         Assertions.assertTrue(selectedBuilding.hasTag("source"));
@@ -87,7 +88,7 @@ public class UpdateBuildingTagsCommandTest {
         newBuilding.put("building:levels", "2");
         newDs.addPrimitiveRecursive(newBuilding);
 
-        Command c = new UpdateBuildingTagsCommand(ds,  () -> selectedBuilding, newBuilding);
+        Command c = new UpdateBuildingTagsCommand(ds, () -> selectedBuilding, newBuilding);
         c.executeCommand();
 
         Assertions.assertTrue(selectedBuilding.hasTag("source"));

@@ -106,7 +106,7 @@ public class BuildingsSettings {
     );
 
     public static final ListProperty UNWANTED_SOURCE_VALUES = new ListProperty(
-        SETTING_PREFIX + "unwanted_source_values", new ArrayList<>(List.of("geoportal.gov.pl", "bing"))
+        SETTING_PREFIX + "unwanted_source_values", new ArrayList<>(List.of("geoportal.gov.pl", "bing", "yahoo"))
     );
 
     public static final BooleanProperty AUTOREMOVE_UNWANTED_SOURCE = new BooleanProperty(
