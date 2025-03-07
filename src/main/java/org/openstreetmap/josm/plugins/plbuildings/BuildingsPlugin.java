@@ -9,6 +9,7 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction;
 import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsSettingsAction;
 import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsStatsAction;
+import org.openstreetmap.josm.plugins.plbuildings.controllers.SettingsAutoremoveSourceTagsController;
 import org.openstreetmap.josm.plugins.plbuildings.controllers.SettingsController;
 import org.openstreetmap.josm.plugins.plbuildings.controllers.SettingsDataSourcesController;
 import org.openstreetmap.josm.plugins.plbuildings.controllers.SettingsNotificationsController;
@@ -16,9 +17,11 @@ import org.openstreetmap.josm.plugins.plbuildings.controllers.SettingsTabControl
 import org.openstreetmap.josm.plugins.plbuildings.controllers.SettingsUncommonTagsController;
 import org.openstreetmap.josm.plugins.plbuildings.controllers.ToggleDialogController;
 import org.openstreetmap.josm.plugins.plbuildings.gui.BuildingsToggleDialog;
+import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsAutoremoveSourceTagsPanel;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsDataSourcesPanel;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsNotificationsPanel;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsUncommonTagsPanel;
+import org.openstreetmap.josm.plugins.plbuildings.models.AutoremoveSourceTags;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.NotificationConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.UncommonTags;
@@ -39,7 +42,8 @@ public class BuildingsPlugin extends Plugin {
         List<SettingsTabController> settingsTabControllers = List.of(
             new SettingsDataSourcesController(dataSourceConfig, new SettingsDataSourcesPanel()),
             new SettingsNotificationsController(new NotificationConfig(), new SettingsNotificationsPanel()),
-            new SettingsUncommonTagsController(new UncommonTags(), new SettingsUncommonTagsPanel())
+            new SettingsUncommonTagsController(new UncommonTags(), new SettingsUncommonTagsPanel()),
+            new SettingsAutoremoveSourceTagsController(new AutoremoveSourceTags(), new SettingsAutoremoveSourceTagsPanel())
         );
 
         MainMenu.add(MainApplication.getMenu().dataMenu, new BuildingsStatsAction());
