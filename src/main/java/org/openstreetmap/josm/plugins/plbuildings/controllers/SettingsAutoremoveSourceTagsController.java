@@ -19,7 +19,7 @@ public class SettingsAutoremoveSourceTagsController implements SettingsTabContro
         this.sourceTagsPanelView = settingsAutoremoveSourceTagsPanel;
         this.sourceValuesListModel = new SettingsSourceValuesListModel();
 
-        sourceTagsPanelView.setSourceValuesListModel(sourceValuesListModel);
+        sourceTagsPanelView.setValuesListModel(sourceValuesListModel);
 
         sourceTagsModel.addPropertyChangeListener(
             AutoremoveSourceTags.SOURCE_VALUES, evt -> updateCommonBuildingValuesList()
@@ -30,18 +30,18 @@ public class SettingsAutoremoveSourceTagsController implements SettingsTabContro
     }
 
     private void initViewListeners() {
-        sourceTagsPanelView.addSourceValueBtnAddActionListener(actionEvent -> addCommonBuildingValueAction());
-        sourceTagsPanelView.removeSourceValueBtnAddActionListener(actionEvent -> removeCommonBuildingValueAction());
+        sourceTagsPanelView.addValueBtnAddActionListener(actionEvent -> addCommonBuildingValueAction());
+        sourceTagsPanelView.removeValueBtnAddActionListener(actionEvent -> removeCommonBuildingValueAction());
 
-        sourceTagsPanelView.sourceValuesListAddListSelectionListener(
-            listSelectionEvent -> sourceTagsPanelView.removeSourceValueBtnSetEnabled(
-                sourceTagsPanelView.getSourceValuesListSelectedIndex() != -1
+        sourceTagsPanelView.valuesListAddListSelectionListener(
+            listSelectionEvent -> sourceTagsPanelView.removeValueBtnSetEnabled(
+                sourceTagsPanelView.getValuesListSelectedIndex() != -1
             )
         );
     }
 
     private void addCommonBuildingValueAction() {
-        String newValue = sourceTagsPanelView.promptNewSourceValue();
+        String newValue = sourceTagsPanelView.promptNewValue();
         if (newValue == null || sourceValuesListModel.contains(newValue)) {
             return;
         }
@@ -49,7 +49,7 @@ public class SettingsAutoremoveSourceTagsController implements SettingsTabContro
     }
 
     private void removeCommonBuildingValueAction() {
-        int valueIndex = sourceTagsPanelView.getSourceValuesListSelectedIndex();
+        int valueIndex = sourceTagsPanelView.getValuesListSelectedIndex();
         String selectedValue = (String) sourceValuesListModel.getElementAt(valueIndex);
         if (selectedValue != null) {
             sourceTagsModel.removeSourceValue(selectedValue);
