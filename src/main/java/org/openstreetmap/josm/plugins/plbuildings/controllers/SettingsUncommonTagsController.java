@@ -18,7 +18,7 @@ public class SettingsUncommonTagsController implements SettingsTabController {
         this.uncommonTagsPanelView = settingsUncommonTagsPanel;
         this.commonBuildingValuesListModel = new SettingsCommonBuildingValuesListModel();
 
-        uncommonTagsPanelView.setCommonBuildingValuesListModel(commonBuildingValuesListModel);
+        uncommonTagsPanelView.setValuesListModel(commonBuildingValuesListModel);
 
         uncommonTagsModel.addPropertyChangeListener(
             UncommonTags.COMMON_BUILDING_VALUES, evt -> updateCommonBuildingValuesList()
@@ -29,18 +29,18 @@ public class SettingsUncommonTagsController implements SettingsTabController {
     }
 
     private void initViewListeners() {
-        uncommonTagsPanelView.addBuildingValueBtnAddActionListener(actionEvent -> addCommonBuildingValueAction());
-        uncommonTagsPanelView.removeBuildingValueBtnAddActionListener(actionEvent -> removeCommonBuildingValueAction());
+        uncommonTagsPanelView.addValueBtnAddActionListener(actionEvent -> addCommonBuildingValueAction());
+        uncommonTagsPanelView.removeValueBtnAddActionListener(actionEvent -> removeCommonBuildingValueAction());
 
-        uncommonTagsPanelView.commonBuildingValuesListAddListSelectionListener(
-            listSelectionEvent -> uncommonTagsPanelView.removeBuildingValueBtnSetEnabled(
-                uncommonTagsPanelView.getCommonBuildingValuesListSelectedIndex() != -1
+        uncommonTagsPanelView.valuesListAddListSelectionListener(
+            listSelectionEvent -> uncommonTagsPanelView.removeValueBtnSetEnabled(
+                uncommonTagsPanelView.getValuesListSelectedIndex() != -1
             )
         );
     }
 
     private void addCommonBuildingValueAction() {
-        String newValue = uncommonTagsPanelView.promptNewCommonBuildingValue();
+        String newValue = uncommonTagsPanelView.promptNewValue();
         if (newValue == null || commonBuildingValuesListModel.contains(newValue)) {
             return;
         }
@@ -48,7 +48,7 @@ public class SettingsUncommonTagsController implements SettingsTabController {
     }
 
     private void removeCommonBuildingValueAction() {
-        int valueIndex = uncommonTagsPanelView.getCommonBuildingValuesListSelectedIndex();
+        int valueIndex = uncommonTagsPanelView.getValuesListSelectedIndex();
         String selectedValue = (String) commonBuildingValuesListModel.getElementAt(valueIndex);
         if (selectedValue != null) {
             uncommonTagsModel.removeCommonBuildingValue(selectedValue);
