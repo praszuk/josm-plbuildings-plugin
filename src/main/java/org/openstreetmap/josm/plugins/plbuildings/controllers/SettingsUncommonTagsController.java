@@ -4,24 +4,24 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsUncommonTagsPanel;
-import org.openstreetmap.josm.plugins.plbuildings.models.UncommonTags;
+import org.openstreetmap.josm.plugins.plbuildings.models.TagValues;
 import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsCommonBuildingValuesListModel;
 
 public class SettingsUncommonTagsController implements SettingsTabController {
-    private final UncommonTags uncommonTagsModel;
+    private final TagValues uncommonTagsModel;
     private final SettingsUncommonTagsPanel uncommonTagsPanelView;
     private final SettingsCommonBuildingValuesListModel commonBuildingValuesListModel;
 
-    public SettingsUncommonTagsController(UncommonTags uncommonTagsModel,
+    public SettingsUncommonTagsController(TagValues tagValuesModel,
                                           SettingsUncommonTagsPanel settingsUncommonTagsPanel) {
-        this.uncommonTagsModel = uncommonTagsModel;
+        this.uncommonTagsModel = tagValuesModel;
         this.uncommonTagsPanelView = settingsUncommonTagsPanel;
         this.commonBuildingValuesListModel = new SettingsCommonBuildingValuesListModel();
 
         uncommonTagsPanelView.setValuesListModel(commonBuildingValuesListModel);
 
         uncommonTagsModel.addPropertyChangeListener(
-            UncommonTags.COMMON_BUILDING_VALUES, evt -> updateCommonBuildingValuesList()
+            TagValues.VALUES_CHANGED, evt -> updateCommonBuildingValuesList()
         );
         initViewListeners();
 
@@ -44,20 +44,20 @@ public class SettingsUncommonTagsController implements SettingsTabController {
         if (newValue == null || commonBuildingValuesListModel.contains(newValue)) {
             return;
         }
-        uncommonTagsModel.addCommonBuildingValue(newValue);
+        uncommonTagsModel.addValue(newValue);
     }
 
     private void removeCommonBuildingValueAction() {
         int valueIndex = uncommonTagsPanelView.getValuesListSelectedIndex();
         String selectedValue = (String) commonBuildingValuesListModel.getElementAt(valueIndex);
         if (selectedValue != null) {
-            uncommonTagsModel.removeCommonBuildingValue(selectedValue);
+            uncommonTagsModel.removeValue(selectedValue);
         }
     }
 
     private void updateCommonBuildingValuesList() {
         commonBuildingValuesListModel.clear();
-        uncommonTagsModel.getCommonBuildingValues().forEach(commonBuildingValuesListModel::addElement);
+        uncommonTagsModel.getValues().forEach(commonBuildingValuesListModel::addElement);
     }
 
     @Override

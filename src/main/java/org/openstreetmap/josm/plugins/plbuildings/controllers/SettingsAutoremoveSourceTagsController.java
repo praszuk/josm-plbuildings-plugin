@@ -4,25 +4,25 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsAutoremoveSourceTagsPanel;
-import org.openstreetmap.josm.plugins.plbuildings.models.AutoremoveSourceTags;
+import org.openstreetmap.josm.plugins.plbuildings.models.TagValues;
 import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsSourceValuesListModel;
 
 
 public class SettingsAutoremoveSourceTagsController implements SettingsTabController {
-    private final AutoremoveSourceTags sourceTagsModel;
+    private final TagValues sourceTagsModel;
     private final SettingsAutoremoveSourceTagsPanel sourceTagsPanelView;
     private final SettingsSourceValuesListModel sourceValuesListModel;
 
-    public SettingsAutoremoveSourceTagsController(AutoremoveSourceTags sourceTagsModel,
+    public SettingsAutoremoveSourceTagsController(TagValues sourceValuesModel,
                                                   SettingsAutoremoveSourceTagsPanel settingsAutoremoveSourceTagsPanel) {
-        this.sourceTagsModel = sourceTagsModel;
+        this.sourceTagsModel = sourceValuesModel;
         this.sourceTagsPanelView = settingsAutoremoveSourceTagsPanel;
         this.sourceValuesListModel = new SettingsSourceValuesListModel();
 
         sourceTagsPanelView.setValuesListModel(sourceValuesListModel);
 
-        sourceTagsModel.addPropertyChangeListener(
-            AutoremoveSourceTags.SOURCE_VALUES, evt -> updateCommonBuildingValuesList()
+        sourceValuesModel.addPropertyChangeListener(
+            TagValues.VALUES_CHANGED, evt -> updateCommonBuildingValuesList()
         );
         initViewListeners();
 
@@ -45,20 +45,20 @@ public class SettingsAutoremoveSourceTagsController implements SettingsTabContro
         if (newValue == null || sourceValuesListModel.contains(newValue)) {
             return;
         }
-        sourceTagsModel.addSourceValue(newValue);
+        sourceTagsModel.addValue(newValue);
     }
 
     private void removeCommonBuildingValueAction() {
         int valueIndex = sourceTagsPanelView.getValuesListSelectedIndex();
         String selectedValue = (String) sourceValuesListModel.getElementAt(valueIndex);
         if (selectedValue != null) {
-            sourceTagsModel.removeSourceValue(selectedValue);
+            sourceTagsModel.removeValue(selectedValue);
         }
     }
 
     private void updateCommonBuildingValuesList() {
         sourceValuesListModel.clear();
-        sourceTagsModel.getSourceValues().forEach(sourceValuesListModel::addElement);
+        sourceTagsModel.getValues().forEach(sourceValuesListModel::addElement);
     }
 
     @Override
