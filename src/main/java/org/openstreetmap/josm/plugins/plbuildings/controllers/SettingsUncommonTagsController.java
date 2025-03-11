@@ -5,18 +5,18 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsUncommonTagsPanel;
 import org.openstreetmap.josm.plugins.plbuildings.models.TagValues;
-import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsCommonBuildingValuesListModel;
+import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsTagValuesListModel;
 
 public class SettingsUncommonTagsController implements SettingsTabController {
     private final TagValues uncommonTagsModel;
     private final SettingsUncommonTagsPanel uncommonTagsPanelView;
-    private final SettingsCommonBuildingValuesListModel commonBuildingValuesListModel;
+    private final SettingsTagValuesListModel commonBuildingValuesListModel;
 
     public SettingsUncommonTagsController(TagValues tagValuesModel,
                                           SettingsUncommonTagsPanel settingsUncommonTagsPanel) {
         this.uncommonTagsModel = tagValuesModel;
         this.uncommonTagsPanelView = settingsUncommonTagsPanel;
-        this.commonBuildingValuesListModel = new SettingsCommonBuildingValuesListModel();
+        this.commonBuildingValuesListModel = new SettingsTagValuesListModel();
 
         uncommonTagsPanelView.setValuesListModel(commonBuildingValuesListModel);
 

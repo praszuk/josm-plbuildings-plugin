@@ -2,5 +2,5 @@ package org.openstreetmap.josm.plugins.plbuildings.models.ui;
 
 import javax.swing.DefaultListModel;
 
-public class SettingsSourceValuesListModel extends DefaultListModel<Object> {
+public class SettingsTagValuesListModel extends DefaultListModel<Object> {
 }

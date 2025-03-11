@@ -5,19 +5,19 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsAutoremoveSourceTagsPanel;
 import org.openstreetmap.josm.plugins.plbuildings.models.TagValues;
-import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsSourceValuesListModel;
+import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsTagValuesListModel;
 
 
 public class SettingsAutoremoveSourceTagsController implements SettingsTabController {
     private final TagValues sourceTagsModel;
     private final SettingsAutoremoveSourceTagsPanel sourceTagsPanelView;
-    private final SettingsSourceValuesListModel sourceValuesListModel;
+    private final SettingsTagValuesListModel sourceValuesListModel;
 
     public SettingsAutoremoveSourceTagsController(TagValues sourceValuesModel,
                                                   SettingsAutoremoveSourceTagsPanel settingsAutoremoveSourceTagsPanel) {
         this.sourceTagsModel = sourceValuesModel;
         this.sourceTagsPanelView = settingsAutoremoveSourceTagsPanel;
-        this.sourceValuesListModel = new SettingsSourceValuesListModel();
+        this.sourceValuesListModel = new SettingsTagValuesListModel();
 
         sourceTagsPanelView.setValuesListModel(sourceValuesListModel);
 
