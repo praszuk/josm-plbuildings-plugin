@@ -4,24 +4,24 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import org.openstreetmap.josm.plugins.plbuildings.gui.SettingsUncommonTagsPanel;
-import org.openstreetmap.josm.plugins.plbuildings.models.UncommonTags;
-import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsCommonBuildingValuesListModel;
+import org.openstreetmap.josm.plugins.plbuildings.models.TagValues;
+import org.openstreetmap.josm.plugins.plbuildings.models.ui.SettingsTagValuesListModel;
 
 public class SettingsUncommonTagsController implements SettingsTabController {
-    private final UncommonTags uncommonTagsModel;
+    private final TagValues uncommonTagsModel;
     private final SettingsUncommonTagsPanel uncommonTagsPanelView;
-    private final SettingsCommonBuildingValuesListModel commonBuildingValuesListModel;
+    private final SettingsTagValuesListModel commonBuildingValuesListModel;
 
-    public SettingsUncommonTagsController(UncommonTags uncommonTagsModel,
+    public SettingsUncommonTagsController(TagValues tagValuesModel,
                                           SettingsUncommonTagsPanel settingsUncommonTagsPanel) {
-        this.uncommonTagsModel = uncommonTagsModel;
+        this.uncommonTagsModel = tagValuesModel;
         this.uncommonTagsPanelView = settingsUncommonTagsPanel;
-        this.commonBuildingValuesListModel = new SettingsCommonBuildingValuesListModel();
+        this.commonBuildingValuesListModel = new SettingsTagValuesListModel();
 
-        uncommonTagsPanelView.setCommonBuildingValuesListModel(commonBuildingValuesListModel);
+        uncommonTagsPanelView.setValuesListModel(commonBuildingValuesListModel);
 
         uncommonTagsModel.addPropertyChangeListener(
-            UncommonTags.COMMON_BUILDING_VALUES, evt -> updateCommonBuildingValuesList()
+            TagValues.VALUES_CHANGED, evt -> updateCommonBuildingValuesList()
         );
         initViewListeners();
 
@@ -29,35 +29,35 @@ public class SettingsUncommonTagsController implements SettingsTabController {
     }
 
     private void initViewListeners() {
-        uncommonTagsPanelView.addBuildingValueBtnAddActionListener(actionEvent -> addCommonBuildingValueAction());
-        uncommonTagsPanelView.removeBuildingValueBtnAddActionListener(actionEvent -> removeCommonBuildingValueAction());
+        uncommonTagsPanelView.addValueBtnAddActionListener(actionEvent -> addCommonBuildingValueAction());
+        uncommonTagsPanelView.removeValueBtnAddActionListener(actionEvent -> removeCommonBuildingValueAction());
 
-        uncommonTagsPanelView.commonBuildingValuesListAddListSelectionListener(
-            listSelectionEvent -> uncommonTagsPanelView.removeBuildingValueBtnSetEnabled(
-                uncommonTagsPanelView.getCommonBuildingValuesListSelectedIndex() != -1
+        uncommonTagsPanelView.valuesListAddListSelectionListener(
+            listSelectionEvent -> uncommonTagsPanelView.removeValueBtnSetEnabled(
+                uncommonTagsPanelView.getValuesListSelectedIndex() != -1
             )
         );
     }
 
     private void addCommonBuildingValueAction() {
-        String newValue = uncommonTagsPanelView.promptNewCommonBuildingValue();
+        String newValue = uncommonTagsPanelView.promptNewValue();
         if (newValue == null || commonBuildingValuesListModel.contains(newValue)) {
             return;
         }
-        uncommonTagsModel.addCommonBuildingValue(newValue);
+        uncommonTagsModel.addValue(newValue);
     }
 
     private void removeCommonBuildingValueAction() {
-        int valueIndex = uncommonTagsPanelView.getCommonBuildingValuesListSelectedIndex();
+        int valueIndex = uncommonTagsPanelView.getValuesListSelectedIndex();
         String selectedValue = (String) commonBuildingValuesListModel.getElementAt(valueIndex);
         if (selectedValue != null) {
-            uncommonTagsModel.removeCommonBuildingValue(selectedValue);
+            uncommonTagsModel.removeValue(selectedValue);
         }
     }
 
     private void updateCommonBuildingValuesList() {
         commonBuildingValuesListModel.clear();
-        uncommonTagsModel.getCommonBuildingValues().forEach(commonBuildingValuesListModel::addElement);
+        uncommonTagsModel.getValues().forEach(commonBuildingValuesListModel::addElement);
     }
 
     @Override
