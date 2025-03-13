@@ -8,6 +8,7 @@ import static org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus.DOWN
 import static org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus.IDLE;
 import static org.openstreetmap.josm.plugins.plbuildings.gui.NotificationPopup.showNotification;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.NearestBuilding.getNearestBuilding;
+import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.validateSelectedWay;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -18,6 +19,7 @@ import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOneDsStrat
 import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOverlappingStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.enums.Notification;
+import org.openstreetmap.josm.plugins.plbuildings.exceptions.ImportActionCanceledException;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOneDsOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.gui.ImportedBuildingOverlappingOptionDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
@@ -101,6 +103,20 @@ public class BuildingsImportManager {
         if (notification != null && notificationConfig.isNotificationEnabled(notification)) {
             showNotification(status + ": " + reason);
         }
+    }
+
+    public void validate() throws ImportActionCanceledException {
+        if (cursorLatLon == null) {
+            throw new ImportActionCanceledException(
+                tr("Cursor outside the map view!"), ImportStatus.IMPORT_ERROR
+            );
+        }
+        if (currentProfile == null) {
+            throw new ImportActionCanceledException(
+                tr("No data source profile selected!"), ImportStatus.IMPORT_ERROR
+            );
+        }
+        validateSelectedWay(selectedBuilding);
     }
 
     public void run() {

@@ -181,17 +181,7 @@ public class BuildingsImportAction extends JosmAction {
             selectedBuilding
         );
         try {
-            if (cursorLatLon == null) {
-                throw new ImportActionCanceledException(
-                    tr("Cursor outside the map view!"), ImportStatus.IMPORT_ERROR
-                );
-            }
-            if (buildingsImportManager.getCurrentProfile() == null) {
-                throw new ImportActionCanceledException(
-                    tr("No data source profile selected!"), ImportStatus.IMPORT_ERROR
-                );
-            }
-            validateSelectedWay(selectedBuilding);
+            buildingsImportManager.validate();
         } catch (ImportActionCanceledException exception) {
             Logging.info("{0} {1}", exception.getStatus(), exception.getMessage());
             buildingsImportManager.setStatus(exception.getStatus(), exception.getMessage());
