@@ -13,19 +13,14 @@ import java.util.Collections;
 import java.util.List;
 import mockit.Mock;
 import mockit.MockUp;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.plugins.plbuildings.io.DataSourceProfileDownloader;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceConfig;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class DataSourceConfigTest {
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules();
-
     DataSourceConfig dataSourceConfig;
     DataSourceServer server1;
     DataSourceServer server2;
@@ -33,7 +28,7 @@ public class DataSourceConfigTest {
     DataSourceProfile profile2server1;
     DataSourceProfile profile3server2;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         BuildingsSettings.DATA_SOURCE_SERVERS.put("[]");
         BuildingsSettings.DATA_SOURCE_PROFILES.put("[]");

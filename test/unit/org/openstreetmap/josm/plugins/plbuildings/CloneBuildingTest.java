@@ -7,21 +7,16 @@ import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.isSameButCl
 import static org.openstreetmap.josm.plugins.plbuildings.utils.CloneBuilding.cloneBuilding;
 
 import java.util.List;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class CloneBuildingTest {
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().main();
-
     Way buildingToClone;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.buildingToClone = new Way(5);
         this.buildingToClone.put("building", "house");

@@ -1,7 +1,6 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.testProfile;
@@ -11,30 +10,25 @@ import java.util.Collections;
 import java.util.List;
 import mockit.Mock;
 import mockit.MockUp;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.commands.UpdateBuildingTagsCommand;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.UserCancelException;
 
 
 public class UpdateTagsTest {
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().main();
-
-
     @Test
     public void testNoTagsChangeCancel() {
         DataSet importDataSet = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
-        assertNotNull(importDataSet);
+        Assertions.assertNotNull(importDataSet);
 
         DataSet ds = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
-        assertNotNull(ds);
+        Assertions.assertNotNull(ds);
 
         Way buildingToReplace = (Way) ds.getWays().stream()
             .filter(way -> way.hasTag("building", "house"))
@@ -47,7 +41,7 @@ public class UpdateTagsTest {
         manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
-        assertEquals(version, buildingToReplace.getVersion());
+        Assertions.assertEquals(version, buildingToReplace.getVersion());
     }
 
     @Test
@@ -64,10 +58,10 @@ public class UpdateTagsTest {
             }
         };
         DataSet importDataSet = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
-        assertNotNull(importDataSet);
+        Assertions.assertNotNull(importDataSet);
 
         DataSet ds = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
-        assertNotNull(ds);
+        Assertions.assertNotNull(ds);
 
         Way buildingToReplace = (Way) ds.getWays().stream()
             .filter(way -> way.hasTag("building", "house"))
@@ -80,8 +74,8 @@ public class UpdateTagsTest {
         manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
-        assertEquals(1, ds.getWays().size());
-        assertEquals(1, ds.getWays().stream()
+        Assertions.assertEquals(1, ds.getWays().size());
+        Assertions.assertEquals(1, ds.getWays().stream()
             .filter(way -> way.hasTag("roof:shape", "flat"))
             .count());
     }
@@ -100,12 +94,12 @@ public class UpdateTagsTest {
             }
         };
         DataSet importDataSet = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
-        assertNotNull(importDataSet);
+        Assertions.assertNotNull(importDataSet);
         Way building = (Way) importDataSet.getWays().toArray()[0];
         building.put("building", "detached");
 
         DataSet ds = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
-        assertNotNull(ds);
+        Assertions.assertNotNull(ds);
 
         Way buildingToReplace = (Way) ds.getWays().stream()
             .filter(way -> way.hasTag("building", "house"))
@@ -118,8 +112,8 @@ public class UpdateTagsTest {
         manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
-        assertEquals(1, ds.getWays().size());
-        assertEquals(1, ds.getWays().stream().filter(way -> way.hasTag("building", "detached")).count());
+        Assertions.assertEquals(1, ds.getWays().size());
+        Assertions.assertEquals(1, ds.getWays().stream().filter(way -> way.hasTag("building", "detached")).count());
     }
 
     @Test
@@ -134,12 +128,12 @@ public class UpdateTagsTest {
             }
         };
         DataSet importDataSet = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
-        assertNotNull(importDataSet);
+        Assertions.assertNotNull(importDataSet);
         Way building = (Way) importDataSet.getWays().toArray()[0];
         building.put("building", "detached");
 
         DataSet ds = importOsmFile(new File("test/data/update_tags/import_building.osm"), "");
-        assertNotNull(ds);
+        Assertions.assertNotNull(ds);
 
         Way buildingToReplace = (Way) ds.getWays().stream()
             .filter(way -> way.hasTag("building", "house"))
@@ -153,8 +147,8 @@ public class UpdateTagsTest {
         manager.setCurrentProfile(testProfile);
         manager.processDownloadedData();
 
-        assertEquals(1, ds.getWays().size());
-        assertEquals(0, ds.getWays().stream().filter(way -> way.hasTag("building", "detached")).count());
-        assertEquals(version, buildingToReplace.getVersion());
+        Assertions.assertEquals(1, ds.getWays().size());
+        Assertions.assertEquals(0, ds.getWays().stream().filter(way -> way.hasTag("building", "detached")).count());
+        Assertions.assertEquals(version, buildingToReplace.getVersion());
     }
 }
