@@ -329,5 +329,10 @@
             <!-- The check is suppressed in the next line of code after the comment -->
             <property name="influenceFormat" value="1"/>
         </module>
+        <module name="IllegalImport">
+            <property name="illegalClasses" value="org.junit.Test, org.junit.Before, org.junit.BeforeClass, org.junit.After, org.junit.AfterClass"/>
+            <property name="illegalPkgs" value="org.junit.Assert"/>
+        </module>
+        <module name="UnusedImports"/>
     </module>
 </module>
