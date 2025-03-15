@@ -1,30 +1,29 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.DATA_SOURCE;
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.importOsmFile;
 import static org.openstreetmap.josm.plugins.plbuildings.ImportUtils.testProfile;
 
 import java.io.File;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class ShareNodesWithObjectTest {
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().main();
+//    @Rule TODO
+//    public JOSMTestRules rules = new JOSMTestRules().main();
 
     @Test
     public void testImportBuildingShareTwoNodesWithBuilding() {
         DataSet importDataSet = importOsmFile(new File("test/data/share_nodes_with_object/import_building.osm"), "");
-        assertNotNull(importDataSet);
+        Assertions.assertNotNull(importDataSet);
 
         DataSet ds = importOsmFile(new File("test/data/share_nodes_with_object/way_building.osm"), "");
-        assertNotNull(ds);
+        Assertions.assertNotNull(ds);
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
@@ -32,7 +31,7 @@ public class ShareNodesWithObjectTest {
         manager.processDownloadedData();
 
         Way building = (Way) ds.getWays().toArray()[0]; // doesn't matter which one
-        assertEquals(
+        Assertions.assertEquals(
             2,
             building.getNodes().stream()
                 .skip(1)
@@ -44,10 +43,10 @@ public class ShareNodesWithObjectTest {
     @Test
     public void testImportBuildingNotShareNodesWithNotBuildingWay() {
         DataSet importDataSet = importOsmFile(new File("test/data/share_nodes_with_object/import_building.osm"), "");
-        assertNotNull(importDataSet);
+        Assertions.assertNotNull(importDataSet);
 
         DataSet ds = importOsmFile(new File("test/data/share_nodes_with_object/way_waterway.osm"), "");
-        assertNotNull(ds);
+        Assertions.assertNotNull(ds);
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
@@ -55,7 +54,7 @@ public class ShareNodesWithObjectTest {
         manager.processDownloadedData();
 
         Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];
-        assertEquals(
+        Assertions.assertEquals(
             0,
             building.getNodes().stream()
                 .skip(1)
@@ -67,10 +66,10 @@ public class ShareNodesWithObjectTest {
     @Test
     public void testImportBuildingNotShareNodesWithBarrier() {
         DataSet importDataSet = importOsmFile(new File("test/data/share_nodes_with_object/import_building.osm"), "");
-        assertNotNull(importDataSet);
+        Assertions.assertNotNull(importDataSet);
 
         DataSet ds = importOsmFile(new File("test/data/share_nodes_with_object/way_barrier.osm"), "");
-        assertNotNull(ds);
+        Assertions.assertNotNull(ds);
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
@@ -78,7 +77,7 @@ public class ShareNodesWithObjectTest {
         manager.processDownloadedData();
 
         Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];
-        assertEquals(
+        Assertions.assertEquals(
             0,
             building.getNodes().stream()
                 .skip(1)
@@ -90,10 +89,10 @@ public class ShareNodesWithObjectTest {
     @Test
     public void testImportBuildingNotShareNodeWithNodeObject() {
         DataSet importDataSet = importOsmFile(new File("test/data/share_nodes_with_object/import_building.osm"), "");
-        assertNotNull(importDataSet);
+        Assertions.assertNotNull(importDataSet);
 
         DataSet ds = importOsmFile(new File("test/data/share_nodes_with_object/node_shop.osm"), "");
-        assertNotNull(ds);
+        Assertions.assertNotNull(ds);
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, null);
         manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importDataSet));
@@ -103,6 +102,6 @@ public class ShareNodesWithObjectTest {
         Way building = (Way) ds.getWays().stream().filter(way -> way.hasKey("building")).toArray()[0];
 
         // -1 is for avoid duplicate of nodes from closed way and +1 is for looking for node object
-        assertEquals((building.getNodesCount() - 1) + 1, ds.getNodes().size());
+        Assertions.assertEquals((building.getNodesCount() - 1) + 1, ds.getNodes().size());
     }
 }

@@ -39,7 +39,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class ToggleDialogControllerTest {
     @RegisterExtension
-    static JOSMTestRules rule = new JOSMTestRules();
+    static JOSMTestRules rule = new JOSMTestRules().main();
 
     @Injectable
     private DataSourceConfig model;

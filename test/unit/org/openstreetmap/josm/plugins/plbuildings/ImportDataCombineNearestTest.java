@@ -15,10 +15,9 @@ import mockit.Mock;
 import mockit.MockUp;
 import mockit.Mocked;
 import mockit.Verifications;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -36,12 +35,8 @@ import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceProfile;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 import org.openstreetmap.josm.plugins.plbuildings.models.NotificationConfig;
 import org.openstreetmap.josm.plugins.plbuildings.utils.BuildingsSessionStateManager;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class ImportDataCombineNearestTest {
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().main();
-
     public DataSourceProfile profileOneDs;
     public DataSourceProfile profileTwoDs;
     public DataSet emptyDs;
@@ -56,7 +51,7 @@ public class ImportDataCombineNearestTest {
 
     public BuildingsImportManager manager;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:4326"));
 
@@ -95,7 +90,8 @@ public class ImportDataCombineNearestTest {
         );
         new MockUp<BuildingsImportManager>() {
             @Mock
-            public void injectSourceTags(OsmPrimitive importedBuilding, String geometrySource, String tagsSource) {}
+            public void injectSourceTags(OsmPrimitive importedBuilding, String geometrySource, String tagsSource) {
+            }
         };
 
         // Reset to avoid random failing tests
@@ -511,12 +507,12 @@ public class ImportDataCombineNearestTest {
         notificationConfig.setNotificationEnabled(Notification.NOT_ENOUGH_OVERLAPPING, true);
         assertFalse(manager.shouldShowNotEnoughOverlappingNotification());
 
-        Assert.assertTrue(Arrays.stream(CombineNearestOverlappingStrategy.values()).allMatch(strategy -> {
+        Assertions.assertTrue(Arrays.stream(CombineNearestOverlappingStrategy.values()).allMatch(strategy -> {
             BuildingsSessionStateManager.setOverlappingConfirmationSessionStrategy(strategy);
             return manager.shouldShowNotEnoughOverlappingNotification();
         }));
         notificationConfig.setNotificationEnabled(Notification.NOT_ENOUGH_OVERLAPPING, false);
-        Assert.assertTrue(Arrays.stream(CombineNearestOverlappingStrategy.values()).noneMatch(strategy -> {
+        Assertions.assertTrue(Arrays.stream(CombineNearestOverlappingStrategy.values()).noneMatch(strategy -> {
             BuildingsSessionStateManager.setOverlappingConfirmationSessionStrategy(strategy);
             return manager.shouldShowNotEnoughOverlappingNotification();
         }));

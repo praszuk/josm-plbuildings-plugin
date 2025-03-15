@@ -1,18 +1,16 @@
 package org.openstreetmap.josm.plugins.plbuildings;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class BuildingLevelsWithRoofTest {
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().main();
+//    @Rule
+//    public JOSMTestRules rules = new JOSMTestRules().main();
 
     @Test
     public void testNotCompleteLevelsData() {
@@ -22,7 +20,7 @@ public class BuildingLevelsWithRoofTest {
         OsmPrimitive newPrimitive1 = new Way();
         newPrimitive1.put("building", "house");
 
-        assertFalse(PreCheckUtils.isBuildingLevelsWithRoofEquals(selected1, newPrimitive1));
+        Assertions.assertFalse(PreCheckUtils.isBuildingLevelsWithRoofEquals(selected1, newPrimitive1));
 
         OsmPrimitive selected2 = new Way();
         selected2.put("building", "house");
@@ -31,7 +29,7 @@ public class BuildingLevelsWithRoofTest {
         OsmPrimitive newPrimitive2 = new Way();
         newPrimitive2.put("building", "house");
 
-        assertFalse(PreCheckUtils.isBuildingLevelsWithRoofEquals(selected2, newPrimitive2));
+        Assertions.assertFalse(PreCheckUtils.isBuildingLevelsWithRoofEquals(selected2, newPrimitive2));
 
         OsmPrimitive selected3 = new Way();
         selected3.put("building", "house");
@@ -41,7 +39,7 @@ public class BuildingLevelsWithRoofTest {
         newPrimitive3.put("building", "house");
         newPrimitive3.put("building:levels", "2");
 
-        assertFalse(PreCheckUtils.isBuildingLevelsWithRoofEquals(selected3, newPrimitive3));
+        Assertions.assertFalse(PreCheckUtils.isBuildingLevelsWithRoofEquals(selected3, newPrimitive3));
     }
 
     @Test
@@ -55,7 +53,7 @@ public class BuildingLevelsWithRoofTest {
         newPrimitive1.put("building", "house");
         newPrimitive1.put("building:levels", "LEVELS2");
 
-        assertFalse(PreCheckUtils.isBuildingLevelsWithRoofEquals(selected1, newPrimitive1));
+        Assertions.assertFalse(PreCheckUtils.isBuildingLevelsWithRoofEquals(selected1, newPrimitive1));
     }
 
     @Test
@@ -69,7 +67,7 @@ public class BuildingLevelsWithRoofTest {
         newPrimitive1.put("building", "house");
         newPrimitive1.put("building:levels", "2");
 
-        assertTrue(PreCheckUtils.isBuildingLevelsWithRoofEquals(selected1, newPrimitive1));
+        Assertions.assertTrue(PreCheckUtils.isBuildingLevelsWithRoofEquals(selected1, newPrimitive1));
 
         OsmPrimitive selected2 = new Way();
         selected2.put("building:levels", "1");
@@ -79,6 +77,6 @@ public class BuildingLevelsWithRoofTest {
         newPrimitive2.put("building", "house");
         newPrimitive2.put("building:levels", "3");
 
-        assertFalse(PreCheckUtils.isBuildingLevelsWithRoofEquals(selected2, newPrimitive2));
+        Assertions.assertFalse(PreCheckUtils.isBuildingLevelsWithRoofEquals(selected2, newPrimitive2));
     }
 }

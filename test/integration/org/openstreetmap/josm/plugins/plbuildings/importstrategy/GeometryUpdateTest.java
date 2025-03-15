@@ -28,8 +28,8 @@ import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class GeometryUpdateTest {
-    @RegisterExtension
-    static JOSMTestRules rule = new JOSMTestRules().main().projection();
+//    @RegisterExtension
+//    static JOSMTestRules rule = new JOSMTestRules().main().projection();
 
     @BeforeEach
     public void setUp() {
