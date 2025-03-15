@@ -8,10 +8,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils;
 
 public class SurveyCheckerTest {
-
-//    @Rule TODO
-//    public JOSMTestRules rules = new JOSMTestRules().main();
-
     @Test
     public void testPrimitiveHasSurveyKeyValue() {
         OsmPrimitive primitive1 = new Node();

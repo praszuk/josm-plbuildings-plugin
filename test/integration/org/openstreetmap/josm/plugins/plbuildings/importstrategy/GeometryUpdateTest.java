@@ -12,7 +12,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -25,12 +24,8 @@ import org.openstreetmap.josm.plugins.plbuildings.actions.BuildingsImportAction;
 import org.openstreetmap.josm.plugins.plbuildings.enums.ImportMode;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class GeometryUpdateTest {
-//    @RegisterExtension
-//    static JOSMTestRules rule = new JOSMTestRules().main().projection();
-
     @BeforeEach
     public void setUp() {
         ExpertToggleAction.getInstance().setExpert(true);

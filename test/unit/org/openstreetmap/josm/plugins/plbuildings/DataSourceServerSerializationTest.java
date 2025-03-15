@@ -8,9 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 
 public class DataSourceServerSerializationTest {
-//    @Rule  TODO
-//    public JOSMTestRules rules = new JOSMTestRules().main();
-
     @Test
     public void serializationDataSourceServerTest() {
 

@@ -14,12 +14,8 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class SimpleBuildingImportTest {
-//    @Rule TODO
-//    public JOSMTestRules rules = new JOSMTestRules().main();
-
     @Test
     public void testImportBuildingNoCloseNodesJustOneBuildingInDataset() {
         DataSet importDataSet = importOsmFile(new File("test/data/simple_building.osm"), "");

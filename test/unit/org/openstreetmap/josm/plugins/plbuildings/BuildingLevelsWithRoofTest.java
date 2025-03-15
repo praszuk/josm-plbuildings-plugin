@@ -6,12 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class BuildingLevelsWithRoofTest {
-//    @Rule
-//    public JOSMTestRules rules = new JOSMTestRules().main();
-
     @Test
     public void testNotCompleteLevelsData() {
         OsmPrimitive selected1 = new Way();
