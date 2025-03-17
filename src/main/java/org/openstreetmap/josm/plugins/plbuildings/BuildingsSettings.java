@@ -11,7 +11,6 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOneDsStrategy;
-import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOverlappingStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.enums.ImportMode;
 import org.openstreetmap.josm.plugins.plbuildings.models.DataSourceServer;
 
@@ -73,7 +72,9 @@ public class BuildingsSettings {
         "[]"
     );
 
-    /** first element: unique server name, second element: unique profile name */
+    /**
+     * first element: unique server name, second element: unique profile name
+     */
     public static final ListProperty CURRENT_DATA_SOURCE_PROFILE = new ListProperty(
         SETTING_PREFIX + "current_data_source_profile", new ArrayList<>()
     );
@@ -83,7 +84,9 @@ public class BuildingsSettings {
         true
     );
 
-    /** keeps the state if notification should appear or not */
+    /**
+     * keeps the state if notification should appear or not
+     */
     public static final StringProperty NOTIFICATION_STATES = new StringProperty(
         SETTING_PREFIX + "notification_states",
         "[]"

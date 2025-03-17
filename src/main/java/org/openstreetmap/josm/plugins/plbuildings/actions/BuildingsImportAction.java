@@ -1,7 +1,6 @@
 package org.openstreetmap.josm.plugins.plbuildings.actions;
 
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.findUncommonTags;
-import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.validateSelectedWay;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -158,8 +157,7 @@ public class BuildingsImportAction extends JosmAction {
         } catch (ImportActionCanceledException exception) {
             Logging.info("{0} {1}", exception.getStatus(), exception.getMessage());
             manager.setStatus(exception.getStatus(), exception.getMessage());
-        }
-        finally {
+        } finally {
             manager.getEditLayer().clearSelection();
             importStats.save();
         }
