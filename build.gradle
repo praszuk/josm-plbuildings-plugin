@@ -6,6 +6,7 @@ plugins {
 checkstyle {
     toolVersion = "10.16.0"
     maxWarnings = 0
+    sourceSets = []  // Disable checkstyle from build task
 }
 
 dependencies {
@@ -50,4 +51,13 @@ test {
     }
 }
 
+tasks.register('installPreCommit', Copy) {
+    description = "Copy pre-commit.sh to .git/hooks dir."
+    outputs.upToDateWhen { false }
+    from("$rootDir/scripts/pre-commit")
+    into("$rootDir/.git/hooks/")
+}
 
+tasks.build {
+    dependsOn("installPreCommit")
+}
