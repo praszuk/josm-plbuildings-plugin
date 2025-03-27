@@ -28,10 +28,10 @@ public class PreCheckUtils {
      * E.g. detached->house returns true
      */
     public static boolean isBuildingValueSimplification(String currentValue, String newValue) {
-        if (currentValue == null) {
+        if (currentValue == null || currentValue.isEmpty()) {
             return false;
         }
-        if (newValue == null) {
+        if (newValue == null || newValue.isEmpty()) {
             return true;
         }
         if (newValue.equals(currentValue)) {
