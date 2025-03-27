@@ -93,4 +93,104 @@ public class UpdateBuildingTagsCommandTest {
 
         Assertions.assertTrue(selectedBuilding.hasTag("source"));
     }
+
+    @Test
+    void testConstructionValueIsUsedWhenNewBuildingIsNoLongerInConstructionAndNewValueIsLessDetailed() {
+        DataSet ds = new DataSet();
+
+        Way selectedBuilding = new Way();
+        selectedBuilding.put("building", "construction");
+        selectedBuilding.put("construction", "house");
+        ds.addPrimitiveRecursive(selectedBuilding);
+
+        DataSet newDs = new DataSet();
+        Way newBuilding = new Way();
+        newBuilding.put("building", "yes");
+        newDs.addPrimitiveRecursive(newBuilding);
+
+        Command c = new UpdateBuildingTagsCommand(ds, () -> selectedBuilding, newBuilding);
+        c.executeCommand();
+
+        Assertions.assertTrue(selectedBuilding.hasTag("building", "house"));
+        Assertions.assertFalse(selectedBuilding.hasTag("construction"));
+
+        c.undoCommand();
+        Assertions.assertTrue(selectedBuilding.hasTag("building", "construction"));
+        Assertions.assertTrue(selectedBuilding.hasTag("construction", "house"));
+    }
+
+    @Test
+    void testConstructionValueIsSkippedWhenNewBuildingIsNoLongerInConstructionAndNewValueIsMoreDetailed() {
+        DataSet ds = new DataSet();
+
+        Way selectedBuilding = new Way();
+        selectedBuilding.put("building", "construction");
+        selectedBuilding.put("construction", "house");
+        ds.addPrimitiveRecursive(selectedBuilding);
+
+        DataSet newDs = new DataSet();
+        Way newBuilding = new Way();
+        newBuilding.put("building", "detached");
+        newDs.addPrimitiveRecursive(newBuilding);
+
+        Command c = new UpdateBuildingTagsCommand(ds, () -> selectedBuilding, newBuilding);
+        c.executeCommand();
+
+        Assertions.assertTrue(selectedBuilding.hasTag("building", "detached"));
+        Assertions.assertFalse(selectedBuilding.hasTag("construction"));
+
+        c.undoCommand();
+        Assertions.assertTrue(selectedBuilding.hasTag("building", "construction"));
+        Assertions.assertTrue(selectedBuilding.hasTag("construction", "house"));
+    }
+
+    @Test
+    void testConstructionValueIsSkippedWhenNewBuildingIsNoLongerInConstructionAndNewValueIsEqual() {
+        DataSet ds = new DataSet();
+
+        Way selectedBuilding = new Way();
+        selectedBuilding.put("building", "construction");
+        selectedBuilding.put("construction", "house");
+        ds.addPrimitiveRecursive(selectedBuilding);
+
+        DataSet newDs = new DataSet();
+        Way newBuilding = new Way();
+        newBuilding.put("building", "house");
+        newDs.addPrimitiveRecursive(newBuilding);
+
+        Command c = new UpdateBuildingTagsCommand(ds, () -> selectedBuilding, newBuilding);
+        c.executeCommand();
+
+        Assertions.assertTrue(selectedBuilding.hasTag("building", "house"));
+        Assertions.assertFalse(selectedBuilding.hasTag("construction"));
+
+        c.undoCommand();
+        Assertions.assertTrue(selectedBuilding.hasTag("building", "construction"));
+        Assertions.assertTrue(selectedBuilding.hasTag("construction", "house"));
+    }
+
+    @Test
+    void testConstructionValueNotChangedIfNewBuildingIsInConstructionToo() {
+        DataSet ds = new DataSet();
+
+        Way selectedBuilding = new Way();
+        selectedBuilding.put("building", "construction");
+        selectedBuilding.put("construction", "house");
+        ds.addPrimitiveRecursive(selectedBuilding);
+
+        DataSet newDs = new DataSet();
+        Way newBuilding = new Way();
+        newBuilding.put("building", "construction");
+        newDs.addPrimitiveRecursive(newBuilding);
+
+        Command c = new UpdateBuildingTagsCommand(ds, () -> selectedBuilding, newBuilding);
+        c.executeCommand();
+
+        Assertions.assertTrue(selectedBuilding.hasTag("building", "construction"));
+        Assertions.assertTrue(selectedBuilding.hasTag("construction", "house"));
+
+        c.undoCommand();
+        Assertions.assertTrue(selectedBuilding.hasTag("building", "construction"));
+        Assertions.assertTrue(selectedBuilding.hasTag("construction", "house"));
+    }
 }
