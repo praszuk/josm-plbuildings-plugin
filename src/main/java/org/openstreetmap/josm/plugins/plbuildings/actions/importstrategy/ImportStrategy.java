@@ -48,10 +48,9 @@ public abstract class ImportStrategy {
     }
 
     public void trySimplifyBuildingValue() {
-        if (isBuildingValueSimplification(manager.getSelectedBuilding(), importedBuilding)) {
-            String oldValue = manager.getSelectedBuilding().get("building");
-            String newValue = importedBuilding.get("building");
-
+        String oldValue = manager.getSelectedBuilding().get("building");
+        String newValue = importedBuilding.get("building");
+        if (isBuildingValueSimplification(oldValue, newValue)) {
             importedBuilding.put("building", manager.getSelectedBuilding().get("building"));
             Logging.info("Avoiding building details simplification ({0} -\\> {1})", oldValue, newValue);
         }

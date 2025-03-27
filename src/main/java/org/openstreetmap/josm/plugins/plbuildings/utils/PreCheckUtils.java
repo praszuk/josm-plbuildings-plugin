@@ -23,14 +23,6 @@ public class PreCheckUtils {
         return primitive.getKeys().toString().contains("survey");
     }
 
-    // TODO remove unnecessary method
-    public static boolean isBuildingValueSimplification(@Nonnull OsmPrimitive current, @Nonnull OsmPrimitive newObj) {
-        String currentValue = current.get("building");
-        String newValue = newObj.get("building");
-
-        return isBuildingValueSimplification(currentValue, newValue);
-    }
-
     /**
      * Checks if new building value is a simplification of existing value.
      * E.g. detached->house returns true
