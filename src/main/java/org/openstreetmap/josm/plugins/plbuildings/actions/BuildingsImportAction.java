@@ -1,5 +1,6 @@
 package org.openstreetmap.josm.plugins.plbuildings.actions;
 
+import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.findLifecyclePrefixBuildingTags;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.findUncommonTags;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -26,6 +27,7 @@ import org.openstreetmap.josm.plugins.plbuildings.actions.importstrategy.ImportS
 import org.openstreetmap.josm.plugins.plbuildings.actions.importstrategy.TagsUpdateStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.exceptions.ImportActionCanceledException;
+import org.openstreetmap.josm.plugins.plbuildings.gui.LifecyclePrefixBuildingTagDialog;
 import org.openstreetmap.josm.plugins.plbuildings.gui.UncommonTagDialog;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportData;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
@@ -102,6 +104,25 @@ public class BuildingsImportAction extends JosmAction {
         return true;
     }
 
+    public static void showDialogIfFoundLifecycleBuildingPrefixedTags(
+        Way resultBuilding, BuildingsImportManager manager
+    ) {
+        if (resultBuilding == null) {
+            return;
+        }
+
+        TagMap lifecyclePrefixBuildingTags = findLifecyclePrefixBuildingTags(resultBuilding);
+        if (lifecyclePrefixBuildingTags.isEmpty()) {
+            return;
+        }
+
+        Logging.debug("Found tags with life cycle prefixes {0}", lifecyclePrefixBuildingTags);
+        manager.setStatus(ImportStatus.ACTION_REQUIRED, null);
+        LifecyclePrefixBuildingTagDialog.show(
+            lifecyclePrefixBuildingTags.getTags().toString().replace("[", "").replace("]", "")
+        );
+    }
+
     public static void performBuildingImport(BuildingsImportManager manager) {
         importStats.addTotalImportActionCounter(1);
 
@@ -152,6 +173,7 @@ public class BuildingsImportAction extends JosmAction {
 
             boolean hasUncommonTags = BuildingsSettings.UNCOMMON_TAGS_CHECK.get()
                 && showDialogIfFoundUncommonTags(resultBuilding, manager);
+            showDialogIfFoundLifecycleBuildingPrefixedTags(resultBuilding, manager);
             manager.setStatus(ImportStatus.DONE, null);
             manager.updateGuiTags(hasUncommonTags);
         } catch (ImportActionCanceledException exception) {

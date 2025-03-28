@@ -58,4 +58,11 @@ public class BuildingsTags {
         "tourism"
     );
 
+    /**
+     * https://wiki.openstreetmap.org/wiki/Lifecycle_prefix
+     */
+    public static final Set<String> COMMON_LIFECYCLE_PREFIXES = Set.of(
+        "proposed", "planned", "construction", "abandoned", "ruins", "demolished", "destroyed", "removed", "was"
+    );
+
 }

@@ -27,14 +27,11 @@ public class PreCheckUtils {
      * Checks if new building value is a simplification of existing value.
      * E.g. detached->house returns true
      */
-    public static boolean isBuildingValueSimplification(@Nonnull OsmPrimitive current, @Nonnull OsmPrimitive newObj) {
-        String currentValue = current.get("building");
-        String newValue = newObj.get("building");
-
-        if (currentValue == null) {
+    public static boolean isBuildingValueSimplification(String currentValue, String newValue) {
+        if (currentValue == null || currentValue.isEmpty()) {
             return false;
         }
-        if (newValue == null) {
+        if (newValue == null || newValue.isEmpty()) {
             return true;
         }
         if (newValue.equals(currentValue)) {

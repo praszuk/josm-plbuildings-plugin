@@ -1,5 +1,6 @@
 package org.openstreetmap.josm.plugins.plbuildings.commands;
 
+import static org.openstreetmap.josm.plugins.plbuildings.utils.PreCheckUtils.isBuildingValueSimplification;
 import static org.openstreetmap.josm.plugins.plbuildings.utils.TagConflictUtils.resolveTagConflictsDefault;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -13,6 +14,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
@@ -88,6 +90,29 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
         return new ChangePropertyCommand(selectedBuilding, "source", null);
     }
 
+    /**
+     * Replace building with construction value for tag resolver to prevent conflicts and handle construction=* leftover
+     */
+    private void handleConstructionSubtag(TagCollection tagsOfPrimitives, Way selectedBuilding, Way newBuilding) {
+        if (selectedBuilding.hasTag("building", "construction")
+            && selectedBuilding.hasTag("construction")
+            && !newBuilding.hasTag("building", "construction")) {
+
+            // Remove from both, selected and new – to keep one version
+            tagsOfPrimitives.removeByKey("building");
+            tagsOfPrimitives.removeByKey("building");
+
+            if (isBuildingValueSimplification(selectedBuilding.get("construction"), newBuilding.get("building"))) {
+                tagsOfPrimitives.add(new Tag("building", selectedBuilding.get("construction")));
+            } else {
+                tagsOfPrimitives.add(new Tag("building", newBuilding.get("building")));
+            }
+
+            tagsOfPrimitives.removeByKey("construction");
+            tagsOfPrimitives.add(new Tag("construction", "")); // Remove completely construction tag
+        }
+    }
+
     @Override
     public boolean executeCommand() {
         if (this.updateTagsCommand == null) {
@@ -120,6 +145,7 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
         return true;
     }
 
+
     /**
      * Prepare update tags command using CombinePrimitiveResolverDialog before launching dialog.
      * It checks if any conflict can be skipped using resolveTagConflictsDefault from TagConflictsUtil
@@ -134,6 +160,7 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
         Collection<OsmPrimitive> primitives = Arrays.asList(selectedBuilding, newBuilding);
         TagCollection tagsOfPrimitives = TagCollection.unionOfAllPrimitives(primitives);
 
+        handleConstructionSubtag(tagsOfPrimitives, selectedBuilding, newBuilding);
         resolveTagConflictsDefault(tagsOfPrimitives, selectedBuilding, newBuilding);
 
         return CombinePrimitiveResolverDialog.launchIfNecessary(
