@@ -29,4 +29,17 @@ public class PostCheckUtils {
         return uncommon;
     }
 
+    public static TagMap findLifecyclePrefixBuildingTags(OsmPrimitive primitive) {
+        TagMap tags = new TagMap();
+        if (primitive == null) {
+            return tags;
+        }
+        primitive.getKeys().getTags().stream()
+            .filter(t -> t.getKey().contains("building") || t.getKey().contains("roof"))
+            .filter(t -> BuildingsTags.COMMON_LIFECYCLE_PREFIXES.stream()
+                .anyMatch(prefix -> t.getKey().startsWith(prefix)))
+            .forEach(t -> tags.put(t.getKey(), t.getValue()));
+
+        return tags;
+    }
 }
