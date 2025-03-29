@@ -113,6 +113,17 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
         }
     }
 
+    /**
+     * Handle source:geometry cleanup to avoid leftover if only source:building will be needed.
+     */
+    private void handleSourceTags(TagCollection tagsOfPrimitives, Way newBuilding) {
+        // We need to handle only case where new building doesn't have source:geometry, otherwise it will be replaced
+        if (tagsOfPrimitives.getNumTagsFor("source:geometry") == 1 && !newBuilding.hasTag("source:geometry")) {
+            tagsOfPrimitives.removeByKey("source:geometry");
+            tagsOfPrimitives.add(new Tag("source:geometry", "")); // Remove completely source:geometry tag
+        }
+    }
+
     @Override
     public boolean executeCommand() {
         if (this.updateTagsCommand == null) {
@@ -160,6 +171,7 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
         Collection<OsmPrimitive> primitives = Arrays.asList(selectedBuilding, newBuilding);
         TagCollection tagsOfPrimitives = TagCollection.unionOfAllPrimitives(primitives);
 
+        handleSourceTags(tagsOfPrimitives, newBuilding);
         handleConstructionSubtag(tagsOfPrimitives, selectedBuilding, newBuilding);
         resolveTagConflictsDefault(tagsOfPrimitives, selectedBuilding, newBuilding);
 
