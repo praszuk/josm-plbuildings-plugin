@@ -8,7 +8,10 @@ import mockit.Mocked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOneDsStrategy;
 import org.openstreetmap.josm.plugins.plbuildings.enums.CombineNearestOverlappingStrategy;
@@ -33,6 +36,19 @@ public class InjectSourceTagsTest {
         BuildingsSettings.IMPORT_MODE.put(ImportMode.FULL);
     }
 
+    Way createClosedWay(DataSet dataSet) {
+        Node node1 = new Node(new LatLon(0.0, 0.0));
+        Node node2 = new Node(new LatLon(0.1, 0.1));
+        Node node3 = new Node(new LatLon(0.2, 0.2));
+        dataSet.addPrimitive(node1);
+        dataSet.addPrimitive(node2);
+        dataSet.addPrimitive(node3);
+        Way closedWay = new Way();
+        dataSet.addPrimitive(closedWay);
+
+        return closedWay;
+    }
+
     @Test
     void testOneDsImportOnlySourceBuilding() {
         DataSet importDataSet = importOsmFile(new File("test/data/simple_building.osm"), "");
@@ -48,6 +64,54 @@ public class InjectSourceTagsTest {
 
         Way resultBuilding = currentDataSet.getWays().stream().findFirst().orElseThrow();
         Assertions.assertEquals(resultBuilding.get("source:building"), profileSameDs.getTags());
+        Assertions.assertFalse(resultBuilding.hasTag("source:geometry"));
+    }
+
+    @Test
+    void testOneDsImportOnlySourceBuildingButSelectedBuildingAlreadyContainsBothSourceTagsSharedTagsSource() {
+        ExpertToggleAction.getInstance().setExpert(true);
+        BuildingsSettings.IMPORT_MODE.put(ImportMode.TAGS);
+
+        DataSet importDataSet = importOsmFile(new File("test/data/simple_building.osm"), "");
+        Assertions.assertFalse(importDataSet.getWays().stream().findFirst().orElseThrow().hasTag("source:building"));
+        Assertions.assertFalse(importDataSet.getWays().stream().findFirst().orElseThrow().hasTag("source:geometry"));
+
+        DataSet currentDataSet = new DataSet();
+        Way selectedBuilding = createClosedWay(currentDataSet);
+        selectedBuilding.put("source:building", profileDifferentDs.getTags());
+        selectedBuilding.put("source:geometry", profileDifferentDs.getGeometry());
+
+        BuildingsImportManager manager = new BuildingsImportManager(currentDataSet, null, selectedBuilding);
+        manager.setImportedData(new BuildingsImportData(profileSameDs.getTags(), importDataSet));
+        manager.setCurrentProfile(profileSameDs);
+        manager.processDownloadedData();
+
+        Way resultBuilding = currentDataSet.getWays().stream().findFirst().orElseThrow();
+        Assertions.assertEquals(resultBuilding.get("source:building"), profileSameDs.getTags());
+        Assertions.assertFalse(resultBuilding.hasTag("source:geometry"));
+    }
+
+    @Test
+    void testOneDsImportOnlySourceBuildingButSelectedBuildingAlreadyContainsBothSourceTagsSharedGeometrySource() {
+        ExpertToggleAction.getInstance().setExpert(true);
+        BuildingsSettings.IMPORT_MODE.put(ImportMode.TAGS);
+
+        DataSet importDataSet = importOsmFile(new File("test/data/simple_building.osm"), "");
+        Assertions.assertFalse(importDataSet.getWays().stream().findFirst().orElseThrow().hasTag("source:building"));
+        Assertions.assertFalse(importDataSet.getWays().stream().findFirst().orElseThrow().hasTag("source:geometry"));
+
+        DataSet currentDataSet = new DataSet();
+        Way selectedBuilding = createClosedWay(currentDataSet);
+        selectedBuilding.put("source:building", profileDifferentDs.getTags());
+        selectedBuilding.put("source:geometry", profileDifferentDs.getGeometry());
+
+        BuildingsImportManager manager = new BuildingsImportManager(currentDataSet, null, selectedBuilding);
+        manager.setImportedData(new BuildingsImportData(profileSameDs.getGeometry(), importDataSet));
+        manager.setCurrentProfile(profileSameDs);
+        manager.processDownloadedData();
+
+        Way resultBuilding = currentDataSet.getWays().stream().findFirst().orElseThrow();
+        Assertions.assertEquals(resultBuilding.get("source:building"), profileSameDs.getGeometry());
         Assertions.assertFalse(resultBuilding.hasTag("source:geometry"));
     }
 
