@@ -14,7 +14,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -83,6 +85,13 @@ class FullImportTest {
         Assertions.assertEquals(replaceCounter, stats.getImportWithReplaceCounter());
         Assertions.assertEquals(tagsUpdateCounter, stats.getImportWithTagsUpdateCounter());
         Assertions.assertEquals(geometryUpdateCounter, stats.getImportWithGeometryUpdateCounter());
+
+        Command command = UndoRedoHandler.getInstance().getLastCommand();
+        Assertions.assertNotNull(command);
+
+        command.undoCommand();
+
+        Assertions.assertTrue(ds.isEmpty());
     }
 
     @Test
@@ -121,6 +130,14 @@ class FullImportTest {
         Assertions.assertEquals(replaceCounter + 1, stats.getImportWithReplaceCounter());
         Assertions.assertEquals(tagsUpdateCounter + 1, stats.getImportWithTagsUpdateCounter());
         Assertions.assertEquals(geometryUpdateCounter + 1, stats.getImportWithGeometryUpdateCounter());
+
+        Command command = UndoRedoHandler.getInstance().getLastCommand();
+        Assertions.assertNotNull(command);
+
+        command.undoCommand();
+
+        Assertions.assertNotEquals(buildingToImport.getNodesCount(), buildingToReplace.getNodesCount());
+        Assertions.assertNotEquals(buildingToImport.get("building"), buildingToReplace.get("building"));
     }
 
     @Test
@@ -144,7 +161,7 @@ class FullImportTest {
         Way buildingToReplace = ds.getWays().stream().findFirst().orElseThrow();
         ds.setSelected(buildingToReplace);
 
-        Assertions.assertEquals(buildingToReplace.getNodesCount(), buildingToImport.getNodesCount());
+        int buildingNodeVersion = buildingToReplace.getNode(0).getVersion();
         Assertions.assertNotEquals(buildingToReplace.get("building"), buildingToImport.get("building"));
 
         BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
@@ -154,12 +171,19 @@ class FullImportTest {
 
         Assertions.assertTrue(isBuildingWayValid(buildingToReplace));
 
-        Assertions.assertEquals(buildingToImport.getNodesCount(), buildingToReplace.getNodesCount());
+        Assertions.assertEquals(buildingNodeVersion, buildingToReplace.getNode(0).getVersion());
         Assertions.assertEquals(buildingToImport.get("building"), buildingToReplace.get("building"));
 
         Assertions.assertEquals(replaceCounter + 1, stats.getImportWithReplaceCounter());
         Assertions.assertEquals(tagsUpdateCounter + 1, stats.getImportWithTagsUpdateCounter());
         Assertions.assertEquals(geometryUpdateCounter, stats.getImportWithGeometryUpdateCounter());
+
+        Command command = UndoRedoHandler.getInstance().getLastCommand();
+        Assertions.assertNotNull(command);
+
+        command.undoCommand();
+
+        Assertions.assertEquals(buildingNodeVersion, buildingToReplace.getNode(0).getVersion());
+        Assertions.assertNotEquals(buildingToImport.get("building"), buildingToReplace.get("building"));
     }
-    // TODO test import with only tag replace (duplicate)
 }

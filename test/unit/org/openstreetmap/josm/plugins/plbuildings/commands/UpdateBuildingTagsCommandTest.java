@@ -10,6 +10,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
+import org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus;
 
 public class UpdateBuildingTagsCommandTest {
 
@@ -17,6 +18,27 @@ public class UpdateBuildingTagsCommandTest {
     void setUp() {
         ExpertToggleAction.getInstance().setExpert(true);
     }
+
+    @Test
+    void testUnchangedTagsReturnsFalseOnExecutedCommand() {
+        DataSet ds = new DataSet();
+
+        Way selectedBuilding = new Way();
+        selectedBuilding.put("building", "yes");
+        ds.addPrimitiveRecursive(selectedBuilding);
+
+        DataSet newDs = new DataSet();
+        Way newBuilding = new Way();
+        newBuilding.put("building", "yes");
+        newDs.addPrimitiveRecursive(newBuilding);
+
+        UpdateBuildingTagsCommand c = new UpdateBuildingTagsCommand(ds, () -> selectedBuilding, newBuilding);
+
+        Assertions.assertFalse(c.executeCommand());
+        Assertions.assertEquals("No tags to change", c.getErrorReason());
+        Assertions.assertEquals(ImportStatus.NO_UPDATE, c.getErrorStatus());
+    }
+
 
     @ParameterizedTest
     @CsvSource({

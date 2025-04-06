@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -121,8 +122,51 @@ public class TagsUpdateTest {
         Assertions.assertNotEquals(buildingToImport.getNodesCount(), buildingToReplace.getNodesCount());
         Assertions.assertNotEquals(buildingToImport.get("building"), buildingToReplace.get("building"));
 
-        Assertions.assertEquals(replaceCounter, BuildingsImportStats.getInstance().getImportWithTagsUpdateCounter());
+        Assertions.assertEquals(replaceCounter, BuildingsImportStats.getInstance().getImportWithReplaceCounter());
         Assertions.assertEquals(tagsUpdateCounter, stats.getImportWithTagsUpdateCounter());
         Assertions.assertEquals(geometryUpdateCounter, stats.getImportWithGeometryUpdateCounter());
+        Assertions.assertNull(UndoRedoHandler.getInstance().getLastCommand());
+    }
+
+    @Test
+    void testImportCanceledNoUpdateBuilding() {
+        DataSet importData = importOsmFile(new File("test/data/import_strategy/imported_building.osm"), "");
+        Assertions.assertNotNull(importData);
+
+        Way buildingToImport = (Way) importData.getWays().toArray()[0];
+        buildingToImport.removeAll();
+        buildingToImport.put("building", "yes");
+
+        DataSet ds = importOsmFile(new File("test/data/import_strategy/current_building.osm"), "");
+        MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, "test", null));
+
+        BuildingsImportStats stats = BuildingsImportStats.getInstance();
+        int replaceCounter = stats.getImportWithReplaceCounter();
+        int tagsUpdateCounter = stats.getImportWithTagsUpdateCounter();
+        int geometryUpdateCounter = stats.getImportWithGeometryUpdateCounter();
+
+        Assertions.assertNotNull(ds);
+
+        Way buildingToReplace = ds.getWays().stream().findFirst().orElseThrow();
+        buildingToReplace.removeAll();
+        buildingToReplace.put("building", "yes");
+        buildingToReplace.put("source:building", DATA_SOURCE);
+
+        Assertions.assertNotEquals(buildingToReplace.getNodesCount(), buildingToImport.getNodesCount());
+        Assertions.assertEquals(buildingToReplace.get("building"), buildingToImport.get("building"));
+
+        BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
+        manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importData));
+        manager.setCurrentProfile(testProfile);
+
+        manager.processDownloadedData();
+
+        Assertions.assertNotEquals(buildingToImport.getNodesCount(), buildingToReplace.getNodesCount());
+        Assertions.assertEquals(buildingToImport.get("building"), buildingToReplace.get("building"));
+
+        Assertions.assertEquals(replaceCounter, BuildingsImportStats.getInstance().getImportWithReplaceCounter());
+        Assertions.assertEquals(tagsUpdateCounter, stats.getImportWithTagsUpdateCounter());
+        Assertions.assertEquals(geometryUpdateCounter, stats.getImportWithGeometryUpdateCounter());
+        Assertions.assertNull(UndoRedoHandler.getInstance().getLastCommand());
     }
 }
