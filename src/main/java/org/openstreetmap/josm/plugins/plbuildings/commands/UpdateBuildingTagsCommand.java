@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
+import org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UserCancelException;
 
@@ -28,16 +29,26 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
     static final String DESCRIPTION_TEXT = tr("Updated building tags");
     private final CommandResultBuilding resultSelectedBuilding;
     private final Way newBuilding;
+    private boolean ignoreNoUpdate;
     private Way selectedBuilding;
     private SequenceCommand updateTagsCommand;
 
     private String executeErrorReason;
+    private ImportStatus executeErrorStatus;
 
     public UpdateBuildingTagsCommand(DataSet dataSet, CommandResultBuilding resultSelectedBuilding, Way newBuilding) {
         super(dataSet);
         this.resultSelectedBuilding = resultSelectedBuilding;
         this.newBuilding = newBuilding;
         this.updateTagsCommand = null;
+        this.ignoreNoUpdate = false;
+    }
+
+    public UpdateBuildingTagsCommand(
+        DataSet dataSet, CommandResultBuilding resultSelectedBuilding, Way newBuilding, boolean ignoreNoUpdate
+    ) {
+        this(dataSet, resultSelectedBuilding, newBuilding);
+        this.ignoreNoUpdate = ignoreNoUpdate;
     }
 
     @Override
@@ -70,24 +81,24 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
         return DESCRIPTION_TEXT;
     }
 
-
-    private Command removeUnwantedSource() {
+    private boolean shouldRemoveSourceTag(Way selectedBuilding) {
         if (!BuildingsSettings.AUTOREMOVE_UNWANTED_SOURCE.get()) {
-            return null;
+            return false;
         }
         String source = selectedBuilding.get("source");
         if (source == null) {
-            return null;
+            return false;
         }
-        boolean isSourceContainUnwantedValue = BuildingsSettings.UNWANTED_SOURCE_VALUES.get()
+
+        return BuildingsSettings.UNWANTED_SOURCE_VALUES.get()
             .stream()
             .map(String::toLowerCase)
             .anyMatch(val -> source.toLowerCase().contains(val));
+    }
 
-        if (!isSourceContainUnwantedValue) {
-            return null;
-        }
-        return new ChangePropertyCommand(selectedBuilding, "source", null);
+    private void handleUnwantedSourceTag(TagCollection tagsOfPrimitives) {
+        tagsOfPrimitives.removeByKey("source");
+        tagsOfPrimitives.add(new Tag("source", ""));
     }
 
     /**
@@ -116,7 +127,7 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
     /**
      * Handle source:geometry cleanup to avoid leftover if only source:building will be needed.
      */
-    private void handleSourceTags(TagCollection tagsOfPrimitives, Way newBuilding) {
+    private void handleSourceGeometryTag(TagCollection tagsOfPrimitives, Way newBuilding) {
         // We need to handle only case where new building doesn't have source:geometry, otherwise it will be replaced
         if (tagsOfPrimitives.getNumTagsFor("source:geometry") == 1 && !newBuilding.hasTag("source:geometry")) {
             tagsOfPrimitives.removeByKey("source:geometry");
@@ -137,17 +148,23 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
                     selectedBuilding.getId()
                 );
                 executeErrorReason = tr("Conflict tag dialog canceled by user");
+                executeErrorStatus = ImportStatus.CANCELED;
                 return false;
             }
 
-            Command removeUnwantedSource = removeUnwantedSource();
-            if (removeUnwantedSource != null) {
-                commands.add(removeUnwantedSource);
+            // Ensure at least one command as result for UpdateBuildingsTagsCommand execute.
+            // Edge-case for the FullImportStartegy: if geometry is updated and tags have no update
+            // SequenceCommand doesn't allow to modify "sequenceComplete" which is needed to run undo() on manually
+            // commited SequenceCommand, so put fake data change to execute SequenceCommand fully instead of manually.
+            if (commands.isEmpty() && ignoreNoUpdate) {
+                commands.add(new ChangePropertyCommand(newBuilding, "building",  newBuilding.get("building")));
             }
 
             if (commands.isEmpty()) {
                 Logging.debug("No tags difference! Canceling!");
-                return true;
+                executeErrorReason = tr("No tags to change");
+                executeErrorStatus = ImportStatus.NO_UPDATE;
+                return false;
             }
             this.updateTagsCommand = new SequenceCommand(DESCRIPTION_TEXT, commands);
         }
@@ -171,7 +188,10 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
         Collection<OsmPrimitive> primitives = Arrays.asList(selectedBuilding, newBuilding);
         TagCollection tagsOfPrimitives = TagCollection.unionOfAllPrimitives(primitives);
 
-        handleSourceTags(tagsOfPrimitives, newBuilding);
+        if (shouldRemoveSourceTag(selectedBuilding)) {
+            handleUnwantedSourceTag(tagsOfPrimitives);
+        }
+        handleSourceGeometryTag(tagsOfPrimitives, newBuilding);
         handleConstructionSubtag(tagsOfPrimitives, selectedBuilding, newBuilding);
         resolveTagConflictsDefault(tagsOfPrimitives, selectedBuilding, newBuilding);
 
@@ -190,5 +210,10 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
     @Override
     public String getErrorReason() {
         return executeErrorReason;
+    }
+
+    @Override
+    public ImportStatus getErrorStatus() {
+        return executeErrorStatus;
     }
 }

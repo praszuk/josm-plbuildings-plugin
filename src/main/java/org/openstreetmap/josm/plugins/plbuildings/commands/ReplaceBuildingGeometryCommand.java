@@ -10,6 +10,7 @@ import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryCommand;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryException;
 import org.openstreetmap.josm.plugins.utilsplugin2.replacegeometry.ReplaceGeometryUtils;
@@ -27,6 +28,7 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
     private ReplaceGeometryCommand replaceGeometryCommand;
 
     private String executeErrorReason;
+    private ImportStatus executeErrorStatus;
 
     public ReplaceBuildingGeometryCommand(DataSet data, Way selectedBuilding, CommandResultBuilding resultNewBuilding) {
         super(data);
@@ -83,6 +85,7 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
         // If user cancel conflict window
         if (exception instanceof IllegalArgumentException) {
             executeErrorReason = tr("Canceled merging buildings!");
+            executeErrorStatus = ImportStatus.CANCELED;
             Logging.debug(
                 "No building (id: {0}) update, caused: Cancel conflict dialog by user",
                 selectedBuilding.getId()
@@ -95,6 +98,7 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
                     + " Old building may be connected with some ways/relations"
                     + " or not whole area is downloaded!"
             );
+            executeErrorStatus = ImportStatus.IMPORT_ERROR;
             Logging.debug(
                 "No building update (id: {0}), caused: Replacing Geometry from UtilPlugins2 error",
                 selectedBuilding.getId()
@@ -105,6 +109,7 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
             executeErrorReason = tr(
                 "Cannot merge buildings! Building has been wrongly replaced and data has been broken!"
             );
+            executeErrorStatus = ImportStatus.IMPORT_ERROR;
             Logging.error(
                 "No building update (id: {0}), caused: DataIntegrity with replacing error! Building: {1}",
                 selectedBuilding.getId(),
@@ -112,6 +117,7 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
             );
         } else {
             executeErrorReason = tr("Cannot merge buildings! Unknown error!");
+            executeErrorStatus = ImportStatus.IMPORT_ERROR;
             Logging.error(
                 "No building update (id: {0}), caused: Unknown error: {1}",
                 selectedBuilding.getId(),
@@ -154,5 +160,10 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
     @Override
     public String getErrorReason() {
         return executeErrorReason;
+    }
+
+    @Override
+    public ImportStatus getErrorStatus() {
+        return executeErrorStatus;
     }
 }

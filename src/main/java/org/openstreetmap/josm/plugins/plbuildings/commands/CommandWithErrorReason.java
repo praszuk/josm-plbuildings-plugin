@@ -3,12 +3,13 @@ package org.openstreetmap.josm.plugins.plbuildings.commands;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus;
+import org.openstreetmap.josm.tools.Pair;
 
 
 /**
- * Extension to JOSM Command classes which allow to return error message after command execution.
+ * Extension to JOSM Command classes which allow to return error message and status after command execution.
  * Be default JOSM returns only boolean value there (.executeCommand())
  */
 public interface CommandWithErrorReason {
@@ -18,12 +19,16 @@ public interface CommandWithErrorReason {
      */
     String getErrorReason();
 
-    static String getLatestErrorReason(Collection<Command> commands) {
+    ImportStatus getErrorStatus();
+
+    static Pair<String, ImportStatus> getLatestErrorReasonStatus(Collection<Command> commands) {
         ArrayList<Command> reversedCommands = new ArrayList<>(commands);
         Collections.reverse(reversedCommands);
         return reversedCommands.stream().filter(obj -> obj instanceof CommandWithErrorReason)
-            .map(obj -> ((CommandWithErrorReason) obj).getErrorReason())
-            .filter(Objects::nonNull)
+            .map(obj -> new Pair<>(
+                ((CommandWithErrorReason) obj).getErrorReason(), ((CommandWithErrorReason) obj).getErrorStatus())
+            )
+            .filter(obj -> obj.a != null && obj.b != null)
             .findFirst()
             .orElseThrow();
     }

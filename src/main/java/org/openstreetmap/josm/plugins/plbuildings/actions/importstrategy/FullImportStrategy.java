@@ -1,6 +1,6 @@
 package org.openstreetmap.josm.plugins.plbuildings.actions.importstrategy;
 
-import static org.openstreetmap.josm.plugins.plbuildings.commands.CommandWithErrorReason.getLatestErrorReason;
+import static org.openstreetmap.josm.plugins.plbuildings.commands.CommandWithErrorReason.getLatestErrorReasonStatus;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Arrays;
@@ -17,6 +17,7 @@ import org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus;
 import org.openstreetmap.josm.plugins.plbuildings.exceptions.ImportActionCanceledException;
 import org.openstreetmap.josm.plugins.plbuildings.models.BuildingsImportStats;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Pair;
 
 public class FullImportStrategy extends ImportStrategy {
     public FullImportStrategy(BuildingsImportManager manager, BuildingsImportStats importStats, Way importedBuilding) {
@@ -34,7 +35,7 @@ public class FullImportStrategy extends ImportStrategy {
         if (!isUpdated) {
             throw new ImportActionCanceledException(
                 updateBuildingTagsCommand.getErrorReason(),
-                ImportStatus.IMPORT_ERROR
+                updateBuildingTagsCommand.getErrorStatus()
             );
         }
         UndoRedoHandler.getInstance().add(updateBuildingTagsCommand, false);
@@ -59,16 +60,9 @@ public class FullImportStrategy extends ImportStrategy {
             importedBuilding
         );
 
-        List<Command> commands =
-            Arrays.asList(addBuildingGeometryCommand, updateBuildingTagsCommand);
-        SequenceCommand importedNewBuildingSequence = new SequenceCommand(
-            tr("Imported a new building"), commands
-        );
-        boolean isSuccess = importedNewBuildingSequence.executeCommand();
-        if (!isSuccess) {
-            Logging.debug("Import of a new building failed!");
-            throw new ImportActionCanceledException(getLatestErrorReason(commands), ImportStatus.IMPORT_ERROR);
-        }
+        List<Command> commands = Arrays.asList(addBuildingGeometryCommand, updateBuildingTagsCommand);
+        SequenceCommand importedNewBuildingSequence = new SequenceCommand(tr("Imported a new building"), commands);
+        importedNewBuildingSequence.executeCommand();
         UndoRedoHandler.getInstance().add(importedNewBuildingSequence, false);
         importStats.addImportNewBuildingCounter(1);
         Logging.debug("Imported building: {0}", addBuildingGeometryCommand.getResultBuilding().getId());
@@ -83,16 +77,16 @@ public class FullImportStrategy extends ImportStrategy {
             currentDataSet,
             importedBuilding
         );
-        ReplaceBuildingGeometryCommand replaceBuildingGeometryCommand =
-            new ReplaceBuildingGeometryCommand(
-                currentDataSet,
-                selectedBuilding,
-                addBuildingGeometryCommand
-            );
+        ReplaceBuildingGeometryCommand replaceBuildingGeometryCommand = new ReplaceBuildingGeometryCommand(
+            currentDataSet,
+            selectedBuilding,
+            addBuildingGeometryCommand
+        );
         UpdateBuildingTagsCommand updateBuildingTagsCommand = new UpdateBuildingTagsCommand(
             currentDataSet,
             () -> selectedBuilding,
-            importedBuilding
+            importedBuilding,
+            true
         );
 
         List<Command> commands = Arrays.asList(
@@ -107,7 +101,8 @@ public class FullImportStrategy extends ImportStrategy {
         boolean isSuccess = mergedGeometryAndUpdatedTagsBuildingSequence.executeCommand();
         if (!isSuccess) {
             Logging.debug("Update (geometry and tags) building failed!");
-            throw new ImportActionCanceledException(getLatestErrorReason(commands), ImportStatus.IMPORT_ERROR);
+            Pair<String, ImportStatus> errorReasonStatus = getLatestErrorReasonStatus(commands);
+            throw new ImportActionCanceledException(errorReasonStatus.a, errorReasonStatus.b);
         }
         UndoRedoHandler.getInstance().add(mergedGeometryAndUpdatedTagsBuildingSequence, false);
         importStats.addImportWithReplaceCounter(1);
