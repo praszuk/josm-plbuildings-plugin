@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
+import org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UserCancelException;
 
@@ -31,6 +32,7 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
     private SequenceCommand updateTagsCommand;
 
     private String executeErrorReason;
+    private ImportStatus executeErrorStatus;
 
     public UpdateBuildingTagsCommand(DataSet dataSet, CommandResultBuilding resultSelectedBuilding, Way newBuilding) {
         super(dataSet);
@@ -136,12 +138,15 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
                     selectedBuilding.getId()
                 );
                 executeErrorReason = tr("Conflict tag dialog canceled by user");
+                executeErrorStatus = ImportStatus.CANCELED;
                 return false;
             }
 
             if (commands.isEmpty()) {
                 Logging.debug("No tags difference! Canceling!");
-                return true;
+                executeErrorReason = tr("No tags to change");
+                executeErrorStatus = ImportStatus.NO_UPDATE;
+                return false;
             }
             this.updateTagsCommand = new SequenceCommand(DESCRIPTION_TEXT, commands);
         }
@@ -187,5 +192,10 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
     @Override
     public String getErrorReason() {
         return executeErrorReason;
+    }
+
+    @Override
+    public ImportStatus getErrorStatus() {
+        return executeErrorStatus;
     }
 }

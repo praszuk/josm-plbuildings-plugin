@@ -43,7 +43,7 @@ public class TagsUpdateStrategy extends ImportStrategy {
         if (!isSuccess) {
             throw new ImportActionCanceledException(
                 updateBuildingTagsCommand.getErrorReason(),
-                ImportStatus.IMPORT_ERROR
+                updateBuildingTagsCommand.getErrorStatus()
             );
         }
         UndoRedoHandler.getInstance().add(updateBuildingTagsCommand, false);
