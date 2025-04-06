@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -70,24 +69,24 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
         return DESCRIPTION_TEXT;
     }
 
-
-    private Command removeUnwantedSource() {
+    private boolean shouldRemoveSourceTag(Way selectedBuilding) {
         if (!BuildingsSettings.AUTOREMOVE_UNWANTED_SOURCE.get()) {
-            return null;
+            return false;
         }
         String source = selectedBuilding.get("source");
         if (source == null) {
-            return null;
+            return false;
         }
-        boolean isSourceContainUnwantedValue = BuildingsSettings.UNWANTED_SOURCE_VALUES.get()
+
+        return BuildingsSettings.UNWANTED_SOURCE_VALUES.get()
             .stream()
             .map(String::toLowerCase)
             .anyMatch(val -> source.toLowerCase().contains(val));
+    }
 
-        if (!isSourceContainUnwantedValue) {
-            return null;
-        }
-        return new ChangePropertyCommand(selectedBuilding, "source", null);
+    private void handleUnwantedSourceTag(TagCollection tagsOfPrimitives) {
+        tagsOfPrimitives.removeByKey("source");
+        tagsOfPrimitives.add(new Tag("source", ""));
     }
 
     /**
@@ -116,7 +115,7 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
     /**
      * Handle source:geometry cleanup to avoid leftover if only source:building will be needed.
      */
-    private void handleSourceTags(TagCollection tagsOfPrimitives, Way newBuilding) {
+    private void handleSourceGeometryTag(TagCollection tagsOfPrimitives, Way newBuilding) {
         // We need to handle only case where new building doesn't have source:geometry, otherwise it will be replaced
         if (tagsOfPrimitives.getNumTagsFor("source:geometry") == 1 && !newBuilding.hasTag("source:geometry")) {
             tagsOfPrimitives.removeByKey("source:geometry");
@@ -138,11 +137,6 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
                 );
                 executeErrorReason = tr("Conflict tag dialog canceled by user");
                 return false;
-            }
-
-            Command removeUnwantedSource = removeUnwantedSource();
-            if (removeUnwantedSource != null) {
-                commands.add(removeUnwantedSource);
             }
 
             if (commands.isEmpty()) {
@@ -171,7 +165,10 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
         Collection<OsmPrimitive> primitives = Arrays.asList(selectedBuilding, newBuilding);
         TagCollection tagsOfPrimitives = TagCollection.unionOfAllPrimitives(primitives);
 
-        handleSourceTags(tagsOfPrimitives, newBuilding);
+        if (shouldRemoveSourceTag(selectedBuilding)) {
+            handleUnwantedSourceTag(tagsOfPrimitives);
+        }
+        handleSourceGeometryTag(tagsOfPrimitives, newBuilding);
         handleConstructionSubtag(tagsOfPrimitives, selectedBuilding, newBuilding);
         resolveTagConflictsDefault(tagsOfPrimitives, selectedBuilding, newBuilding);
 
