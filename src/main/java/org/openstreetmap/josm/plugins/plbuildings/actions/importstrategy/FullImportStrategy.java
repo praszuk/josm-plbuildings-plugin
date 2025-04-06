@@ -77,16 +77,16 @@ public class FullImportStrategy extends ImportStrategy {
             currentDataSet,
             importedBuilding
         );
-        ReplaceBuildingGeometryCommand replaceBuildingGeometryCommand =
-            new ReplaceBuildingGeometryCommand(
-                currentDataSet,
-                selectedBuilding,
-                addBuildingGeometryCommand
-            );
+        ReplaceBuildingGeometryCommand replaceBuildingGeometryCommand = new ReplaceBuildingGeometryCommand(
+            currentDataSet,
+            selectedBuilding,
+            addBuildingGeometryCommand
+        );
         UpdateBuildingTagsCommand updateBuildingTagsCommand = new UpdateBuildingTagsCommand(
             currentDataSet,
             () -> selectedBuilding,
-            importedBuilding
+            importedBuilding,
+            true
         );
 
         List<Command> commands = Arrays.asList(

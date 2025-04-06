@@ -186,4 +186,55 @@ class FullImportTest {
         Assertions.assertEquals(buildingNodeVersion, buildingToReplace.getNode(0).getVersion());
         Assertions.assertNotEquals(buildingToImport.get("building"), buildingToReplace.get("building"));
     }
+
+    @Test
+    void testImportWithNewGeometryButTagsNoUpdate() {
+        DataSet importData = importOsmFile(new File("test/data/import_strategy/imported_building.osm"), "");
+        Assertions.assertNotNull(importData);
+
+        Way buildingToImport = (Way) importData.getWays().toArray()[0];
+        buildingToImport.removeAll();
+        buildingToImport.put("building", "yes");
+
+        DataSet ds = importOsmFile(new File("test/data/import_strategy/current_building.osm"), "");
+        MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, "test", null));
+
+        Assertions.assertNotNull(ds);
+
+        BuildingsImportStats stats = BuildingsImportStats.getInstance();
+        int replaceCounter = stats.getImportWithReplaceCounter();
+        int tagsUpdateCounter = stats.getImportWithTagsUpdateCounter();
+        int geometryUpdateCounter = stats.getImportWithGeometryUpdateCounter();
+
+        Way buildingToReplace = ds.getWays().stream().findFirst().orElseThrow();
+        buildingToReplace.removeAll();
+        buildingToReplace.put("building", "yes");
+        buildingToReplace.put("source:building", DATA_SOURCE);
+        ds.setSelected(buildingToReplace);
+
+        Assertions.assertNotEquals(buildingToReplace.getNodesCount(), buildingToImport.getNodesCount());
+        Assertions.assertEquals(buildingToReplace.get("building"), buildingToImport.get("building"));
+
+        BuildingsImportManager manager = new BuildingsImportManager(ds, null, buildingToReplace);
+        manager.setImportedData(new BuildingsImportData(DATA_SOURCE, importData));
+        manager.setCurrentProfile(testProfile);
+        manager.processDownloadedData();
+
+        Assertions.assertTrue(isBuildingWayValid(buildingToReplace));
+
+        Assertions.assertEquals(buildingToImport.getNodesCount(), buildingToReplace.getNodesCount());
+        Assertions.assertEquals(buildingToImport.get("building"), buildingToReplace.get("building"));
+
+        Assertions.assertEquals(replaceCounter + 1, stats.getImportWithReplaceCounter());
+        Assertions.assertEquals(tagsUpdateCounter + 1, stats.getImportWithTagsUpdateCounter());
+        Assertions.assertEquals(geometryUpdateCounter + 1, stats.getImportWithGeometryUpdateCounter());
+
+        Command command = UndoRedoHandler.getInstance().getLastCommand();
+        Assertions.assertNotNull(command);
+
+        command.undoCommand();
+
+        Assertions.assertNotEquals(buildingToImport.getNodesCount(), buildingToReplace.getNodesCount());
+        Assertions.assertEquals(buildingToImport.get("building"), buildingToReplace.get("building"));
+    }
 }

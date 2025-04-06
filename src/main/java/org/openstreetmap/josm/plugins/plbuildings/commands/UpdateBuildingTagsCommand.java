@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -28,6 +29,7 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
     static final String DESCRIPTION_TEXT = tr("Updated building tags");
     private final CommandResultBuilding resultSelectedBuilding;
     private final Way newBuilding;
+    private boolean ignoreNoUpdate;
     private Way selectedBuilding;
     private SequenceCommand updateTagsCommand;
 
@@ -39,6 +41,14 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
         this.resultSelectedBuilding = resultSelectedBuilding;
         this.newBuilding = newBuilding;
         this.updateTagsCommand = null;
+        this.ignoreNoUpdate = false;
+    }
+
+    public UpdateBuildingTagsCommand(
+        DataSet dataSet, CommandResultBuilding resultSelectedBuilding, Way newBuilding, boolean ignoreNoUpdate
+    ) {
+        this(dataSet, resultSelectedBuilding, newBuilding);
+        this.ignoreNoUpdate = ignoreNoUpdate;
     }
 
     @Override
@@ -140,6 +150,14 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
                 executeErrorReason = tr("Conflict tag dialog canceled by user");
                 executeErrorStatus = ImportStatus.CANCELED;
                 return false;
+            }
+
+            // Ensure at least one command as result for UpdateBuildingsTagsCommand execute.
+            // Edge-case for the FullImportStartegy: if geometry is updated and tags have no update
+            // SequenceCommand doesn't allow to modify "sequenceComplete" which is needed to run undo() on manually
+            // commited SequenceCommand, so put fake data change to execute SequenceCommand fully instead of manually.
+            if (commands.isEmpty() && ignoreNoUpdate) {
+                commands.add(new ChangePropertyCommand(newBuilding, "building",  newBuilding.get("building")));
             }
 
             if (commands.isEmpty()) {
