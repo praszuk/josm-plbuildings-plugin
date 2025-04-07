@@ -142,12 +142,8 @@ public class SettingsDataSourcesPanel extends JPanel {
 
         importOneDsStrategyComboBox = new JComboBox<>();
 
-        strategyPanel.add(
-            new JLabel(tr("Default executed strategy at importing building, when") + ":"), BorderLayout.NORTH
-        );
-
         JPanel comboBoxesPanel = new JPanel(new GridLayout(1, 2));
-        comboBoxesPanel.add(new JLabel("– " + tr("One data source is missing") + ":"));
+        comboBoxesPanel.add(new JLabel(tr("On data source missing") + ":"));
         comboBoxesPanel.add(importOneDsStrategyComboBox);
         comboBoxesPanel.setBorder(new EmptyBorder(5, 0, 0, 0));
         strategyPanel.add(comboBoxesPanel, BorderLayout.CENTER);
