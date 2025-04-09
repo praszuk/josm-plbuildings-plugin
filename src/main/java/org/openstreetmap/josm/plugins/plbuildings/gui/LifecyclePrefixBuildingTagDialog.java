@@ -12,8 +12,8 @@ public class LifecyclePrefixBuildingTagDialog {
     public static void show(String lifecyclePrefixBuildingTags) {
         JOptionPane.showMessageDialog(null,
             tr(
-                "Lifecycle prefixes have been detected in the result building: {0}."
-                    + "\nPlease verify if this is correct and fix the data if needed.",
+                "Lifecycle prefixes have been detected in the resulting building: {0}."
+                    + " Please verify that this is correct and update the data if necessary.",
                 lifecyclePrefixBuildingTags
             ),
             tr("Lifecycle prefix tags detected"),

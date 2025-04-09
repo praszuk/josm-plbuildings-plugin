@@ -12,7 +12,9 @@ public enum Notification {
 
     ONE_DS_MISSING("one_ds_missing", tr("Data source is missing"), NotificationType.DATA_SOURCES),
     NOT_ENOUGH_OVERLAPPING(
-        "not_enough_overlapping", tr("Imported buildings data not overlapping enough"), NotificationType.DATA_SOURCES
+        "not_enough_overlapping",
+        tr("Imported building data does not overlapping enough"),
+        NotificationType.DATA_SOURCES
     );
 
     private final String name;

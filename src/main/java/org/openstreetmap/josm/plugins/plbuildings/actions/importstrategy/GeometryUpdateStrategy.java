@@ -31,7 +31,7 @@ public class GeometryUpdateStrategy extends ImportStrategy {
         Way selectedBuilding = manager.getSelectedBuilding();
         if (selectedBuilding == null) {
             throw new ImportActionCanceledException(
-                tr("Cannot perform building update geometry without selected building."),
+                tr("Cannot update building geometry without a selected building."),
                 ImportStatus.CANCELED
             );
         }

@@ -325,7 +325,7 @@ public class BuildingsImportManager {
                     importedBuilding = combineBuildings(geometryBuilding, tagsBuilding);
                 } else {
                     String notificationText = tr(
-                        "Imported buildings data not overlapping enough. Used strategy"
+                        "Imported building data does not overlapping enough. Used strategy"
                     ) + ": ";
                     ImportedBuildingOverlappingOptionDialog overlappingDialog =
                         new ImportedBuildingOverlappingOptionDialog(
@@ -346,17 +346,17 @@ public class BuildingsImportManager {
                             importedBuilding = geometryBuilding;
                             importedBuildingGeometrySource = profile.getGeometry();
                             importedBuildingTagsSource = profile.getGeometry();
-                            notificationText += String.format(tr("Used %s"), profile.getGeometry());
+                            notificationText += String.format(tr("Used {}"), profile.getGeometry());
                             break;
                         case ACCEPT_TAGS_SOURCE:
                             importedBuilding = tagsBuilding;
                             importedBuildingGeometrySource = profile.getTags();
                             importedBuildingTagsSource = profile.getTags();
-                            notificationText += String.format(tr("Used %s"), profile.getTags());
+                            notificationText += String.format(tr("Used {}"), profile.getTags());
                             break;
                         default:
                             importedBuilding = null;
-                            notificationText = tr("Imported buildings data not overlapping enough. Canceling.");
+                            notificationText = tr("Imported building data does not overlapping enough. Canceling.");
                     }
                     if (shouldShowNotEnoughOverlappingNotification()) {
                         showNotification(notificationText);

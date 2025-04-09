@@ -84,7 +84,7 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
     private void handleException(Exception exception) {
         // If user cancel conflict window
         if (exception instanceof IllegalArgumentException) {
-            executeErrorReason = tr("Canceled merging buildings!");
+            executeErrorReason = tr("Building merging canceled!");
             executeErrorStatus = ImportStatus.CANCELED;
             Logging.debug(
                 "No building (id: {0}) update, caused: Cancel conflict dialog by user",
@@ -95,8 +95,8 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
         else if (exception instanceof ReplaceGeometryException) {
             executeErrorReason = tr(
                 "Cannot merge buildings!"
-                    + " Old building may be connected with some ways/relations"
-                    + " or not whole area is downloaded!"
+                    + " The old building might be part of ways or relations,"
+                    + " or it is not entirely within the downloaded area."
             );
             executeErrorStatus = ImportStatus.IMPORT_ERROR;
             Logging.debug(
@@ -107,7 +107,7 @@ public class ReplaceBuildingGeometryCommand extends Command implements CommandRe
         // If data integrity like nodes duplicated or first!=last has been somehow broken
         else if (exception instanceof DataIntegrityProblemException) {
             executeErrorReason = tr(
-                "Cannot merge buildings! Building has been wrongly replaced and data has been broken!"
+                "Cannot merge buildings! A building was wrongly replaced, and the data is broken!"
             );
             executeErrorStatus = ImportStatus.IMPORT_ERROR;
             Logging.error(

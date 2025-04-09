@@ -36,7 +36,9 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class BuildingsImportAction extends JosmAction {
-    static final String DESCRIPTION = tr("Import building at cursor position or replace/update selected.");
+    static final String DESCRIPTION = tr(
+        "Import the building at the location pointed to by the cursor and/or replace/update the selected one."
+    );
     static final String TITLE = "PlBuildings: " + tr("Download building");
     static final BuildingsImportStats importStats = BuildingsImportStats.getInstance();
 
@@ -132,8 +134,8 @@ public class BuildingsImportAction extends JosmAction {
         }
 
         if (buildingsImportData.isOutOfUserFrameView(getUserFrameViewBounds())) {
-            Logging.warn("Imported building data out of the user view.");
-            manager.setStatus(ImportStatus.IMPORT_ERROR, tr("Imported building data out of the user view."));
+            Logging.warn("Imported building data outside the user's view.");
+            manager.setStatus(ImportStatus.IMPORT_ERROR, tr("Imported building data outside the user's view."));
             return;
         }
 

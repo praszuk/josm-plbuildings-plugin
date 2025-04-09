@@ -126,7 +126,7 @@ public class FullImportStrategy extends ImportStrategy {
         if (isBuildingDuplicate()) {
             if (selectedBuilding == null) {
                 throw new ImportActionCanceledException(
-                    tr("Duplicated building geometry, but not selected any building. Canceling!"),
+                    tr("Duplicated building geometry, without a selected building. Canceling!"),
                     ImportStatus.NO_UPDATE
                 );
             }

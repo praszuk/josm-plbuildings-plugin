@@ -144,10 +144,10 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
                 commands = new ArrayList<>(prepareUpdateTagsCommands(selectedBuilding, newBuilding));
             } catch (UserCancelException exception) {
                 Logging.debug(
-                    "No building tags (id: {0}) update, caused: Cancel conflict dialog by user",
+                    "No building tags (id: {0}) update, caused: Tag conflict dialog canceled by user",
                     selectedBuilding.getId()
                 );
-                executeErrorReason = tr("Conflict tag dialog canceled by user");
+                executeErrorReason = tr("Tag conflict dialog canceled by user");
                 executeErrorStatus = ImportStatus.CANCELED;
                 return false;
             }

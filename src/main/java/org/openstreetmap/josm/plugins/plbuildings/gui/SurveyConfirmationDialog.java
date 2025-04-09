@@ -18,7 +18,11 @@ public class SurveyConfirmationDialog {
     public static boolean show() {
         int result = JOptionPane.showConfirmDialog(
             null,
-            tr("Detected \"survey\" value in tags.\nAre you sure you want to proceed updating this object?"),
+            tr(
+                "A {} value was detected in the tags.\n"
+                + "Are you sure you want to proceed with updating this object?",
+                "survey"
+            ),
             tr("Building import confirmation"),
             JOptionPane.YES_NO_OPTION
         );
