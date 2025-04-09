@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 public class SettingsAutoremoveSourceTagsPanel extends SettingsTagValuesPanel {
     @Override
     String getAddNewValueTitle() {
-        return tr("Add new source value");
+        return tr("Add new value for source key");
     }
 
     @Override
