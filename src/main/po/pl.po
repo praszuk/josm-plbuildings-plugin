@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: josm-plugin_plbuildings 1.4.2-2-gdebafc4-SNAPSHOT\n"
+"Project-Id-Version: josm-plugin_plbuildings 2.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-09 02:07+0200\n"
-"PO-Revision-Date: 2025-04-09 02:08+0200\n"
+"POT-Creation-Date: 2025-04-10 01:04+0200\n"
+"PO-Revision-Date: 2025-04-10 01:21+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -18,6 +18,14 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 3.0.1\n"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SurveyConfirmationDialog.java:22
+msgid ""
+"A {} value was detected in the tags.\n"
+"Are you sure you want to proceed with updating this object?"
+msgstr ""
+"Wykryto wartość {} w tagach.\n"
+"Czy na pewno chcesz kontynuować aktualizację tego obiektu?"
 
 #. * User input action required e.g. resolve conflict with tags
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/enums/ImportStatus.java:26
@@ -30,24 +38,26 @@ msgid "Add"
 msgstr "Dodaj"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsUncommonTagsPanel.java:8
-msgid "Add new common building value"
-msgstr "Dodaj nową częstą wartość budynku"
+#, java-format
+msgid "Add new common value for the {0} key"
+msgstr "Dodaj nową częstą wartość dla klucza {0}"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:36
 msgid "Add new server"
 msgstr "Dodaj nowy serwer"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsAutoremoveSourceTagsPanel.java:8
-msgid "Add new value for source key"
-msgstr "Dodaj nową wartość dla klucza source"
+#, java-format
+msgid "Add new value for {0} key"
+msgstr "Dodaj nową wartość dla klucza {0}"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/AddBuildingGeometryCommand.java:80
 msgid "Added building geometry"
-msgstr "Dodano zaimportowany budynek"
+msgstr "Dodano geometrię budynku"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:176
-msgid "Are you sure to remove server"
-msgstr "Czy chcesz usunąć serwer"
+msgid "Are you sure to remove server {}?"
+msgstr "Czy na pewno chcesz usunąć serwer {}?"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/controllers/SettingsAutoremoveSourceTagsController.java:66
 msgid "Autoremove source"
@@ -60,25 +70,30 @@ msgid ""
 "found at building import in {0} key."
 msgstr ""
 "Poniższa lista zawiera wartości, które mogą być automatycznie usunięte, "
-"jeśli zostaną znalezione w kluczu {0} podczas importowania budynku."
+"jeśli zostaną znalezione podczas importowania budynku w kluczu {0}."
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SurveyConfirmationDialog.java:22
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SurveyConfirmationDialog.java:26
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:40
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:61
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:63
 msgid "Building import confirmation"
 msgstr "Potwierdzenie importu budynku"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:147
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:19
+msgid "Building import stats"
+msgstr "Statystyki importowania budynków"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/ReplaceBuildingGeometryCommand.java:87
+msgid "Building merging canceled!"
+msgstr "Anulowano scalanie budynków!"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:149
 msgid "Building not found."
 msgstr "Nie znaleziono budynku."
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:52
-msgid "Buildings from different data sources are not overlapping enough"
-msgstr "Budynki z różnych źródeł danych nie pokrywają się wystarczająco"
-
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:19
-msgid "Buildings import stats"
-msgstr "Statystyki importowania budynków"
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:53
+#, java-format
+msgid "Buildings from different data sources are not overlapping enough ({0})."
+msgstr "Budynki z różnych źródeł danych nie pokrywają się wystarczająco ({0})."
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:25
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:45
@@ -90,17 +105,9 @@ msgstr "Anuluj"
 msgid "Canceled"
 msgstr "Anulowano"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/ImportStrategy.java:43
-msgid "Canceled import by rejected survey dialog confirmation"
-msgstr "Import anulowany przez odrzucenie potwierdzenia okna survey"
-
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/ReplaceBuildingGeometryCommand.java:87
-msgid "Canceled merging buildings!"
-msgstr "Anulowano scalanie budynków!"
-
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/ReplaceBuildingGeometryCommand.java:110
 msgid ""
-"Cannot merge buildings! Building has been wrongly replaced and data has been "
+"Cannot merge buildings! A building was wrongly replaced, and the data is "
 "broken!"
 msgstr ""
 "Nie można scalić budynków! Budynek został błędnie podmieniony i jego dane "
@@ -108,23 +115,22 @@ msgstr ""
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/ReplaceBuildingGeometryCommand.java:97
 msgid ""
-"Cannot merge buildings! Old building may be connected with some ways/"
-"relations or not whole area is downloaded!"
+"Cannot merge buildings! The old building might be part of ways or relations, "
+"or it is not entirely within the downloaded area."
 msgstr ""
-"Nie można scalić budynków! Stary budynek może być jeszcze połączony z "
-"jakimiś liniami, być w relacjach albo nie znajduje się całkowicie w pobranym "
-"obszarze!"
+"Nie można scalić budynków! Stary budynek może być częścią jakichś linii lub "
+"relacji, albo nie znajduje się całkowicie w pobranym obszarze."
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/ReplaceBuildingGeometryCommand.java:119
 msgid "Cannot merge buildings! Unknown error!"
 msgstr "Nie można scalić budynków! Nieznany błąd!"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/GeometryUpdateStrategy.java:34
-msgid "Cannot perform building update geometry without selected building."
+msgid "Cannot update building geometry without a selected building."
 msgstr "Nie można zaktualizować geometrii budynku bez zaznaczonego budynku."
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/TagsUpdateStrategy.java:27
-msgid "Cannot perform building update tags without selected building."
+msgid "Cannot update building tags without a selected building."
 msgstr "Nie można zaktualizować tagów budynku bez zaznaczonego budynku."
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsNotificationsPanel.java:69
@@ -132,12 +138,9 @@ msgid "Combining data sources"
 msgstr "Złączanie źródeł danych"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsUncommonTagsPanel.java:13
-msgid "Common building values:"
-msgstr "Częste wartości budynków:"
-
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/UpdateBuildingTagsCommand.java:150
-msgid "Conflict tag dialog canceled by user"
-msgstr "Okno konfliktów tagów anulowane przez użytkownika"
+#, java-format
+msgid "Common values of the {0} key:"
+msgstr "Częste wartości klucza {0}:"
 
 #. * Server unreachable or timeout, it could alsoo just 400/500 response
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/enums/ImportStatus.java:22
@@ -148,25 +151,17 @@ msgstr "Błąd połączenia"
 msgid "Cursor outside the map view!"
 msgstr "Kursor poza widokiem mapy!"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:79
-msgid "Data source"
-msgstr "Źródło danych"
-
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/enums/Notification.java:13
 msgid "Data source is missing"
 msgstr "Brakuje źródła danych"
 
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:79
+msgid "Data source:"
+msgstr "Źródło danych:"
+
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/controllers/SettingsDataSourcesController.java:211
 msgid "Data sources"
 msgstr "Źródła danych"
-
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SurveyConfirmationDialog.java:21
-msgid ""
-"Detected \"survey\" value in tags.\n"
-"Are you sure you want to proceed updating this object?"
-msgstr ""
-"Wykryto wartość \"survey\" w tagach.\n"
-"Czy chcesz kontynuować aktualizowanie tego obiektu?"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:50
 msgid "Do not show again (this session)."
@@ -174,7 +169,7 @@ msgstr "Nie pokazuj ponownie (w tej sesji)."
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOneDsOptionDialog.java:27
 msgid ""
-"Do not show again (this session). You can change it permamently in the "
+"Do not show again (this session). You can change it permanently in the "
 "settings."
 msgstr ""
 "Nie pokazuj ponownie (w tej sesji). Możesz to zmienić trwale w ustawieniach."
@@ -184,7 +179,7 @@ msgstr ""
 msgid "Done"
 msgstr "Gotowe"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:40
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:42
 msgid "Download building"
 msgstr "Pobierz budynek"
 
@@ -194,7 +189,7 @@ msgid "Downloading"
 msgstr "Pobieranie"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/FullImportStrategy.java:129
-msgid "Duplicated building geometry, but not selected any building. Canceling!"
+msgid "Duplicated building geometry, without a selected building. Canceling!"
 msgstr "Powielona geometria budynku bez zaznaczonego budynku. Anulowanie!"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/GeometryUpdateStrategy.java:42
@@ -203,7 +198,7 @@ msgstr "Powielona geometria budynku. Anulowanie!"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:167
 msgid ""
-"Error with adding a new server. Name must be unique and URL must be valid!"
+"Error adding new server. The name must be unique, and the URL must be valid!"
 msgstr ""
 "Błąd dodawania nowego serwera. Nazwa musi być unikalna oraz URL musi być "
 "poprawny!"
@@ -222,11 +217,9 @@ msgstr "Geometria"
 msgid "Idle"
 msgstr "Bezczynny"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:39
-msgid "Import building at cursor position or replace/update selected."
-msgstr ""
-"Importuj budynek w miejscu wskazywanym przez kursor lub/i wymień/aktualizuj "
-"zaznaczony."
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/ImportStrategy.java:43
+msgid "Import cancelled due to rejection of confirmation of {} key window"
+msgstr "Import anulowany przez odrzucenie potwierdzenia okna klucza {}"
 
 #. * Caused by import action (plugin side – not server/connection)
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/enums/ImportStatus.java:24
@@ -234,8 +227,8 @@ msgid "Import error"
 msgstr "Błąd importowania"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:76
-msgid "Import mode"
-msgstr "Tryb importu"
+msgid "Import mode:"
+msgstr "Tryb importu:"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsNotificationsPanel.java:64
 msgid "Import status change"
@@ -245,27 +238,35 @@ msgstr "Zmiana stanu importu"
 msgid "Import strategy"
 msgstr "Strategia importu"
 
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:40
+msgid ""
+"Import the building at the location pointed to by the cursor and/or replace/"
+"update the selected one."
+msgstr ""
+"Importuj budynek w miejscu wskazanym przez kursor i/lub wymień/aktualizuj "
+"zaznaczony."
+
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/FullImportStrategy.java:64
 msgid "Imported a new building"
 msgstr "Zaimportowano nowy budynek"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:136
-msgid "Imported building data out of the user view."
-msgstr "Zaimportowane dane budynku poza widokiem użytkownika."
-
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/enums/Notification.java:15
-msgid "Imported buildings data not overlapping enough"
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/enums/Notification.java:16
+msgid "Imported building data does not overlapping enough"
 msgstr "Zaimportowane dane budynków nie pokrywają się wystarczająco"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:359
-msgid "Imported buildings data not overlapping enough. Canceling."
+msgid "Imported building data does not overlapping enough. Canceling."
 msgstr ""
 "Zaimportowane dane budynków nie pokrywają się wystarczająco. Anulowanie."
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:328
-msgid "Imported buildings data not overlapping enough. Used strategy"
+msgid "Imported building data does not overlapping enough. Used strategy"
 msgstr ""
 "Zaimportowane dane budynków nie pokrywają się wystarczająco. Użyto strategii"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:138
+msgid "Imported building data outside the user's view."
+msgstr "Zaimportowane dane budynku poza widokiem użytkownika."
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:47
 msgid "Imports with building replace"
@@ -286,7 +287,7 @@ msgstr ""
 "Niepełne dane. Czy chcesz użyć tylko jednego źródła danych do importu "
 "budynku?"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:166
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsImportAction.java:168
 msgid "Incorrect import mode."
 msgstr "Niepoprawny tryb importu."
 
@@ -296,17 +297,16 @@ msgstr "Ostatnie tagi"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/LifecyclePrefixBuildingTagDialog.java:19
 msgid "Lifecycle prefix tags detected"
-msgstr "Tagi z prefiksami cyklu życia zostały wykryte"
+msgstr "Wykryto tagi z prefiksem cyklu życia"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/LifecyclePrefixBuildingTagDialog.java:15
 #, java-format
 msgid ""
-"Lifecycle prefixes have been detected in the result building: {0}.\n"
-"Please verify if this is correct and fix the data if needed."
+"Lifecycle prefixes have been detected in the resulting building: {0}. Please "
+"verify that this is correct and update the data if necessary."
 msgstr ""
-"Prefiksy cyklu życia zostały wykryte w wynikowym budynku: {0}.\n"
-"Proszę zweryfikuj, czy jest to właściwe lub popraw dane jeśli jest to "
-"wymagane."
+"W wynikowym budynku wykryto prefiksy cyklu życia: {0}.\n"
+"Sprawdź, czy jest to poprawne i w razie potrzeby popraw dane."
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:36
 msgid "Merge both"
@@ -347,8 +347,8 @@ msgid "Notifications"
 msgstr "Powiadomienia"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:146
-msgid "On data source missing"
-msgstr "Przy brakującym źródle danych"
+msgid "On data source missing:"
+msgstr "Przy brakującym źródle danych:"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:311
 msgid "One data source is missing. Canceling."
@@ -405,12 +405,12 @@ msgid "Server"
 msgstr "Serwer"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:99
-msgid "Server URL"
-msgstr "URL serwera"
+msgid "Server URL:"
+msgstr "URL serwera:"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:98
-msgid "Server name"
-msgstr "Nazwa serwera"
+msgid "Server name:"
+msgstr "Nazwa serwera:"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:33
 msgid "Servers"
@@ -421,20 +421,20 @@ msgid "Settings"
 msgstr "Ustawienia"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:18
-msgid "Show buildings import stats"
+msgid "Show building import stats"
 msgstr "Pokaż statystyki importowania budynków"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsSettingsAction.java:14
 msgid "Show settings"
 msgstr "Pokaż ustawienia"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsAutoremoveSourceTagsPanel.java:13
-msgid "Source tag values:"
-msgstr "Wartości tagu source:"
-
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:73
-msgid "Status"
-msgstr "Status"
+msgid "Status:"
+msgstr "Status:"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/UpdateBuildingTagsCommand.java:150
+msgid "Tag conflict dialog canceled by user"
+msgstr "Okno konfliktu tagów anulowane przez użytkownika"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/enums/ImportMode.java:8
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/models/ui/SettingsDataSourcesProfilesTableModel.java:12
@@ -443,9 +443,8 @@ msgstr "Tagi"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/BuildingsStatsAction.java:59
 msgid "Total import actions"
-msgstr "Całkowita liczba akcji"
+msgstr "Łączna liczba importów"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:96
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/controllers/SettingsUncommonTagsController.java:65
 msgid "Uncommon tags"
 msgstr "Nietypowe tagi"
@@ -456,12 +455,16 @@ msgid ""
 "Uncommon tags ({0}) has been detected.\n"
 "You can verify that are correct and add more details."
 msgstr ""
-"Wykryto specyficzne tagi ({0}).\n"
+"Wykryto nietypowe tagi ({0}).\n"
 "Możesz zweryfikować, czy są poprawne i dodać więcej szczegółów."
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/UncommonTagDialog.java:20
 msgid "Uncommon tags detected"
-msgstr "Wykryto specyficzne tagi"
+msgstr "Wykryto nietypowe tagi"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/BuildingsToggleDialog.java:96
+msgid "Uncommon tags:"
+msgstr "Nietypowe tagi:"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/GeometryUpdateStrategy.java:60
 msgid "Updated building geometry"
@@ -487,9 +490,13 @@ msgstr "Użyj %s"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:349
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:355
-#, java-printf-format
-msgid "Used %s"
+msgid "Used {}"
 msgstr "Użyto %s"
+
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsAutoremoveSourceTagsPanel.java:13
+#, java-format
+msgid "Values of the {0} key:"
+msgstr "Wartości klucza {0}:"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/models/ui/SettingsDataSourcesProfilesTableModel.java:14
 msgid "Visible"
@@ -500,15 +507,15 @@ msgstr "Widoczny"
 msgid ""
 "When a building is imported, an additional check is performed to ensure that "
 "the building does not contain uncommon tags. Common values for the {0} key "
-"that should not trigger the check mechanism can be added below.{1} Keep in "
-"mind that if an object contains a common value but also contains a tag such "
-"as {2}, a dialog message will appear."
+"that should not trigger the check mechanism can be added below.<br><br> Keep "
+"in mind that if an object contains a common value but also contains a key "
+"such as {1}, a dialog message will appear."
 msgstr ""
 "Kiedy budynek jest importowany, wykonywane jest dodatkowe sprawdzenie, aby "
-"upewnić się, że budynek nie zawiera nietypowych tagów. Częste wartości dla "
-"klucza {0}, które nie powinny uruchamiać mechanizmu sprawdzania, można dodać "
-"poniżej.{1} Pamiętaj, że jeśli obiekt zawiera częstą wartość, ale także "
-"zawiera tag taki jak {2}, pojawi się okienko z komunikatem."
+"upewnić się, że budynek nie zawiera nietypowych tagów. Poniżej można dodać "
+"częste wartości dla klucza {0}, które nie powinny uruchamiać mechanizmu "
+"sprawdzania.<br><br>Pamiętaj, że jeśli obiekt zawiera częstą wartość, ale "
+"także zawiera tag taki jak {1}, pojawi się okienko z komunikatem."
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/controllers/ToggleDialogController.java:58
 msgid "Yes"
@@ -521,29 +528,3 @@ msgstr "Importuj budynki z polskich publicznych zbiorów danych."
 #. Translator credits (translators who want to be credited for their contributions can add their names here as the translation)
 msgid "translator-credits"
 msgstr "NieWnen"
-
-#~ msgid "Default executed strategy at importing building, when"
-#~ msgstr "Domyślna strategia w trakcie import, gdy"
-
-#~ msgid "One data source is missing. Using: "
-#~ msgstr "Brakuje jedno źródła danych. Użyto: "
-
-#~ msgid "Enabled notifications"
-#~ msgstr "Włączone powiadomienia"
-
-#, java-printf-format
-#~ msgid "Use %s (geometry)"
-#~ msgstr "Użyj %s (geometria)"
-
-#~ msgid "Buildings with full replace"
-#~ msgstr "Budynki z pełną podmianą"
-
-#~ msgid "Open"
-#~ msgstr "Otwórz"
-
-#~ msgid "PlBuildings Settings"
-#~ msgstr "Ustawienia PlBuildings"
-
-#~ msgctxt "G – geometry, T – tags "
-#~ msgid "G: %s, T: %s"
-#~ msgstr "G: %s, T: %s"

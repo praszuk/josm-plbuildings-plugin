@@ -15,8 +15,8 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class BuildingsStatsAction extends JosmAction {
 
-    public static final String DESCRIPTION = tr("Show buildings import stats");
-    public static final String TITLE = "PlBuildings: " + tr("Buildings import stats");
+    public static final String DESCRIPTION = tr("Show building import stats");
+    public static final String TITLE = "PlBuildings: " + tr("Building import stats");
 
     public BuildingsStatsAction() {
         super(

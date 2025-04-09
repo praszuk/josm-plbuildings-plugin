@@ -24,7 +24,7 @@ public class TagsUpdateStrategy extends ImportStrategy {
         Way selectedBuilding = manager.getSelectedBuilding();
         if (selectedBuilding == null) {
             throw new ImportActionCanceledException(
-                tr("Cannot perform building update tags without selected building."),
+                tr("Cannot update building tags without a selected building."),
                 ImportStatus.CANCELED
             );
         }

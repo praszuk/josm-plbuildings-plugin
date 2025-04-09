@@ -49,8 +49,10 @@ public class ImportedBuildingOverlappingOptionDialog {
         JPanel panel = new JPanel(new BorderLayout());
         JCheckBox doNotShowAgainThisSessionCheckBox = new JCheckBox(tr("Do not show again (this session)."));
         panel.add(
-            new JLabel(tr("Buildings from different data sources are not overlapping enough")
-            + String.format(" (%.2f%%).", overlapPercentage)),
+            new JLabel(tr(
+                "Buildings from different data sources are not overlapping enough ({0}).",
+                String.format("%.2f%%", overlapPercentage)
+            )),
             BorderLayout.CENTER
         );
         panel.add(doNotShowAgainThisSessionCheckBox, BorderLayout.SOUTH);

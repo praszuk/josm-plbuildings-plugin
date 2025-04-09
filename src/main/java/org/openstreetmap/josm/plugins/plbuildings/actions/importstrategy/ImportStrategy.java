@@ -40,7 +40,7 @@ public abstract class ImportStrategy {
             boolean isContinue = SurveyConfirmationDialog.show();
             if (!isContinue) {
                 throw new ImportActionCanceledException(
-                    tr("Canceled import by rejected survey dialog confirmation"),
+                    tr("Import cancelled due to rejection of confirmation of {} key window", "survey"),
                     ImportStatus.CANCELED
                 );
             }

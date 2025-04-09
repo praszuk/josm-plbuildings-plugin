@@ -70,13 +70,13 @@ public class BuildingsToggleDialog extends ToggleDialog {
     private JPanel createConfigPanel() {
         final JPanel configPanel = new JPanel(new GridLayout(3, 2));
 
-        configPanel.add(new JLabel(tr("Status") + ": "));
+        configPanel.add(new JLabel(tr("Status:")));
         configPanel.add(status);
 
-        configPanel.add(new JLabel(tr("Import mode") + ": "));
+        configPanel.add(new JLabel(tr("Import mode:")));
         configPanel.add(importModeComboBox);
 
-        configPanel.add(new JLabel(tr("Data source") + ": "));
+        configPanel.add(new JLabel(tr("Data source:")));
         configPanel.add(dataSourceProfilesComboBox);
 
         configPanel.setBorder(new EmptyBorder(0, 5, 0, 0));
@@ -87,13 +87,13 @@ public class BuildingsToggleDialog extends ToggleDialog {
     private JPanel createLatestTagsPanel() {
         final JPanel lastImportTagsPanel = new JPanel(new GridLayout(0, 2));
 
-        lastImportTagsPanel.add(new JLabel("building: "));
+        lastImportTagsPanel.add(new JLabel("building:"));
         lastImportTagsPanel.add(buildingType);
 
-        lastImportTagsPanel.add(new JLabel("building:levels: "));
+        lastImportTagsPanel.add(new JLabel("building:levels:"));
         lastImportTagsPanel.add(buildingLevels);
 
-        lastImportTagsPanel.add(new JLabel(tr("Uncommon tags") + ": "));
+        lastImportTagsPanel.add(new JLabel(tr("Uncommon tags:")));
         lastImportTagsPanel.add(hasUncommonTag);
 
         lastImportTagsPanel.setBorder(BorderFactory.createTitledBorder(tr("Latest tags")));

@@ -95,8 +95,8 @@ public class SettingsDataSourcesPanel extends JPanel {
         addServerNameField = new JTextField(50);
         addServerUrlField = new JTextField(50);
 
-        JLabel serverNameLabel = new JLabel(tr("Server name") + ": ");
-        JLabel serverUrlLabel = new JLabel(tr("Server URL") + ": ");
+        JLabel serverNameLabel = new JLabel(tr("Server name:"));
+        JLabel serverUrlLabel = new JLabel(tr("Server URL:") + " ");
 
         serverNameLabel.setLabelFor(addServerNameField);
         serverUrlLabel.setLabelFor(addServerUrlField);
@@ -143,7 +143,7 @@ public class SettingsDataSourcesPanel extends JPanel {
         importOneDsStrategyComboBox = new JComboBox<>();
 
         JPanel comboBoxesPanel = new JPanel(new GridLayout(1, 2));
-        comboBoxesPanel.add(new JLabel(tr("On data source missing") + ":"));
+        comboBoxesPanel.add(new JLabel(tr("On data source missing:")));
         comboBoxesPanel.add(importOneDsStrategyComboBox);
         comboBoxesPanel.setBorder(new EmptyBorder(5, 0, 0, 0));
         strategyPanel.add(comboBoxesPanel, BorderLayout.CENTER);
@@ -164,7 +164,7 @@ public class SettingsDataSourcesPanel extends JPanel {
     public void showAddNewServerErrorDialog() {
         JOptionPane.showMessageDialog(
             null,
-            tr("Error with adding a new server. Name must be unique and URL must be valid!"),
+            tr("Error adding new server. The name must be unique, and the URL must be valid!"),
             ADD_SERVER_TITLE,
             JOptionPane.ERROR_MESSAGE
         );
@@ -173,7 +173,7 @@ public class SettingsDataSourcesPanel extends JPanel {
     public boolean showRemoveServerConfirmDialog(String serverName) {
         int result = JOptionPane.showConfirmDialog(
             null,
-            tr("Are you sure to remove server") + ": " + serverName,
+            tr("Are you sure to remove server {}?", serverName),
             REMOVE_SERVER_TITLE,
             JOptionPane.OK_CANCEL_OPTION
         );
