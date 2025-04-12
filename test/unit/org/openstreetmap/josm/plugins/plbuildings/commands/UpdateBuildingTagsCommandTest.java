@@ -1,5 +1,13 @@
 package org.openstreetmap.josm.plugins.plbuildings.commands;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import mockit.Invocation;
+import mockit.Mock;
+import mockit.MockUp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,7 +16,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.plugins.plbuildings.BuildingsSettings;
 import org.openstreetmap.josm.plugins.plbuildings.enums.ImportStatus;
 
@@ -189,6 +200,41 @@ public class UpdateBuildingTagsCommandTest {
         c.undoCommand();
         Assertions.assertTrue(selectedBuilding.hasTag("building", "construction"));
         Assertions.assertTrue(selectedBuilding.hasTag("construction", "house"));
+    }
+
+    @Test
+    void testConstructionValueCauseConflictWhenNewBuildingIsNoLongerInConstructionAndNewValueIsUnknownByPlugin() {
+        DataSet ds = new DataSet();
+
+        Way selectedBuilding = new Way();
+        selectedBuilding.put("building", "construction");
+
+        // any value which not prevent simplification (like detached-/>house) or autoremove conflicts (like yes->house)
+        selectedBuilding.put("construction", "asdf");
+        ds.addPrimitiveRecursive(selectedBuilding);
+
+        DataSet newDs = new DataSet();
+        Way newBuilding = new Way();
+        newBuilding.put("building", "detached");
+        newDs.addPrimitiveRecursive(newBuilding);
+
+        AtomicBoolean wasCalled = new AtomicBoolean(false);
+        new MockUp<CombinePrimitiveResolverDialog>() {
+            @Mock
+            public List<Command> launchIfNecessary(
+                Invocation inv,
+                TagCollection tags,
+                Collection<OsmPrimitive> primitives,
+                Collection<OsmPrimitive> reference
+            ) {
+                // TagCollection need to have 2 values for building key – then it triggers conflict and appear for user
+                Assertions.assertEquals(Set.of("asdf", "detached"), tags.getValues("building"));
+                wasCalled.set(true);
+                return Collections.emptyList();
+            }
+        };
+        new UpdateBuildingTagsCommand(ds, () -> selectedBuilding, newBuilding).executeCommand();
+        Assertions.assertTrue(wasCalled.get());
     }
 
     @Test
