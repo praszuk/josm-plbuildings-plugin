@@ -28,6 +28,9 @@ public class TagConflictUtils {
 
         conflictKeys.forEach(conflictKey -> {
             String currentValue = target.get(conflictKey);
+            if (currentValue.equals("construction") && target.hasKey("construction")) {
+                currentValue = target.get("construction");
+            }
             String newValue = source.get(conflictKey);
             if (isTagConflictCanBeSkipped(conflictKey, currentValue, newValue)) {
                 tags.remove(new Tag(conflictKey, currentValue));

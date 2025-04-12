@@ -109,13 +109,14 @@ public class UpdateBuildingTagsCommand extends Command implements CommandResultB
             && selectedBuilding.hasTag("construction")
             && !newBuilding.hasTag("building", "construction")) {
 
-            // Remove from both, selected and new – to keep one version
+            // Remove from both, and re-add below if value doesn't simplify – it can be handled after this method
             tagsOfPrimitives.removeByKey("building");
             tagsOfPrimitives.removeByKey("building");
 
             if (isBuildingValueSimplification(selectedBuilding.get("construction"), newBuilding.get("building"))) {
                 tagsOfPrimitives.add(new Tag("building", selectedBuilding.get("construction")));
             } else {
+                tagsOfPrimitives.add(new Tag("building", selectedBuilding.get("construction")));
                 tagsOfPrimitives.add(new Tag("building", newBuilding.get("building")));
             }
 
