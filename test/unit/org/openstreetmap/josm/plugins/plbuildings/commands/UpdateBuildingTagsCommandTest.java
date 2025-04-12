@@ -215,4 +215,26 @@ public class UpdateBuildingTagsCommandTest {
         Assertions.assertTrue(selectedBuilding.hasTag("building", "construction"));
         Assertions.assertTrue(selectedBuilding.hasTag("construction", "house"));
     }
+
+    @Test
+    void testConstructionValueWithoutConstructionKeyIsNotConflictableWithAnyNewValue() {
+        DataSet ds = new DataSet();
+
+        Way selectedBuilding = new Way();
+        selectedBuilding.put("building", "construction");
+        ds.addPrimitiveRecursive(selectedBuilding);
+
+        DataSet newDs = new DataSet();
+        Way newBuilding = new Way();
+        newBuilding.put("building", "yes");
+        newDs.addPrimitiveRecursive(newBuilding);
+
+        Command c = new UpdateBuildingTagsCommand(ds, () -> selectedBuilding, newBuilding);
+        c.executeCommand();
+
+        Assertions.assertTrue(selectedBuilding.hasTag("building", "yes"));
+
+        c.undoCommand();
+        Assertions.assertTrue(selectedBuilding.hasTag("building", "construction"));
+    }
 }

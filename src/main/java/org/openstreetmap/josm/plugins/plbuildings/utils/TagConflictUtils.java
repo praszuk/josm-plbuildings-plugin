@@ -51,6 +51,9 @@ public class TagConflictUtils {
                 if (currentValue.equals("yes") && !newValue.equals("construction")) {
                     return true;
                 }
+                else if (currentValue.equals("construction")) {
+                    return true;
+                }
                 // farm_auxiliary is more like deprecated in Poland
                 else if (currentValue.equals("farm_auxiliary") && newValue.equals("outbuilding")) {
                     return true;
