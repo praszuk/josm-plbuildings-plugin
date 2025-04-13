@@ -18,7 +18,9 @@ It communicates with the [PLBuildings server](https://github.com/praszuk/josm-pl
   - Looking for "survey" value.
   - Preventing tags simplification (e.g. `detached` -/> `house`)
   - Avoiding breaking `building:levels` if selected budilings has `roof:levels` tag.
-- Post-checking imported building (looking for uncommon tags).
+- Post-checking imported building to notify about uncommon tags.
+- Post-checking imported building to notify if object contains tags with lifecycle prefixes.
+- Handling `construction=*` tag.
 - Statuses (current state of import action).
 - Import modes:
   - Full – default (full import of new building or full replace)
@@ -29,6 +31,7 @@ It communicates with the [PLBuildings server](https://github.com/praszuk/josm-pl
   - Multiple data sources including combined data sources (1st for geometry, 2nd for tags) – it also contains resolver if one source is missing
   - Notifications
   - Uncommon tags
+  - Autoremove source
   - ...more settings in JOSM advanced preferences with searching by key `plbuildings.`
 - GUI Sidebar (Toggle Dialog) with:
   - Current status (of import operation)
@@ -36,7 +39,7 @@ It communicates with the [PLBuildings server](https://github.com/praszuk/josm-pl
   - Data source
   - Latest tags (with Uncommon tags indicator)
 - Auto-inject `source:building` and `source:geometry` tags
-- Autoremove `source=geoportal.gov.pl` or `source=bing` tags
+- Autoremove specific values from the `source` tag (e.g. `geoportal.gov.pl`)
 
 ## How to use it
 1. Install plugin in JOSM (same as other plugins via JOSM plugin settings).
@@ -72,6 +75,7 @@ Plugin settings `Menu->Data->PlBuildings: Settings`:
 ![Plugin settings: data sources](media/settings_data_sources.png)
 ![Plugin settings: notifications](media/settings_notifications.png)
 ![Plugin settings: uncommon tags](media/settings_uncommon_tags.png)
+![Plugin settings: autoremove source](media/settings_autoremove_source.png)
 
 ## License
 [GPLv3](LICENSE)

@@ -18,7 +18,9 @@ Wtyczka komunikuje się z [serwerem PLBuildings](https://github.com/praszuk/josm
     - Szukanie wartości "survey".
     - Zapobieganie zubożeniu tagów (np. `detached` -/> `house`)
     - Unikanie błędów związanych z `building:levels` w zależności od tego, czy zaznaczony budynek ma tag `roof:levels`.
-- Sprawdzanie zaimportowanych budynków pod względem nietypowych tagów.
+- Sprawdzanie zaimportowanych budynków w celu powiadomienia o nietypowych tagach.
+- Sprawdzanie zaimportowanych budynków w celu powiadomienia o tagach z prefiksami cyklu życia.
+- Obsługa tagu `construction=*`.
 - Statusy (aktualny stan akcji importu).
 - Tryby importu:
     - Pełny – domyślny (pełny import nowego budynku lub pełna zamiana)
@@ -29,6 +31,7 @@ Wtyczka komunikuje się z [serwerem PLBuildings](https://github.com/praszuk/josm
     - Wiele źródeł danych, w tym złączone źródła danych (np. 1 dla geometrii, 2 dla tagów) – zawiera to również mechanizm, który obsługuje braki w wybranym źródle.
     - Powiadomienia
     - Nietypowe tagi
+    - Auto usuwanie źródła
     - ...więcej ustawień można znaleźć w ustawieniach zaawansowanych JOSMa, szukając po kluczu `plbuildings.`
 - Boczny panel GUI (tzw. Toggle Dialog), który zawiera:
     - Aktualny status
@@ -36,7 +39,7 @@ Wtyczka komunikuje się z [serwerem PLBuildings](https://github.com/praszuk/josm
     - Źródło danych
     - Ostatnie tagi (wraz ze wskaźnikiem nietypowych tagów)
 - Automatyczne dodawanie tagów `source:building` i `source:geometry`.
-- Automatyczne usuwanie tagów `source=geoportal.gov.pl` i `source=bing`.
+- Automatyczne usuwanie wybranych wartości z klucza `source` (np. `geoportal.gov.pl`).
 
 ## Jak z niej korzystać
 1. Zainstaluj wtyczkę w JOSMie (tak jak każdą inną – przez ustawienia JOSMa).
@@ -69,7 +72,7 @@ Ustawienia wtyczki `Menu->Dane->PlBuildings: Ustawienia`:
 ![Ustawienia wtyczki: źródła danych](media/settings_data_sources.png)
 ![Ustawienia wtyczki: powiadomienia](media/settings_notifications.png)
 ![Ustawienia wtyczki: nietypowe tagi](media/settings_uncommon_tags.png)
-
+![Ustawienia wtyczki: auto usuwanie źródła](media/settings_autoremove_source.png)
 
 ## Licencja
 [GPLv3](LICENSE)
