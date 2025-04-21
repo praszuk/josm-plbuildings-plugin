@@ -346,13 +346,13 @@ public class BuildingsImportManager {
                             importedBuilding = geometryBuilding;
                             importedBuildingGeometrySource = profile.getGeometry();
                             importedBuildingTagsSource = profile.getGeometry();
-                            notificationText += String.format(tr("Used {}"), profile.getGeometry());
+                            notificationText += String.format(tr("Used {0}"), profile.getGeometry());
                             break;
                         case ACCEPT_TAGS_SOURCE:
                             importedBuilding = tagsBuilding;
                             importedBuildingGeometrySource = profile.getTags();
                             importedBuildingTagsSource = profile.getTags();
-                            notificationText += String.format(tr("Used {}"), profile.getTags());
+                            notificationText += String.format(tr("Used {0}"), profile.getTags());
                             break;
                         default:
                             importedBuilding = null;

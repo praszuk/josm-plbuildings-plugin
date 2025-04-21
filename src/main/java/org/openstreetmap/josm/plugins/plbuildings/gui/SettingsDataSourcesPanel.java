@@ -173,7 +173,7 @@ public class SettingsDataSourcesPanel extends JPanel {
     public boolean showRemoveServerConfirmDialog(String serverName) {
         int result = JOptionPane.showConfirmDialog(
             null,
-            tr("Are you sure to remove server {}?", serverName),
+            tr("Are you sure to remove server {0}?", serverName),
             REMOVE_SERVER_TITLE,
             JOptionPane.OK_CANCEL_OPTION
         );

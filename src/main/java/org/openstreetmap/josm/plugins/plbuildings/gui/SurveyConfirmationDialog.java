@@ -19,7 +19,7 @@ public class SurveyConfirmationDialog {
         int result = JOptionPane.showConfirmDialog(
             null,
             tr(
-                "A {} value was detected in the tags.\n"
+                "A {0} value was detected in the tags.\n"
                 + "Are you sure you want to proceed with updating this object?",
                 "survey"
             ),
