@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: josm-plugin_plbuildings 2.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-10 01:04+0200\n"
-"PO-Revision-Date: 2025-04-10 01:21+0200\n"
+"POT-Creation-Date: 2025-04-21 15:28+0200\n"
+"PO-Revision-Date: 2025-04-21 15:28+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -20,11 +20,12 @@ msgstr ""
 "X-Generator: Poedit 3.0.1\n"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SurveyConfirmationDialog.java:22
+#, java-format
 msgid ""
-"A {} value was detected in the tags.\n"
+"A {0} value was detected in the tags.\n"
 "Are you sure you want to proceed with updating this object?"
 msgstr ""
-"Wykryto wartość {} w tagach.\n"
+"Wykryto wartość {0} w tagach.\n"
 "Czy na pewno chcesz kontynuować aktualizację tego obiektu?"
 
 #. * User input action required e.g. resolve conflict with tags
@@ -56,8 +57,9 @@ msgid "Added building geometry"
 msgstr "Dodano geometrię budynku"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsDataSourcesPanel.java:176
-msgid "Are you sure to remove server {}?"
-msgstr "Czy na pewno chcesz usunąć serwer {}?"
+#, java-format
+msgid "Are you sure to remove server {0}?"
+msgstr "Czy na pewno chcesz usunąć serwer {0}?"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/controllers/SettingsAutoremoveSourceTagsController.java:66
 msgid "Autoremove source"
@@ -218,8 +220,9 @@ msgid "Idle"
 msgstr "Bezczynny"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/actions/importstrategy/ImportStrategy.java:43
-msgid "Import cancelled due to rejection of confirmation of {} key window"
-msgstr "Import anulowany przez odrzucenie potwierdzenia okna klucza {}"
+#, java-format
+msgid "Import cancelled due to rejection of confirmation of {0} key window"
+msgstr "Import anulowany przez odrzucenie potwierdzenia okna klucza {0}"
 
 #. * Caused by import action (plugin side – not server/connection)
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/enums/ImportStatus.java:24
@@ -333,7 +336,7 @@ msgstr "Brak danych"
 msgid "No data source profile selected!"
 msgstr "Nie wybrano profilu źródła danych!"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/UpdateBuildingTagsCommand.java:165
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/UpdateBuildingTagsCommand.java:166
 msgid "No tags to change"
 msgstr "Brak tagów do zmiany"
 
@@ -432,7 +435,7 @@ msgstr "Pokaż ustawienia"
 msgid "Status:"
 msgstr "Status:"
 
-#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/UpdateBuildingTagsCommand.java:150
+#: src/main/java/org/openstreetmap/josm/plugins/plbuildings/commands/UpdateBuildingTagsCommand.java:151
 msgid "Tag conflict dialog canceled by user"
 msgstr "Okno konfliktu tagów anulowane przez użytkownika"
 
@@ -484,14 +487,15 @@ msgstr "Użyj"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:39
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/ImportedBuildingOverlappingOptionDialog.java:43
-#, java-printf-format
-msgid "Use %s"
-msgstr "Użyj %s"
+#, java-format
+msgid "Use {0}"
+msgstr "Użyj {0}"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:349
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/BuildingsImportManager.java:355
-msgid "Used {}"
-msgstr "Użyto %s"
+#, java-format
+msgid "Used {0}"
+msgstr "Użyto {0}"
 
 #: src/main/java/org/openstreetmap/josm/plugins/plbuildings/gui/SettingsAutoremoveSourceTagsPanel.java:13
 #, java-format
@@ -528,3 +532,7 @@ msgstr "Importuj budynki z polskich publicznych zbiorów danych."
 #. Translator credits (translators who want to be credited for their contributions can add their names here as the translation)
 msgid "translator-credits"
 msgstr "NieWnen"
+
+#, java-printf-format
+#~ msgid "Use %s"
+#~ msgstr "Użyj %s"
