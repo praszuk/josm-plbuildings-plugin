@@ -15,14 +15,11 @@ public class SettingsAutoremoveSourceTagsPanel extends SettingsTagValuesPanel {
 
     @Override
     String getDescription() {
-        return String.format(
-            "<html>"
-                + tr(
-                "Below list contains values which can be automatically removed "
-                    + "if will be found at building import in {0} key.",
-                "<i>source</i>"
-            )
-                + "</html>"
-        );
+        return "<html>"
+            + tr(
+            "Below list contains values which can be automatically removed "
+                + "if will be found at building import in {0} key.",
+            "<i>source</i>"
+            ) + "</html>";
     }
 }
