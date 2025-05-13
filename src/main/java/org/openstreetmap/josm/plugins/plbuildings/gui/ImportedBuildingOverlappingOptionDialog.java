@@ -34,14 +34,8 @@ public class ImportedBuildingOverlappingOptionDialog {
     public void show() {
         ArrayList<Pair<CombineNearestOverlappingStrategy, Object>> choicesPairs = new ArrayList<>(Arrays.asList(
             Pair.create(CombineNearestOverlappingStrategy.MERGE_BOTH, tr("Merge both")),
-            Pair.create(
-                CombineNearestOverlappingStrategy.ACCEPT_GEOMETRY_SOURCE,
-                String.format(tr("Use {0}"), geometryDataSource)
-            ),
-            Pair.create(
-                CombineNearestOverlappingStrategy.ACCEPT_TAGS_SOURCE,
-                String.format(tr("Use {0}"), tagsDataSource)
-            ),
+            Pair.create(CombineNearestOverlappingStrategy.ACCEPT_GEOMETRY_SOURCE, tr("Use {0}", geometryDataSource)),
+            Pair.create(CombineNearestOverlappingStrategy.ACCEPT_TAGS_SOURCE, tr("Use {0}", tagsDataSource)),
             Pair.create(CombineNearestOverlappingStrategy.CANCEL, tr("Cancel"))
         ));
         Object[] choices = choicesPairs.stream().map(pair -> pair.b).toArray();
