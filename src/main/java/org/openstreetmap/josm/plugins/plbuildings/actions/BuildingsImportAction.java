@@ -4,10 +4,13 @@ import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.fi
 import static org.openstreetmap.josm.plugins.plbuildings.utils.PostCheckUtils.findUncommonTags;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -61,10 +64,10 @@ public class BuildingsImportAction extends JosmAction {
 
     public static LatLon getCurrentCursorLocation() {
         try {
-            return MainApplication.getMap().mapView.getLatLon(
-                MainApplication.getMap().mapView.getMousePosition().getX(),
-                MainApplication.getMap().mapView.getMousePosition().getY()
-            );
+            Point mousePosition = MouseInfo.getPointerInfo().getLocation();
+            // Use SwingUtilties conversion to handle scaling bug on macOS Sequoia 15
+            SwingUtilities.convertPointFromScreen(mousePosition, MainApplication.getMap().mapView);
+            return MainApplication.getMap().mapView.getLatLon(mousePosition.getX(), mousePosition.getY());
         } catch (NullPointerException exception) {
             return null;
         }
